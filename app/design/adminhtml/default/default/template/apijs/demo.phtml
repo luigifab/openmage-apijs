@@ -1,0 +1,59 @@
+<?php
+/**
+ * Created D/20/11/2011
+ * Updated D/20/11/2011
+ * Version 1
+ *
+ * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * http://www.luigifab.info/magento/apijs.php
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+?>
+
+<hr style="margin:1em 0 0.5em; border:none; border-top:1px solid #999;"/>
+
+<p><?php echo $this->__('Documentation') ?> : <a href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;">luigifab.info/apijs</a>
+<br /><?php echo $this->__('Version') ?> : <strong>2.5.0</strong></p>
+
+<?php if (Mage::getStoreConfig('apijs/general/enabled') === '1'): ?>
+	<p><?php echo $this->__('Examples:') ?>&nbsp;
+		<button type="button" onclick="apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>'); this.blur();">1</button>
+		<button type="button" onclick="apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');">2</button>
+		<button type="button" onclick="apijs.dialogue.dialogProgress('<?php echo $this->__('Add an image') ?>','<?php echo $this->__('Operation in progress...') ?>');">3</button>
+	</p>
+
+	<script type="text/javascript">
+	function setApijsConfig() {
+		apijs.config.dialogue.imageClose.src = '<?php echo $this->getSkinUrl('images/apijs/dialogue/close.png') ?>';
+		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/apijs/dialogue/progressbar.svg.php') ?>';
+	}
+	</script>
+
+	<hr style="margin:1em 0 0.6em; border:none; border-top:1px solid #999;"/>
+
+	<p style="line-height:1.4em"><?php echo $this->__('Warning: <em>setApijsConfig</em> function is very important, because if it is defined, it will be called automatically.') ?>
+	<br /><?php echo $this->__('It allows to change the <a href="%s" onclick="%s">configuration</a> of the JavaScript program.', 'http://www.luigifab.info/apijs/config.php', 'window.open(this.href); return false;') ?></p>
+
+	<p><?php echo $this->__('Note that debug mode is disabled by default.') ?></p>
+
+	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em;"><code>&lt;script type="text/javascript"&gt;
+function setApijsConfig() {
+   //apijs.config.debug = true;
+   apijs.config.dialogue.imageClose.src = '&lt;?php echo $this->getSkinUrl('images/apijs/dialogue/close.png') ?&gt;';
+   apijs.config.dialogue.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/apijs/dialogue/progressbar.svg.php') ?&gt;';
+}
+function showMyDialog() {
+   apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');
+}
+&lt;/script&gt;
+&lt;button type="button" onclick="showMyDialog()"&gt;2&lt;/button&gt;</code></pre>
+<?php endif ?>

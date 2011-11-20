@@ -1,0 +1,35 @@
+@charset "utf-8";
+/**
+ * Created D/20/11/2011
+ * Updated D/20/11/2011
+ * Version 2
+ *
+ * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * http://www.luigifab.info/magento/apijs.php
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+
+#box { display:block; }
+#box div.control button { padding:2px 0.7em 2px 25px; font:11px "DejaVu Sans", Verdana, sans-serif !important; }
+#box div.navigation.txt button { font:10px "DejaVu Sans", Verdana, sans-serif; background:#444 !important; }
+
+#box h1 { background-image:url("../../images/apijs/icons/32/sprites.png") !important; }
+#box p.saving { background-image:url("../../images/apijs/dialogue/saving.png") !important; }
+
+#box div.control button.cancel  { background-image:url("../../images/apijs/icons/16/silk-cancel.png") !important; }
+#box div.control button.confirm { background-image:url("../../images/success_msg_icon.gif") !important; }
+
+#box.photo dl dt a span { background-image:url("../../images/apijs/icons/24/gnome-zoom-in.png") !important; }
+#box.photo dl dt img.loading  { background-image:url("../../images/apijs/dialogue/loading.png") !important; }
+#box.photo dl dt img.error_en { background-image:url("../../images/apijs/dialogue/404fr.png") !important; }
+#box.photo dl dt img.error_fr { background-image:url("../../images/apijs/dialogue/404fr.png") !important; }
+

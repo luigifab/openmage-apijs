@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Created S/19/11/2011
+ * Updated D/20/11/2011
+ * Version 2
+ *
+ * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * http://www.luigifab.info/magento/apijs.php
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+-->
+
+<config>
+	<modules>
+		<Luigifab_Apijs>
+			<version>2.5.0</version>
+		</Luigifab_Apijs>
+	</modules>
+
+	<global>
+		<blocks>
+			<apijs>
+				<class>Luigifab_Apijs_Block</class>
+			</apijs>
+		</blocks>
+		<helpers>
+			<apijs>
+				<class>Luigifab_Apijs_Helper</class>
+			</apijs>
+		</helpers>
+	</global>
+
+	<adminhtml>
+		<layout>
+			<updates>
+				<apijs>
+					<file>apijs.xml</file>
+				</apijs>
+			</updates>
+		</layout>
+		<translate>
+			<modules>
+				<Luigifab_Apijs>
+					<files>
+						<default>Luigifab_Apijs.csv</default>
+					</files>
+				</Luigifab_Apijs>
+			</modules>
+		</translate>
+		<acl>
+			<resources><admin><children><system><children><config><children>
+				<apijs translate="title"><title>Dialogs (apijs)</title></apijs>
+			</children></config></children></system></children></admin></resources>
+		</acl>
+	</adminhtml>
+</config>

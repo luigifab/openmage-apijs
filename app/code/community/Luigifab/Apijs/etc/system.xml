@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Created D/20/11/2011
+ * Updated D/20/11/2011
+ * Version 1
+ *
+ * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * http://www.luigifab.info/magento/apijs.php
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+-->
+
+<config>
+	<sections>
+		<apijs translate="label">
+			<label>Dialogs (apijs)</label>
+			<tab>advanced</tab>
+			<sort_order>10000</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>0</show_in_website>
+			<show_in_store>0</show_in_store>
+			<groups>
+				<general translate="label">
+					<label>General</label>
+					<sort_order>0</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>0</show_in_website>
+					<show_in_store>0</show_in_store>
+					<fields>
+						<enabled translate="label">
+							<label>Enable</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</enabled>
+						<demo>
+							<frontend_model>apijs/demo</frontend_model>
+							<sort_order>9</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</demo>
+					</fields>
+				</general>
+			</groups>
+		</apijs>
+	</sections>
+</config>

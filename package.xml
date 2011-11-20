@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+    <name>Luigifab_Apijs</name>
+    <version>2.5.0</version>
+    <stability>stable</stability>
+    <license uri="http://www.opensource.org/licenses/GPL-2.0">GPL</license>
+    <channel>luigifab</channel>
+    <extends/>
+    <summary>Advanced backend dialogs.</summary>
+    <description>Advanced backend dialogs using the apijs (http://www.luigifab.info/apijs/index.php).</description>
+    <notes>- D&#xE9;placement de la configuration des m&#xE9;dias du diaporama dans des input de type hidden (TheSlideshow)&#xD;
+- Suppression du chemin dans le nom du fichier envoy&#xE9; (TheUpload)&#xD;
+- Recherche silencieuse de l'acc&#xE8;s au graphique SVG (TheUpload)&#xD;
+&#xD;
+- Mise &#xE0; jour de css3pie vers la version 1.0 b&#xEA;ta 5&#xD;
+- Correction d'un probl&#xE8;me de l'interpr&#xE9;teur de bbcode avec Prototype&#xD;
+- Quelques modifications du design des boites de dialogue et des albums photos&#xD;
+- Documentation des m&#xE9;thodes publiques de TheDialogue et TheSlideshow&#xD;
+- Refonte des compresseurs de code</notes>
+    <authors><author><name>Fabrice Creuzot</name><user>luigifab</user><email>code@luigifab.info</email></author></authors>
+    <date>2011-11-20</date>
+    <time>18:15:36</time>
+    <contents><target name="magecommunity"><dir name="Luigifab"><dir name="Apijs"><dir name="Block"><file name="Demo.php" hash="29ea233869ed90661fc044a5e390ce3a"/></dir><dir name="Helper"><file name="Data.php" hash="d90bfd44e46121a1acf9ce4b4233f9de"/></dir><file name="changelog" hash="d501da1bcc8633f84cc6f2f72987b36f"/><dir name="etc"><file name="config.xml" hash="66e038b5b3c784dda7f6a8c2acc14911"/><file name="system.xml" hash="e3defb48e2aad8d5a6ec56101672efc0"/></dir><file name="license" hash="b819c62bf1b7f2d249241db9a4ab3c99"/><file name="readme" hash="589fa9be2415379f90a1e19d56f083cd"/></dir></dir></target><target name="magelocale"><dir name="fr_FR"><file name="Luigifab_Apijs.csv" hash="5313665ff6cc262613b78c5b15c7dd62"/></dir></target><target name="magedesign"><dir name="adminhtml"><dir name="default"><dir name="default"><dir name="layout"><file name="apijs.xml" hash="b564a2c2b845811f8518fa8f1a997026"/></dir><dir name="template"><dir name="apijs"><file name="demo.phtml" hash="d28cfc6163cc1652d05688b062dd2ff6"/></dir></dir></dir></dir></dir></target><target name="mageskin"><dir name="adminhtml"><dir name="default"><dir name="default"><dir name="images"><dir name="apijs"><dir name="dialogue"><file name="404fr.png" hash="630e828e4236f1ca04b41625b3c8ff7f"/><file name="close.png" hash="3700e9914d8f9c7849364591f1c2c0b8"/><file name="loading.png" hash="b92c80a385156d25f9c4286ab3805069"/><file name="progressbar.svg.php" hash="2ad691380fbef2f2859310c69accd924"/><file name="saving.png" hash="6d27e6b4f262b5241e173655c1908753"/></dir><dir name="icons"><dir name="16"><file name="silk-cancel.png" hash="acbc321a1e2b4a3f2cd6ed2b99706d58"/></dir><dir name="24"><file name="gnome-next.png" hash="a0a5accb862927453ae66bcbcac29494"/><file name="gnome-prev.png" hash="86009255d6e20b9b5327c011a754ae19"/><file name="gnome-zoom-in.png" hash="aa6ebe898fecdb2cfef99cc6aecc9b07"/></dir><dir name="32"><file name="gnome-appointment-soon.png" hash="b2bf97b69c69a40bd16482e0abaf98bc"/><file name="gnome-delete.png" hash="d54374c9d8c6a3fb54b702533f94a75f"/><file name="gnome-dialog-error.png" hash="aaa58d7d8d29e766da21416ac4892603"/><file name="gnome-dialog-information.png" hash="133c5b2a14746766126911d5d72843cd"/><file name="gnome-dialog-question.png" hash="50e081c251280821729123a0afe27250"/><file name="gnome-dialog-warning.png" hash="35a156b7ed550f7b5786d1cba461a58f"/><file name="gnome-document-print.png" hash="25365d6574c6daa29bcbbc7d62cedd9d"/><file name="gnome-mail-new.png" hash="8a2f185cd3abb064278eb513cec6ab7e"/><file name="gnome-preferences-other.png" hash="a6d1083dda83db5fcd38fef0ca881b67"/><file name="gnome-save.png" hash="6e24e2142f2d8ffecca4438a146d3a3b"/><file name="sprites.png" hash="9fc32edb38dc87d1c3863bb69e523437"/></dir></dir></dir></dir><dir name="css"><dir name="apijs"><file name="dialogue.min.css" hash="81df15785173ae2330f93c6645c15f2a"/><file name="fix.css" hash="d594b565d08357e4f34e2514c142d678"/><file name="ie8.css" hash="d04ba498194f027d01b23df9ad20d7d3"/></dir></dir><dir name="js"><file name="apijs.min.js" hash="269a20e1dc6eaa4572cbc584082d7335"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Luigifab_Apijs.xml" hash="d434316fe8342cb746f23dca138a1f4e"/></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.2.0</min><max>5.9.9</max></php></required></dependencies>
+</package>
