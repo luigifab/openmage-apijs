@@ -2,8 +2,8 @@
 <!--
 /**
  * Created S/19/11/2011
- * Updated D/20/11/2011
- * Version 2
+ * Updated S/26/11/2011
+ * Version 3
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * http://www.luigifab.info/magento/apijs.php
@@ -23,7 +23,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>2.5.0</version>
+			<version>2.6.0</version>
 		</Luigifab_Apijs>
 	</modules>
 

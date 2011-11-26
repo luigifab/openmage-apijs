@@ -1,8 +1,8 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/20/11/2011
- * Version 1
+ * Updated S/26/11/2011
+ * Version 2
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * http://www.luigifab.info/magento/apijs.php
@@ -22,7 +22,7 @@
 <hr style="margin:1em 0 0.5em; border:none; border-top:1px solid #999;"/>
 
 <p><?php echo $this->__('Documentation') ?> : <a href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;">luigifab.info/apijs</a>
-<br /><?php echo $this->__('Version') ?> : <strong>2.5.0</strong></p>
+<br /><?php echo $this->__('Version') ?> : <strong>2.6.0</strong></p>
 
 <?php if (Mage::getStoreConfig('apijs/general/enabled') === '1'): ?>
 	<p><?php echo $this->__('Examples:') ?>&nbsp;
@@ -34,7 +34,7 @@
 	<script type="text/javascript">
 	function setApijsConfig() {
 		apijs.config.dialogue.imageClose.src = '<?php echo $this->getSkinUrl('images/apijs/dialogue/close.png') ?>';
-		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/apijs/dialogue/progressbar.svg.php') ?>';
+		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/apijs/dialogue/progress2.svg.php') ?>';
 	}
 	</script>
 
@@ -49,7 +49,7 @@
 function setApijsConfig() {
    //apijs.config.debug = true;
    apijs.config.dialogue.imageClose.src = '&lt;?php echo $this->getSkinUrl('images/apijs/dialogue/close.png') ?&gt;';
-   apijs.config.dialogue.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/apijs/dialogue/progressbar.svg.php') ?&gt;';
+   apijs.config.dialogue.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/apijs/dialogue/progress2.svg.php') ?&gt;';
 }
 function showMyDialog() {
    apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');
