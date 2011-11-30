@@ -2,11 +2,11 @@
 <!--
 /**
  * Created S/19/11/2011
- * Updated S/26/11/2011
- * Version 3
+ * Updated S/03/12/2011
+ * Version 4
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * http://www.luigifab.info/magento/apijs.php
+ * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -23,7 +23,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>2.6.0</version>
+			<version>2.6.1</version>
 		</Luigifab_Apijs>
 	</modules>
 
@@ -39,6 +39,25 @@
 			</apijs>
 		</helpers>
 	</global>
+
+	<frontend>
+		<layout>
+			<updates>
+				<apijs>
+					<file>apijs.xml</file>
+				</apijs>
+			</updates>
+		</layout>
+		<translate>
+			<modules>
+				<Luigifab_Apijs>
+					<files>
+						<default>Luigifab_Apijs.csv</default>
+					</files>
+				</Luigifab_Apijs>
+			</modules>
+		</translate>
+	</frontend>
 
 	<adminhtml>
 		<layout>
@@ -59,7 +78,7 @@
 		</translate>
 		<acl>
 			<resources><admin><children><system><children><config><children>
-				<apijs translate="title"><title>Dialogs (apijs)</title></apijs>
+				<apijs translate="title"><title>Dialogs</title></apijs>
 			</children></config></children></system></children></admin></resources>
 		</acl>
 	</adminhtml>

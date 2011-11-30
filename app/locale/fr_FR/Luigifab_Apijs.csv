@@ -1,9 +1,16 @@
-"Dialogs (apijs)","Boites de dialogue (apijs)"
-"Examples:","Exemples :"
+"Dialogs","Boites de dialogue"
+"Enabled in backend","Activer sur le backend"
+"Enabled in frontend","Activer sur le frontend"
 
-"Warning: <em>setApijsConfig</em> function is very important, because if it is defined, it will be called automatically.","Attention : la fonction <em>setApijsConfig</em> est très importante, car si elle définie, elle sera appelée automatiquement."
+"Documentation:","Documentation :"
+"Examples:","Exemples :"
+"Version:","Version :"
+"State:","État :"
+
+"Please note that <em>setApijsConfig</em> function is very important, because if it is defined, it will be called automatically.","Veuillez noter que la fonction <em>setApijsConfig</em> est très importante, car si elle définie, elle sera appelée automatiquement."
 "It allows to change the <a href=""%s"" onclick=""%s"">configuration</a> of the JavaScript program.","Elle permet notamment de modifier la <a href=""%s"" onclick=""%s"">configuration</a> du programme JavaScript."
-"Note that debug mode is disabled by default.","À noter que le mode debug est désactivé par défaut."
+"The debug mode is disabled by default.","Le mode debug est désactivé par défaut."
+"You can use one of this lines to test this module on the frontend.","Vous pouvez utiliser une des deux lignes suivantes pour tester ce module sur le frontend."
 
 "PHP manual","Manuel PHP"
 "It is important to note that just because the mail was accepted for delivery, it doesn't mean the mail will actually reach the intended destination.","Il est important de noter que ce n'est pas parce que le mail a été accepté pour livraison, qu'il arrivera à destination."

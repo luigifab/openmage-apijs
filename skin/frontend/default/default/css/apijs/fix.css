@@ -2,7 +2,7 @@
 /**
  * Created D/20/11/2011
  * Updated S/03/12/2011
- * Version 2
+ * Version 4
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -18,7 +18,7 @@
  * GNU General Public License (GPL) for more details.
  */
 
-#box { display:block; }
+#box { display:block; text-align:left; }
 #box div.control button { padding:2px 0.7em 2px 25px; font:11px "DejaVu Sans", Verdana, sans-serif !important; }
 #box div.navigation.txt button { font:10px "DejaVu Sans", Verdana, sans-serif; background:#444 !important; }
 
@@ -26,7 +26,7 @@
 #box p.saving { background-image:url("../../images/apijs/dialogue/saving.png") !important; }
 
 #box div.control button.cancel  { background-image:url("../../images/apijs/icons/16/silk-cancel.png") !important; }
-#box div.control button.confirm { background-image:url("../../images/success_msg_icon.gif") !important; }
+#box div.control button.confirm { background-image:url("../../images/i_msg-success.gif") !important; }
 
 #box.photo dl dt a span { background-image:url("../../images/apijs/icons/24/gnome-zoom-in.png") !important; }
 #box.photo dl dt img.loading  { background-image:url("../../images/apijs/dialogue/loading.png") !important; }

@@ -1,11 +1,11 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/20/11/2011
- * Version 1
+ * Updated S/03/12/2011
+ * Version 3
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * http://www.luigifab.info/magento/apijs.php
+ * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -20,4 +20,11 @@
 
 class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
+	public function getVersion() {
+		return (string) Mage::getConfig()->getModuleConfig('Luigifab_Apijs')->version;
+	}
+
+	public function getStatus($type = 'frontend') {
+		return (Mage::getStoreConfig('apijs/general/'.$type) === '1') ? $this->__('Enabled') : $this->__('Disabled') ;
+	}
 }

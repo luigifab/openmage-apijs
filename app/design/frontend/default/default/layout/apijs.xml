@@ -23,23 +23,23 @@
 <layout version="0.1.0">
 	<default>
 		<reference name="head">
-			<action method="addItem" ifconfig="apijs/general/backend">
+			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
 				<name>css/apijs/dialogue.min.css</name>
 				<params>media="screen, projection"</params>
 			</action>
-			<action method="addItem" ifconfig="apijs/general/backend">
+			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
 				<name>css/apijs/fix.css</name>
 				<params>media="screen, projection"</params>
 			</action>
-			<action method="addItem" ifconfig="apijs/general/backend">
+			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
 				<name>css/apijs/ie8.min.css</name>
 				<params>media="screen, projection"</params>
 				<if>IE 8</if>
 			</action>
-			<action method="addItem" ifconfig="apijs/general/backend">
+			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_js</type>
 				<name>js/apijs/app.min.js</name>
 			</action>

@@ -1,7 +1,7 @@
 @charset "utf-8";
 /**
  * Copyright 2009-2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * (2.6.0) http://www.luigifab.info/apijs
+ * (2.6.1) http://www.luigifab.info/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -13,14 +13,14 @@
  * merchantability or fitness for a particular purpose. See the
  * GNU General Public License (GPL) for more details.
  */
-#dialogue, #dialogue.actif{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sBGBIoNQisDRsAAAAdSURBVDjLY2RgYFjGQAFgYqAQjBowasCoAYPFAADk9gDGAmloQQAAAABJRU5ErkJggg==");}
+#dialogue, #dialogue.actif{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUCNdjYGBgWAYAAKsAp/91VKUAAAAASUVORK5CYII=");}
 #dialogue.slideshow{background:black;}
 #box.photo, #box.video{border:none;}
 #box div.novisible{visibility:hidden;}
 #box dl dd{margin-bottom:0.3em;}
 #box.photo dl dt a span{filter:alpha(opacity=0);}
 #box.photo dl dt a:hover span, #box.photo dt a:active span, #box.photo dt a:focus span{filter:alpha(opacity=75);}
-#box div.close{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAd0SU1FB9sCCxQSHG42tR0AAAALSURBVAjXY2BABwAAEgAB74lUpAAAAABJRU5ErkJggg==");}
+#box div.close{background:url("data:image/gif;base64,AAAA");}
 #box div.navigation.txt button{top:38%;}
 #box div.navigation.txt button#prev{left:-2.25em;filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3) alpha(opacity=30);}
 #box div.navigation.txt button#next{right:-7.2em;filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1) alpha(opacity=30);}

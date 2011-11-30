@@ -1,11 +1,11 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/20/11/2011
- * Version 1
+ * Updated S/03/12/2011
+ * Version 2
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * http://www.luigifab.info/magento/apijs.php
+ * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published

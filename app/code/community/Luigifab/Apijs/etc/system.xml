@@ -2,11 +2,11 @@
 <!--
 /**
  * Created D/20/11/2011
- * Updated D/20/11/2011
- * Version 1
+ * Updated L/05/12/2011
+ * Version 4
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * http://www.luigifab.info/magento/apijs.php
+ * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -21,11 +21,17 @@
 -->
 
 <config>
+	<tabs>
+		<luigifab>
+			<label>Luigifab</label>
+			<sort_order>103</sort_order>
+		</luigifab>
+	</tabs>
 	<sections>
 		<apijs translate="label">
-			<label>Dialogs (apijs)</label>
-			<tab>advanced</tab>
-			<sort_order>10000</sort_order>
+			<label>Dialogs</label>
+			<tab>luigifab</tab>
+			<sort_order>91</sort_order>
 			<show_in_default>1</show_in_default>
 			<show_in_website>0</show_in_website>
 			<show_in_store>0</show_in_store>
@@ -37,15 +43,24 @@
 					<show_in_website>0</show_in_website>
 					<show_in_store>0</show_in_store>
 					<fields>
-						<enabled translate="label">
-							<label>Enable</label>
+						<backend translate="label">
+							<label>Enabled in backend</label>
 							<frontend_type>select</frontend_type>
 							<source_model>adminhtml/system_config_source_yesno</source_model>
 							<sort_order>1</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>0</show_in_website>
 							<show_in_store>0</show_in_store>
-						</enabled>
+						</backend>
+						<frontend translate="label">
+							<label>Enabled in frontend</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</frontend>
 						<demo>
 							<frontend_model>apijs/demo</frontend_model>
 							<sort_order>9</sort_order>
