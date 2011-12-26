@@ -1,8 +1,8 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated S/03/12/2011
- * Version 2
+ * Updated W/21/12/2011
+ * Version 3
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -20,7 +20,7 @@
 
 class Luigifab_Apijs_Block_Demo extends Mage_Adminhtml_Block_Abstract implements Varien_Data_Form_Element_Renderer_Interface {
 
-	protected $_template = 'apijs/demo.phtml';
+	protected $_template = 'luigifab/apijs/demo.phtml';
 
 	public function render(Varien_Data_Form_Element_Abstract $element) {
 		return '<tr><td colspan="3">'.$this->toHtml().'</td></tr>';

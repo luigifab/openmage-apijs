@@ -2,8 +2,8 @@
 <!--
 /**
  * Created S/19/11/2011
- * Updated S/03/12/2011
- * Version 4
+ * Updated S/24/12/2011
+ * Version 5
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -23,7 +23,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>2.6.1</version>
+			<version>2.7.0</version>
 		</Luigifab_Apijs>
 	</modules>
 
@@ -44,7 +44,7 @@
 		<layout>
 			<updates>
 				<apijs>
-					<file>apijs.xml</file>
+					<file>luigifab/apijs.xml</file>
 				</apijs>
 			</updates>
 		</layout>
@@ -63,7 +63,7 @@
 		<layout>
 			<updates>
 				<apijs>
-					<file>apijs.xml</file>
+					<file>luigifab/apijs.xml</file>
 				</apijs>
 			</updates>
 		</layout>

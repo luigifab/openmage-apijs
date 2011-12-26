@@ -2,8 +2,8 @@
 <!--
 /**
  * Created S/19/11/2011
- * Updated S/03/12/2011
- * Version 4
+ * Updated J/22/12/2011
+ * Version 6
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -25,23 +25,23 @@
 		<reference name="head">
 			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
-				<name>css/apijs/dialogue.min.css</name>
+				<name>css/luigifab/apijs/dialogue.min.css</name>
 				<params>media="screen, projection"</params>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
-				<name>css/apijs/fix.css</name>
+				<name>css/luigifab/apijs/styles.css</name>
 				<params>media="screen, projection"</params>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
-				<name>css/apijs/ie8.min.css</name>
+				<name>css/luigifab/apijs/ie8.min.css</name>
 				<params>media="screen, projection"</params>
 				<if>IE 8</if>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_js</type>
-				<name>js/apijs/app.min.js</name>
+				<name>js/luigifab/apijs/app.min.js</name>
 			</action>
 		</reference>
 	</default>

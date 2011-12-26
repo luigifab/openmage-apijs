@@ -1,8 +1,8 @@
 <?php
 /**
- * Created D/20/11/2011
- * Updated D/04/12/2011
- * Version 6
+ * Created J/01/12/2011
+ * Updated W/21/12/2011
+ * Version 2
  *
  * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -19,13 +19,11 @@
  */
 ?>
 
-<hr style="margin:1em 0 0.5em; border:none; border-top:1px solid #999;" />
-
 <p><?php echo $this->__('Documentation:') ?> <a href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;">luigifab.info/apijs</a>
 <br /><?php echo $this->__('Version:') ?> <strong><?php echo $this->helper('apijs')->getVersion() ?></strong>
-<br /><?php echo $this->__('State:') ?> <strong><?php echo $this->helper('apijs')->getStatus('backend') ?></strong></p>
+<br /><?php echo $this->__('State:') ?> <strong><?php echo $this->helper('apijs')->getStatus('frontend') ?></strong></p>
 
-<?php if (Mage::getStoreConfig('apijs/general/backend') === '1'): ?>
+<?php if (Mage::getStoreConfig('apijs/general/frontend') === '1'): ?>
 	<p><?php echo $this->__('Examples:') ?>
 		<button type="button" onclick="apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>'); this.blur();">1</button>
 		<button type="button" onclick="apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');">2</button>
@@ -35,8 +33,8 @@
 	<script type="text/javascript">
 	function setApijsConfig() {
 		//apijs.config.debug = true;
-		apijs.config.dialogue.imageClose.src = '<?php echo $this->getSkinUrl('images/apijs/dialogue/close.png') ?>';
-		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/apijs/dialogue/progress2.svg.php') ?>';
+		apijs.config.dialogue.imageClose.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/close.png') ?>';
+		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/progress2.svg.php') ?>';
 	}
 	</script>
 
@@ -49,20 +47,12 @@
 	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em;"><code>&lt;script type="text/javascript"&gt;
 function setApijsConfig() {
    //apijs.config.debug = true;
-   apijs.config.dialogue.imageClose.src = '&lt;?php echo $this->getSkinUrl('images/apijs/dialogue/close.png') ?&gt;';
-   apijs.config.dialogue.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/apijs/dialogue/progress2.svg.php') ?&gt;';
+   apijs.config.dialogue.imageClose.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/close.png') ?&gt;';
+   apijs.config.dialogue.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/progress2.svg.php') ?&gt;';
 }
 function showMyDialog() {
    apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');
 }
 &lt;/script&gt;
 &lt;button type="button" onclick="showMyDialog()"&gt;2&lt;/button&gt;</code></pre>
-<?php endif ?>
-
-<?php if (Mage::getStoreConfig('apijs/general/frontend') === '1'): ?>
-	<hr style="margin:1em 0 0.6em; border:none; border-top:1px solid #999;" />
-
-	<p><?php echo $this->__('You can use one of this lines to test this module on the frontend.') ?></p>
-	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em;">{{block type="core/template" template="apijs/demo.phtml"}}
-&lt;block type="core/template" template="apijs/demo.phtml" /&gt;</pre>
 <?php endif ?>
