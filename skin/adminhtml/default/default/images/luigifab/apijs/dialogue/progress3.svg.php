@@ -1,10 +1,10 @@
 <?php
 /**
  * Created L/13/04/2009
- * Updated S/26/11/2011
- * Version 11
+ * Updated W/11/04/2012
+ * Version 13
  *
- * Copyright 2010-2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2009-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * http://www.luigifab.info/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -18,9 +18,8 @@
  * GNU General Public License (GPL) for more details.
  */
 
-header('HTTP/1.1 200 OK');
-header('Cache-Control: public');
 header('Pragma: public');
+header('Cache-Control: public');
 header('Content-Type: image/svg+xml; charset=utf-8');
 header('Expires: '.gmdate('D, d M Y H:i:s', strtotime('+1 week')).' GMT');
 

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
- * Created S/19/11/2011
+ * Created D/26/02/2012
  * Updated W/28/03/2012
- * Version 3
+ * Version 2
  *
- * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -19,10 +19,30 @@
 -->
 
 <config>
-    <modules>
-        <Luigifab_Apijs>
-            <active>true</active>
-            <codePool>community</codePool>
-        </Luigifab_Apijs>
-    </modules>
+	<acl>
+		<resources>
+			<admin>
+				<children>
+					<system>
+						<children>
+							<config>
+								<children>
+									<!--luigifab>
+										<title>luigifab</title>
+										<sort_order>103</sort_order>
+										<children-->
+											<apijs translate="title">
+												<title>Dialogs</title>
+												<sort_order>103071</sort_order>
+											</apijs>
+										<!--/children>
+									</luigifab-->
+								</children>
+							</config>
+						</children>
+					</system>
+				</children>
+			</admin>
+		</resources>
+	</acl>
 </config>

@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/01/12/2011
- * Updated W/21/12/2011
- * Version 2
+ * Updated S/18/02/2012
+ * Version 4
  *
- * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -30,21 +30,12 @@
 		<button type="button" onclick="apijs.dialogue.dialogProgress('<?php echo $this->__('Add an image') ?>','<?php echo $this->__('Operation in progress...') ?>');">3</button>
 	</p>
 
-	<script type="text/javascript">
-	function setApijsConfig() {
-		//apijs.config.debug = true;
-		apijs.config.dialogue.imageClose.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/close.png') ?>';
-		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/progress2.svg.php') ?>';
-	}
-	</script>
+	<hr style="margin:1em 0 0.6em; border:none; border-top:1px solid #BBB;" />
 
-	<hr style="margin:1em 0 0.6em; border:none; border-top:1px solid #999;" />
-
-	<p style="line-height:1.4em"><?php echo $this->__('Please note that <em>setApijsConfig</em> function is very important, because if it is defined, it will be called automatically.') ?>
-	<br /><?php echo $this->__('It allows to change the <a href="%s" onclick="%s">configuration</a> of the JavaScript program.', 'http://www.luigifab.info/apijs/config.php', 'window.open(this.href); return false;') ?></p>
+	<p style="line-height:1.4em"><?php echo $this->__('Please note that <em>setApijsConfig</em> function is very important, because if it is defined, it will be called automatically.') ?><br /><?php echo $this->__('It allows to change the <a href="%s" onclick="%s">configuration</a> of the JavaScript program.', 'http://www.luigifab.info/apijs/config.php', 'window.open(this.href); return false;') ?></p>
 
 	<p><?php echo $this->__('The debug mode is disabled by default.') ?></p>
-	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em;"><code>&lt;script type="text/javascript"&gt;
+	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em; white-space:pre-wrap;"><code>&lt;script type="text/javascript"&gt;
 function setApijsConfig() {
    //apijs.config.debug = true;
    apijs.config.dialogue.imageClose.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/close.png') ?&gt;';
@@ -55,4 +46,12 @@ function showMyDialog() {
 }
 &lt;/script&gt;
 &lt;button type="button" onclick="showMyDialog()"&gt;2&lt;/button&gt;</code></pre>
+
+	<script type="text/javascript">
+	function setApijsConfig() {
+		//apijs.config.debug = true;
+		apijs.config.dialogue.imageClose.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/close.png') ?>';
+		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/progress2.svg.php') ?>';
+	}
+	</script>
 <?php endif ?>

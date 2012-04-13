@@ -4,7 +4,7 @@
  * Updated S/03/12/2011
  * Version 3
  *
- * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify

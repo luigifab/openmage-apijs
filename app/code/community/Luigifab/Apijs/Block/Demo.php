@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated W/21/12/2011
- * Version 3
+ * Updated S/18/02/2012
+ * Version 4
  *
- * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -23,6 +23,6 @@ class Luigifab_Apijs_Block_Demo extends Mage_Adminhtml_Block_Abstract implements
 	protected $_template = 'luigifab/apijs/demo.phtml';
 
 	public function render(Varien_Data_Form_Element_Abstract $element) {
-		return '<tr><td colspan="3">'.$this->toHtml().'</td></tr>';
+		return '<tr><td colspan="4">'.$this->toHtml().'</td></tr>';
 	}
 }

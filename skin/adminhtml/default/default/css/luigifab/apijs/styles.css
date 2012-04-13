@@ -1,10 +1,6 @@
 @charset "utf-8";
 /**
- * Created D/20/11/2011
- * Updated W/21/12/2011
- * Version 4
- *
- * Copyright 2011 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2009-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -35,4 +31,3 @@
 #box.photo dl dt img.loading  { background-image:url("../../../images/luigifab/apijs/dialogue/loading.png") !important; }
 #box.photo dl dt img.error_en { background-image:url("../../../images/luigifab/apijs/dialogue/404fr.png") !important; }
 #box.photo dl dt img.error_fr { background-image:url("../../../images/luigifab/apijs/dialogue/404fr.png") !important; }
-
