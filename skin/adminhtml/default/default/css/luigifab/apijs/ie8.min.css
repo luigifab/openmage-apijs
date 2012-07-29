@@ -1,7 +1,7 @@
 @charset "utf-8";
 /**
  * Copyright 2009-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * (2.7.0) http://www.luigifab.info/apijs
+ * (3.0.0) http://www.luigifab.info/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -13,14 +13,13 @@
  * merchantability or fitness for a particular purpose. See the
  * GNU General Public License (GPL) for more details.
  */
-#dialogue, #dialogue.actif{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUCNdjYGBgWAYAAKsAp/91VKUAAAAASUVORK5CYII=");}
-#dialogue.slideshow{background:black;}
+#dialog, #dialog.actif{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUCNdjYGBgWAYAAKsAp/91VKUAAAAASUVORK5CYII=");}
+#dialog.slideshow{background:black;}
 #box.photo, #box.video{border:none;}
 #box div.novisible{visibility:hidden;}
 #box dl dd{margin-bottom:0.3em;}
 #box.photo dl dt a span{filter:alpha(opacity=0);}
 #box.photo dl dt a:hover span, #box.photo dt a:active span, #box.photo dt a:focus span{filter:alpha(opacity=75);}
-#box div.close{background:url("data:image/gif;base64,AAAA");}
 #box div.navigation.txt button{top:38%;}
 #box div.navigation.txt button#prev{left:-2.25em;filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3) alpha(opacity=30);}
 #box div.navigation.txt button#next{right:-7.2em;filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1) alpha(opacity=30);}
@@ -30,3 +29,8 @@
 #box div.navigation.img button#next{filter:alpha(opacity=30);}
 #box div.navigation.img button#prev:hover, #box div.navigation.img button#prev:active, #box div.navigation.img button#prev:focus{filter:alpha(opacity=80);}
 #box div.navigation.img button#next:hover, #box div.navigation.img button#next:active, #box div.navigation.img button#next:focus{filter:alpha(opacity=80);}
+#box div.close{background:url("data:image/gif;base64,AAAA");}
+#box div.close.txt button.close{padding:0.15em 0.6em 0.3em;}
+div.album{behavior:url("./styles/css3pie.htc.php");position:relative;-pie-background:#EEE;}
+div.album dl{behavior:url("./styles/css3pie.htc.php");position:relative;-pie-background:#CCC;}
+div.presentation{behavior:url("./styles/css3pie.htc.php");position:relative;-pie-background:#EEE;}

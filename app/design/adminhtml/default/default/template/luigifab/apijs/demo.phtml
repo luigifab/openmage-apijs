@@ -1,8 +1,8 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated S/18/02/2012
- * Version 8
+ * Updated V/15/06/2012
+ * Version 12
  *
  * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -27,9 +27,9 @@
 
 <?php if (Mage::getStoreConfig('apijs/general/backend') === '1'): ?>
 	<p><?php echo $this->__('Examples:') ?>
-		<button type="button" onclick="apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>'); this.blur();">1</button>
-		<button type="button" onclick="apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');">2</button>
-		<button type="button" onclick="apijs.dialogue.dialogProgress('<?php echo $this->__('Add an image') ?>','<?php echo $this->__('Operation in progress...') ?>');">3</button>
+		<button type="button" onclick="apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>'); this.blur();">1</button>
+		<button type="button" onclick="apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');">2</button>
+		<button type="button" onclick="apijs.dialog.dialogProgress('<?php echo $this->__('Add an image (imageUpload)') ?>','<?php echo $this->__('Operation in progress...') ?>');">3</button>
 	</p>
 
 	<hr style="margin:1em 0 0.6em; border:none; border-top:1px solid #BBB;" />
@@ -40,11 +40,10 @@
 	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em; white-space:pre-wrap;"><code>&lt;script type="text/javascript"&gt;
 function setApijsConfig() {
    //apijs.config.debug = true;
-   apijs.config.dialogue.imageClose.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/close.png') ?&gt;';
-   apijs.config.dialogue.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/progress2.svg.php') ?&gt;';
+   apijs.config.dialog.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialog/progress2.svg.php') ?&gt;';
 }
 function showMyDialog() {
-   apijs.dialogue.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');
+   apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');
 }
 &lt;/script&gt;
 &lt;button type="button" onclick="showMyDialog()"&gt;2&lt;/button&gt;</code></pre>
@@ -52,8 +51,7 @@ function showMyDialog() {
 	<script type="text/javascript">
 	function setApijsConfig() {
 		//apijs.config.debug = true;
-		apijs.config.dialogue.imageClose.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/close.png') ?>';
-		apijs.config.dialogue.imageUpload.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialogue/progress2.svg.php') ?>';
+		apijs.config.dialog.imageUpload.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialog/progress2.svg.php') ?>';
 	}
 	</script>
 <?php endif ?>
@@ -62,6 +60,6 @@ function showMyDialog() {
 	<hr style="margin:1em 0 0.6em; border:none; border-top:1px solid #BBB;" />
 
 	<p><?php echo $this->__('You can use one of this lines to test this module on the frontend.') ?></p>
-	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em;">{{block type="core/template" template="luigifab/apijs/demo.phtml"}}
-&lt;block type="core/template" template="luigifab/apijs/demo.phtml" /&gt;</pre>
+	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em;"><code>{{block type="core/template" template="luigifab/apijs/demo.phtml"}}
+&lt;block type="core/template" template="luigifab/apijs/demo.phtml" /&gt;</code></pre>
 <?php endif ?>

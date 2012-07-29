@@ -16,5 +16,5 @@
 "It is important to note that just because the mail was accepted for delivery, it doesn't mean the mail will actually reach the intended destination.","Il est important de noter que ce n'est pas parce que le mail a été accepté pour livraison, qu'il arrivera à destination."
 "Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.","Avoir une virgule après avoir défini la dernière entrée, bien qu'inutile, est une syntaxe valide."
 
-"Add an image","Ajouter une image"
+"Add an image (imageUpload)","Ajouter une image (imageUpload)"
 "Operation in progress...","Opération en cours..."
