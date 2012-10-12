@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
  * Created S/19/11/2011
- * Updated L/21/05/2012
- * Version 8
+ * Updated J/11/10/2012
+ * Version 9
  *
  * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -21,7 +21,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>3.0.0</version>
+			<version>3.0.1</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>

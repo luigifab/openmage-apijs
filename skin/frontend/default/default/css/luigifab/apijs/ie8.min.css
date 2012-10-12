@@ -1,17 +1,10 @@
 @charset "utf-8";
 /**
  * Copyright 2009-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * (3.0.0) http://www.luigifab.info/apijs
+ * (3.0.1) http://www.luigifab.info/apijs
  *
  * This program is free software, you can redistribute it or modify
- * it under the terms of the GNU General Public License (GPL) as published
- * by the free software foundation, either version 2 of the license, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but without any warranty, without even the implied warranty of
- * merchantability or fitness for a particular purpose. See the
- * GNU General Public License (GPL) for more details.
+ * it under the terms of the GNU General Public License (GPL).
  */
 #dialog, #dialog.actif{background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUCNdjYGBgWAYAAKsAp/91VKUAAAAASUVORK5CYII=");}
 #dialog.slideshow{background:black;}
@@ -31,6 +24,3 @@
 #box div.navigation.img button#next:hover, #box div.navigation.img button#next:active, #box div.navigation.img button#next:focus{filter:alpha(opacity=80);}
 #box div.close{background:url("data:image/gif;base64,AAAA");}
 #box div.close.txt button.close{padding:0.15em 0.6em 0.3em;}
-div.album{behavior:url("./styles/css3pie.htc.php");position:relative;-pie-background:#EEE;}
-div.album dl{behavior:url("./styles/css3pie.htc.php");position:relative;-pie-background:#CCC;}
-div.presentation{behavior:url("./styles/css3pie.htc.php");position:relative;-pie-background:#EEE;}
