@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
  * Created S/19/11/2011
- * Updated J/11/10/2012
- * Version 9
+ * Updated S/02/02/2013
+ * Version 13
  *
- * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2011-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -21,7 +21,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>3.0.1</version>
+			<version>4.0.0</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -29,6 +29,11 @@
 			<apijs>
 				<class>Luigifab_Apijs_Block</class>
 			</apijs>
+			<catalog>
+				<rewrite>
+					<product_view_media>Luigifab_Apijs_Block_Media</product_view_media>
+				</rewrite>
+			</catalog>
 		</blocks>
 		<helpers>
 			<apijs>
@@ -72,4 +77,15 @@
 			</modules>
 		</translate>
 	</adminhtml>
+	<default>
+		<apijs>
+			<gallery>
+				<show_default_picture>1</show_default_picture>
+				<picture_width>270</picture_width>
+				<picture_height>203</picture_height>
+				<thumbnail_width>50</thumbnail_width>
+				<thumbnail_height>38</thumbnail_height>
+			</gallery>
+		</apijs>
+	</default>
 </config>

@@ -1,27 +1,39 @@
 @charset "utf-8";
 /**
- * Copyright 2009-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2009-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
- * (3.0.1) http://www.luigifab.info/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL).
  */
 
 #box { display:block; text-align:left; }
-#box div.control button { padding:2px 0.7em 2px 25px; font-size:11px; font-weight:normal; }
-#box div.navigation.txt button { font-size:10px; background:#444 !important; }
+#box .nodisplay { display:none; }
+#box .novisible { visibility:hidden; }
 
-#box h1 { background-image:url("../../../images/luigifab/apijs/icons/32/sprites.png") !important; }
-#box p.saving { background-image:url("../../../images/luigifab/apijs/dialog/saving.png") !important; }
+#box p.saving { background-image:url("../../../images/luigifab/apijs/dialog/saving.png"); }
+#box div.navigation.txt button { font-size:10px; }
 
-#box .nodisplay { display:none !important; }
-#box .novisible { visibility:hidden !important; }
+#box div.control button { padding:2px 0.7em 2px 25px; font:0.9em "DejaVu Sans",Verdana,sans-serif; font-weight:normal; }
+#box div.control button.cancel  { background-image:url("../../../images/luigifab/apijs/icons/16/silk-cancel.png"); }
+#box div.control button.confirm { background-image:url("../../../images/luigifab/apijs/icons/16/silk-accept.png"); }
 
-#box div.control button.cancel  { background-image:url("../../../images/luigifab/apijs/icons/16/silk-cancel.png") !important; }
-#box div.control button.confirm { background-image:url("../../../images/luigifab/apijs/icons/16/silk-accept.png") !important; }
+#box.photo dl dt a span { background-image:url("../../../images/luigifab/apijs/icons/24/gnome-zoom-in.png"); }
+#box.photo dl dt img.loading  { background-image:url("../../../images/luigifab/apijs/dialog/loading.png"); }
+#box.photo dl dt img.error_en { background-image:url("../../../images/luigifab/apijs/dialog/404en.png"); }
+#box.photo dl dt img.error_fr { background-image:url("../../../images/luigifab/apijs/dialog/404fr.png"); }
 
-#box.photo dl dt a span { background-image:url("../../../images/luigifab/apijs/icons/24/gnome-zoom-in.png") !important; }
-#box.photo dl dt img.loading  { background-image:url("../../../images/luigifab/apijs/dialog/loading.png") !important; }
-#box.photo dl dt img.error_en { background-image:url("../../../images/luigifab/apijs/dialog/404fr.png") !important; }
-#box.photo dl dt img.error_fr { background-image:url("../../../images/luigifab/apijs/dialog/404fr.png") !important; }
+#box.information  h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-information.png"); }
+#box.confirmation h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-question.png"); }
+#box.options  h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-preferences-other.png"); }
+#box.waiting  h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-appointment-soon.png"); }
+#box.upload   h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-mail-new.png"); }
+#box.eeupload h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-error.png"); }
+#box.progress h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-appointment-soon.png"); }
+#box.delete   h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-delete.png"); }
+#box.download h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-save.png"); }
+#box.error    h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-error.png"); }
+#box.print    h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-document-print.png"); }
+#box.warning  h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-warning.png"); }
+
+div.gallery { margin:0; padding:0; }

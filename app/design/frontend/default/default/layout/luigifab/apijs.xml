@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
  * Created S/19/11/2011
- * Updated M/22/05/2012
- * Version 8
+ * Updated S/02/02/2013
+ * Version 12
  *
- * Copyright 2011-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2011-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -23,8 +23,14 @@
 		<reference name="head">
 			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
-				<name>css/luigifab/apijs/dialog.min.css</name>
+				<name>css/luigifab/apijs/app.min.css</name>
 				<params>media="screen, projection"</params>
+			</action>
+			<action method="addItem" ifconfig="apijs/general/frontend">
+				<type>skin_css</type>
+				<name>css/luigifab/apijs/app-ie8.min.css</name>
+				<params>media="screen, projection"</params>
+				<if>IE 8</if>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_css</type>
@@ -32,15 +38,16 @@
 				<params>media="screen, projection"</params>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/frontend">
-				<type>skin_css</type>
-				<name>css/luigifab/apijs/ie8.min.css</name>
-				<params>media="screen, projection"</params>
-				<if>IE 8</if>
-			</action>
-			<action method="addItem" ifconfig="apijs/general/frontend">
 				<type>skin_js</type>
 				<name>js/luigifab/apijs/app.min.js</name>
 			</action>
 		</reference>
 	</default>
+	<catalog_product_view>
+		<reference name="product.info.media">
+			<action method="setTemplate" ifconfig="apijs/gallery/enabled">
+				<template>luigifab/apijs/media.phtml</template>
+			</action>
+		</reference>
+	</catalog_product_view>
 </layout>

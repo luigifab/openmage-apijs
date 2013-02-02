@@ -4,7 +4,7 @@
  * Updated L/23/04/2012
  * Version 14
  *
- * Copyright 2009-2012 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2009-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * http://www.luigifab.info/apijs
  *
  * This program is free software, you can redistribute it or modify
