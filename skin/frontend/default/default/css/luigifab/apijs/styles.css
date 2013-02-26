@@ -11,7 +11,7 @@
 #box .nodisplay { display:none; }
 #box .novisible { visibility:hidden; }
 
-#box p.saving { background-image:url("../../../images/luigifab/apijs/dialog/saving.png"); }
+#box p.saving { background-image:url("../../../images/luigifab/apijs/dialog/saving.svg.php?w=20&h=20"); }
 #box div.navigation.txt button { font-size:10px; }
 
 #box div.control button { padding:2px 0.7em 2px 25px; font:0.9em "DejaVu Sans",Verdana,sans-serif; font-weight:normal; }
@@ -19,9 +19,12 @@
 #box div.control button.confirm { background-image:url("../../../images/luigifab/apijs/icons/16/silk-accept.png"); }
 
 #box.photo dl dt a span { background-image:url("../../../images/luigifab/apijs/icons/24/gnome-zoom-in.png"); }
-#box.photo dl dt img.loading  { background-image:url("../../../images/luigifab/apijs/dialog/loading.png"); }
-#box.photo dl dt img.error_en { background-image:url("../../../images/luigifab/apijs/dialog/404en.png"); }
-#box.photo dl dt img.error_fr { background-image:url("../../../images/luigifab/apijs/dialog/404fr.png"); }
+#box.photo dl dt img.loading { background-image:url("../../../images/luigifab/apijs/dialog/loading.png"); }
+#box.photo dl dt img.error { background-image:url("../../../images/luigifab/apijs/dialog/error-en.png"); }
+#box.photo dl dt img.error.fr { background-image:url("../../../images/luigifab/apijs/dialog/error-fr.png"); }
+#box.photo dl dt img.svg.loading { background-image:url("../../../images/luigifab/apijs/dialog/loading.svg.php?w=60&h=20"); }
+#box.photo dl dt img.svg.error { background-image:url("../../../images/luigifab/apijs/dialog/error.svg.php?w=200&h=200&lang=en"); }
+#box.photo dl dt img.svg.error.fr { background-image:url("../../../images/luigifab/apijs/dialog/error.svg.php?w=200&h=200&lang=fr"); }
 
 #box.information  h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-information.png"); }
 #box.confirmation h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-question.png"); }

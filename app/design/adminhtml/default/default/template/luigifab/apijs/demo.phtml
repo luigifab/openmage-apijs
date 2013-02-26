@@ -1,8 +1,8 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated M/15/01/2013
- * Version 13
+ * Updated M/19/02/2013
+ * Version 14
  *
  * Copyright 2011-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -40,7 +40,7 @@
 	<pre style="margin-top:1em; font-size:0.85em; line-height:1.3em; white-space:pre-wrap;"><code>&lt;script type="text/javascript"&gt;
 function setApijsConfig() {
    //apijs.config.debug = true;
-   apijs.config.dialog.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialog/progress2.svg.php') ?&gt;';
+   apijs.config.dialog.imageUpload.src = '&lt;?php echo $this->getSkinUrl('images/luigifab/apijs/dialog/progress3.svg.php') ?&gt;';
 }
 function showMyDialog() {
    apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('Having a trailing comma after the last defined array entry, while unusual, is a valid syntax.')) ?>');
@@ -51,7 +51,7 @@ function showMyDialog() {
 	<script type="text/javascript">
 	function setApijsConfig() {
 		//apijs.config.debug = true;
-		apijs.config.dialog.imageUpload.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialog/progress2.svg.php') ?>';
+		apijs.config.dialog.imageUpload.src = '<?php echo $this->getSkinUrl('images/luigifab/apijs/dialog/progress3.svg.php') ?>';
 	}
 	</script>
 <?php endif ?>
