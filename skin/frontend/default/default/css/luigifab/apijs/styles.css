@@ -15,8 +15,9 @@
 #box div.navigation.txt button { font-size:10px; }
 
 #box div.control button { padding:2px 0.7em 2px 25px; font:0.9em "DejaVu Sans",Verdana,sans-serif; font-weight:normal; }
-#box div.control button.cancel  { background-image:url("../../../images/luigifab/apijs/icons/16/silk-cancel.png"); }
+#box div.control button.cancel { background-image:url("../../../images/luigifab/apijs/icons/16/silk-cancel.png"); }
 #box div.control button.confirm { background-image:url("../../../images/luigifab/apijs/icons/16/silk-accept.png"); }
+#box div.control button.back { background-image:url("../../../images/luigifab/apijs/icons/16/silk-arrow-clock.png"); }
 
 #box.photo dl dt a span { background-image:url("../../../images/luigifab/apijs/icons/24/gnome-zoom-in.png"); }
 #box.photo dl dt img.loading { background-image:url("../../../images/luigifab/apijs/dialog/loading.png"); }
@@ -39,4 +40,4 @@
 #box.print    h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-document-print.png"); }
 #box.warning  h1 { background-image:url("../../../images/luigifab/apijs/icons/32/gnome-dialog-warning.png"); }
 
-div.gallery { margin:0; padding:0; }
+body div.gallery { margin:0; padding:0; }
