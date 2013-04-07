@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created D/20/11/2011
- * Updated D/03/03/2013
- * Version 7
+ * Updated V/22/03/2013
+ * Version 8
  *
  * Copyright 2011-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -31,15 +31,15 @@
 			<tab>luigifab</tab>
 			<sort_order>71</sort_order>
 			<show_in_default>1</show_in_default>
-			<show_in_website>0</show_in_website>
-			<show_in_store>0</show_in_store>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
 			<groups>
 				<general translate="label">
 					<label>General</label>
 					<sort_order>0</sort_order>
 					<show_in_default>1</show_in_default>
-					<show_in_website>0</show_in_website>
-					<show_in_store>0</show_in_store>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
 					<fields>
 						<backend translate="label">
 							<label>Enabled in backend</label>
@@ -56,19 +56,19 @@
 							<source_model>adminhtml/system_config_source_yesno</source_model>
 							<sort_order>2</sort_order>
 							<show_in_default>1</show_in_default>
-							<show_in_website>0</show_in_website>
-							<show_in_store>0</show_in_store>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
 						</frontend>
 						<demo>
 							<frontend_model>apijs/demo</frontend_model>
 							<sort_order>9</sort_order>
 							<show_in_default>1</show_in_default>
-							<show_in_website>0</show_in_website>
-							<show_in_store>0</show_in_store>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
 						</demo>
 					</fields>
 				</general>
-				<gallery translate="label">
+				<gallery translate="label" module="apijs">
 					<label>Gallery</label>
 					<sort_order>1</sort_order>
 					<show_in_default>1</show_in_default>
