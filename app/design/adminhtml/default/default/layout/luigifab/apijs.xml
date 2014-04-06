@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated D/03/03/2013
- * Version 9
+ * Updated J/20/03/2014
+ * Version 10
  *
- * Copyright 2011-2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2011-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -23,14 +23,13 @@
 		<reference name="head">
 			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_css</type>
-				<name>css/luigifab/apijs/app.min.css</name>
+				<name>css/luigifab/apijs/apijs-screen.min.css</name>
 				<params>media="screen, projection"</params>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_css</type>
-				<name>css/luigifab/apijs/app-ie8.min.css</name>
-				<params>media="screen, projection"</params>
-				<if>IE 8</if>
+				<name>css/luigifab/apijs/apijs-print.min.css</name>
+				<params>media="print"</params>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_css</type>
@@ -39,7 +38,7 @@
 			</action>
 			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_js</type>
-				<name>js/luigifab/apijs/app.min.js</name>
+				<name>js/luigifab/apijs/apijs.min.js</name>
 			</action>
 		</reference>
 	</default>

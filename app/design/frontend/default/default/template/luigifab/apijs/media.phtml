@@ -1,10 +1,10 @@
 <?php
 /**
  * Created M/15/01/2013
- * Updated S/02/02/2013
- * Version 3
+ * Updated V/21/03/2014
+ * Version 5
  *
- * Copyright 2013 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2013-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -19,27 +19,18 @@
  */
 
 $product = $this->getProduct();
-
-$class = (Mage::getStoreConfig('apijs/gallery/hoverload') === '1') ?
-	((Mage::getStoreConfig('apijs/gallery/show_black_background') === '1') ? 'gallery hoverload cblack' : 'gallery hoverload') :
-	((Mage::getStoreConfig('apijs/gallery/show_black_background') === '1') ? 'gallery cblack' : 'gallery');
+$class = (Mage::getStoreConfig('apijs/gallery/hoverload') === '1') ? 'gallery hoverload' : 'gallery';
 ?>
 
 <?php if ($product->getImage()): ?>
-	<?php if ($product->getImage() !== 'no_selection'): ?>
-		<div class="<?php echo $class ?>" id="diaporama.0">
-			<?php echo $this->getPhoto() ?>
-			<?php if (count($this->getGalleryImages()) > 1): ?>
-				<ul>
-					<?php foreach ($this->getGalleryImages() as $image): ?>
-						<li><?php echo $this->getThumbnail($image, $image->getLabel()) ?></li>
-					<?php endforeach ?>
-				</ul>
-			<?php endif ?>
-		</div>
-	<?php elseif (Mage::getStoreConfig('apijs/gallery/show_default_picture') === '1'): ?>
-		<div class="<?php echo $class ?>">
-			<?php echo $this->getPhoto() ?>
-		</div>
-	<?php endif ?>
+	<div class="<?php echo $class ?>" id="slideshow.0">
+		<?php echo $this->getPhoto() ?>
+		<?php if (count($this->getGalleryImages()) > 1): ?>
+			<ul>
+				<?php foreach ($this->getGalleryImages() as $image): ?>
+					<li><?php echo $this->getThumbnail($image, $image->getLabel()) ?></li>
+				<?php endforeach ?>
+			</ul>
+		<?php endif ?>
+	</div>
 <?php endif ?>
