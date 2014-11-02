@@ -1,8 +1,8 @@
 <?php
 /**
- * Created M/15/01/2013
- * Updated S/25/10/2014
- * Version 7
+ * Created V/23/05/2014
+ * Updated D/01/06/2014
+ * Version 2
  *
  * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
@@ -18,20 +18,10 @@
  * GNU General Public License (GPL) for more details.
  */
 
-$number = 0;
-$product = $this->getProduct();
-$class = (Mage::getStoreConfig('apijs/gallery/hoverload') === '1') ? 'gallery hoverload' : 'gallery';
-?>
+class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Abstract implements Varien_Data_Form_Element_Renderer_Interface {
 
-<?php if ($product->getImage()): ?>
-	<div class="<?php echo $class ?>" id="slideshow.0">
-		<?php echo $this->getPhoto() ?>
-		<?php if (count($this->getGalleryImages()) > 1): ?>
-			<ul>
-				<?php foreach ($this->getGalleryImages() as $image): ?>
-					<li><?php echo $this->getThumbnail($image, $number++) ?></li>
-				<?php endforeach ?>
-			</ul>
-		<?php endif ?>
-	</div>
-<?php endif ?>
+	public function render(Varien_Data_Form_Element_Abstract $element) {
+		$url = 'https://redmine.luigifab.info/projects/magento/wiki/apijs';
+		return '<p class="box">Luigifab/Apijs '.$this->helper('apijs')->getVersion().' <a href="'.$url.'" onclick="window.open(this.href); return false;" style="float:right;">'.$url.'</a></p>';
+	}
+}

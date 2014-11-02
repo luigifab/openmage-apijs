@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created D/26/02/2012
- * Updated J/20/03/2014
- * Version 2
+ * Updated M/19/08/2014
+ * Version 3
  *
- * Copyright 2012-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -33,7 +33,7 @@
 										<children-->
 											<apijs translate="title">
 												<title>Dialogs</title>
-												<sort_order>103071</sort_order>
+												<sort_order>103051</sort_order>
 											</apijs>
 										<!--/children>
 									</luigifab-->

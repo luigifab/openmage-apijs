@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated J/20/03/2014
+ * Updated D/01/06/2014
  * Version 4
  *
- * Copyright 2011-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
