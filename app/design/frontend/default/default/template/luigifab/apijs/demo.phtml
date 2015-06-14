@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/01/12/2011
- * Updated D/01/06/2014
- * Version 20
+ * Updated D/18/01/2015
+ * Version 22
  *
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,7 +20,7 @@
 ?>
 
 <ul style="padding:1em; border:1px solid gray; background-color:#CCC; list-style:none;">
-	<li><?php echo $this->__('Documentation: <a %s>apijs</a>, <a %s%s>module</a>, <a %s>translation</a>', 'href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/magento/wiki/Apijs-', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="window.open(this.href); return false;"') ?></li>
+	<li><?php echo $this->__('Documentation: <a %s%s>apijs</a>, <a %s%s>module</a>, <a %s%s>translation</a>', 'href="http://www.luigifab.info/apijs/index.php', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/magento/wiki/Apijs-', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/apijs/wiki', '" onclick="window.open(this.href); return false;"') ?></li>
 	<li><?php echo $this->__('Version:'),' <strong>',$this->helper('apijs')->getVersion(),'</strong>' ?></li>
 	<li><?php echo $this->__('State:'),' <strong>',$this->helper('apijs')->getStatus('frontend'),'</strong>' ?></li>
 	<?php if (Mage::getStoreConfig('apijs/general/frontend') === '1'): ?>

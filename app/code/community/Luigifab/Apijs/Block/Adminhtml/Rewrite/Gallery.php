@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated L/27/10/2014
- * Version 5
+ * Updated V/22/05/2015
+ * Version 6
  *
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -61,7 +61,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 	}
 
 	public function getAddUrl($productId) {
-		return $this->helper('adminhtml')->getUrl('*/apijs_media/upload', array(
+		return $this->helper('adminhtml')->getUrl('*/apijs_media/uploadProduct', array(
 			'product' => $productId, 'form_key' => Mage::getSingleton('core/session')->getFormKey()));
 	}
 

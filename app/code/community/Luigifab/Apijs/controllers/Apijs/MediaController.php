@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated D/02/11/2014
- * Version 6
+ * Updated S/06/06/2015
+ * Version 7
  *
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -24,12 +24,66 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 		return Mage::getSingleton('admin/session')->isAllowed('catalog/products');
 	}
 
-	public function uploadAction() {
+	public function uploadWidgetAction() {
+
+		// désactivation des tampons
+		// en Ajax uniquement car cela permet d'afficher 100% dans la barre de progression, voir http://stackoverflow.com/a/25835968
+		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
+
+			header('Content-Encoding: chunked', true);
+			header('Content-Type: text/plain; charset=utf-8', true);
+			header('Cache-Control: no-cache, must-revalidate', true);
+			header('Pragma: no-cache', true);
+
+			ini_set('output_buffering', false);
+			ini_set('implicit_flush', true);
+			ob_implicit_flush(true);
+			sleep(2);
+
+			try {
+				for ($i = 0; $i < ob_get_level(); $i++)
+					ob_end_clean();
+			}
+			catch (Exception $e) { }
+			echo ' ';
+		}
+
+		// traitement du fichier
+		// la classe à l'international
+		try {
+			// sauvegarde du fichier
+			$uploader = new Varien_File_Uploader('myimage');
+			$uploader->setAllowedExtensions(array('jpg','jpeg','gif','png'));
+			$uploader->setAllowRenameFiles(true);
+			$uploader->setFilesDispersion(false);
+
+			$file = $uploader->save(Mage::getModel('cms/wysiwyg_images_storage')->getSession()->getCurrentPath());
+			$result = 'success-'.array_pop($file); // Array ( => 20100724-152008.jpg => image/jpeg => /tmp/php1EUOZr => 0 => 1141633 => /media/documents/internet/www/sites/14/web/media/catalog/product => /2/0/20100724-152008.jpg )
+		}
+		catch (Exception $e) {
+			$result = $e->getMessage();
+		}
+
+		// texte en Ajax (avec exit(0) sinon HEADERS ALREADY SENT)
+		// ou redirection vers le bon onglet
+		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
+			sleep(3);
+			echo $result;
+			exit(0);
+		}
+		else {
+			if (strpos($result, 'success-') !== 0)
+				Mage::getSingleton('adminhtml/session')->addError($result);
+			$this->_redirect('*//', array('' => 0));
+		}
+	}
+
+	public function uploadProductAction() {
 
 		$productId = intval($this->getRequest()->getParam('product', 0));
 
 		// désactivation des tampons
-		// en Ajax uniquement cat cela permet d'afficher 100% dans la barre de prgression, voir http://stackoverflow.com/a/25835968
+		// en Ajax uniquement car cela permet d'afficher 100% dans la barre de progression, voir http://stackoverflow.com/a/25835968
 		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
 
 			header('Content-Encoding: chunked', true);
@@ -98,7 +152,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 			if (version_compare(Mage::getVersion(), '1.8.0', '>='))
 				Mage::app()->getCacheInstance()->cleanType('block_html');
 
-			$result = trim(Mage::helper('apijs')->renderBlock($product));
+			$result = Mage::helper('apijs')->renderBlock($product);
 		}
 		catch (Exception $e) {
 			$result = $e->getMessage();
@@ -270,7 +324,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 			if (version_compare(Mage::getVersion(), '1.8.0', '>='))
 				Mage::app()->getCacheInstance()->cleanType('block_html');
 
-			$this->getResponse()->setBody(trim(Mage::helper('apijs')->renderBlock($product)));
+			$this->getResponse()->setBody(Mage::helper('apijs')->renderBlock($product));
 		}
 		catch (Exception $e) {
 			$this->getResponse()->setBody($e->getMessage());

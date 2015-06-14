@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/01/06/2014
- * Version 30
+ * Updated J/11/06/2015
+ * Version 39
  *
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -17,10 +17,65 @@
  * merchantability or fitness for a particular purpose. See the
  * GNU General Public License (GPL) for more details.
  */
+
+$wysiwygDir = Mage::getBaseDir('media').'/wysiwyg/';
+$cacheDir = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().'/cache/';
+$mediaDir = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().'/';
+$wysiwygSize = 0;
+$cacheSize = 0;
+$mediaSize = 0;
+
+if (is_dir($wysiwygDir)) {
+
+	exec('du -hs '.$wysiwygDir.' | cut -f1', $wysiwygSize);
+	$wysiwygSize = trim(implode($wysiwygSize));
+
+	// 1G - 500M - 5M - 1.2M - 225K
+	$size = number_format(floatval($wysiwygSize), 2);
+	$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+	if (stripos($wysiwygSize, 'G') !== false)
+		$wysiwygSize = $this->__('%s GB', $size);
+	else if (stripos($wysiwygSize, 'M') !== false)
+		$wysiwygSize = $this->__('%s MB', $size);
+	else if (stripos($wysiwygSize, 'K') !== false)
+		$wysiwygSize = $this->__('%s KB', intval($size));
+}
+
+if (is_dir($cacheDir)) {
+
+	exec('du -hs '.$cacheDir.' | cut -f1', $cacheSize);
+	$cacheSize = trim(implode($cacheSize));
+
+	// 1G - 500M - 5M - 1.2M - 225K
+	$size = number_format(floatval($cacheSize), 2);
+	$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+	if (stripos($cacheSize, 'G') !== false)
+		$cacheSize = $this->__('%s GB', $size);
+	else if (stripos($cacheSize, 'M') !== false)
+		$cacheSize = $this->__('%s MB', $size);
+	else if (stripos($cacheSize, 'K') !== false)
+		$cacheSize = $this->__('%s KB', intval($size));
+}
+
+if (is_dir($mediaDir)) {
+
+	exec('du -hs '.$mediaDir.' | cut -f1', $mediaSize);
+	$mediaSize = trim(implode($mediaSize));
+
+	// 1G - 500M - 5M - 1.2M - 225K
+	$size = number_format(floatval($mediaSize), 2);
+	$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+	if (stripos($mediaSize, 'G') !== false)
+		$mediaSize = $this->__('%s GB', $size);
+	else if (stripos($mediaSize, 'M') !== false)
+		$mediaSize = $this->__('%s MB', $size);
+	else if (stripos($mediaSize, 'K') !== false)
+		$mediaSize = $this->__('%s KB', intval($size));
+}
 ?>
 
 <ul style="list-style:none; line-height:120%;">
-	<li><?php echo $this->__('Documentation: <a %s>apijs</a>, <a %s%s>module</a>, <a %s>translation</a>', 'href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/magento/wiki/Apijs-', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="window.open(this.href); return false;"') ?></li>
+	<li><?php echo $this->__('Documentation: <a %s%s>apijs</a>, <a %s%s>module</a>, <a %s%s>translation</a>', 'href="http://www.luigifab.info/apijs/index.php', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/magento/wiki/Apijs-', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/apijs/wiki', '" onclick="window.open(this.href); return false;"') ?></li>
 	<li><?php echo $this->__('Version:'),' <strong>',$this->helper('apijs')->getVersion(),'</strong>' ?></li>
 	<li><?php echo $this->__('State:'),' <strong>',$this->helper('apijs')->getStatus('backend'),'</strong>' ?></li>
 	<?php if (Mage::getStoreConfig('apijs/general/backend') === '1'): ?>
@@ -40,5 +95,12 @@
 &lt;?php echo $this->getLayout()->createBlock('core/template')->setTemplate('luigifab/apijs/demo.phtml')->toHtml() ?&gt;
 </code></pre>
 <?php endif ?>
+
+<p style="margin-top:1.2em;"><?php echo $this->__('Directories size:') ?></p>
+<ul style="list-style:none; line-height:110%;">
+	<li><?php echo $wysiwygDir ?> <b><?php echo $wysiwygSize ?></b></li>
+	<li><?php echo $mediaDir ?> <b><?php echo $mediaSize ?></b></li>
+	<li><?php echo $cacheDir ?> <b><?php echo $cacheSize ?></b></li>
+</ul>
 
 <hr style="margin:1em 0; border:none; border-top:1px solid #BBB;" />

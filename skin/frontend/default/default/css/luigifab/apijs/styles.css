@@ -1,7 +1,6 @@
-@charset "utf-8";
 /**
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * File created in 2009, Updated D/02/11/2014, version 22
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Created in 2009, updated S/30/05/2015, version 25
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -14,45 +13,12 @@
 #apijsBox button::-moz-focus-inner { margin:-1px; padding:0; }
 
 #apijsBox .left, #apijsBox .right { float:inherit !important; }
-#apijsBox.error, #apijsBox .error, #apijsBox .required, #apijsBox .validation-advice { font-weight:inherit !important;  color:inherit !important; }
+#apijsBox.error, #apijsBox .error, #apijsBox .required, #apijsBox .validation-advice { font-weight:inherit !important; color:inherit !important; }
+
+#apijsBox h1, #apijsBox div.control button, #apijsBox div .browse { background-image:url("../../../images/luigifab/apijs/humanity.min.svg"); }
+#apijsBox dl.media dt div.player.error { background-image:url("../../../images/luigifab/apijs/tv.gif"); }
 
 @font-face {
-	/* http://icomoon.io/app/, session ../fonts/icomoon.json */
 	src:url("../../../fonts/luigifab/apijs/icomoon.ttf") format("truetype");
 	font-family:icomoon; font-style:normal; font-weight:normal;
-}
-
-#apijsBox.information  h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#dialog-information"); }
-#apijsBox.confirmation h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#dialog-question"); }
-#apijsBox.options  h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#preferences-system"); }
-#apijsBox.upload   h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#document-new"); }
-#apijsBox.progress h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#clock"); }
-#apijsBox.waiting  h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#clock"); }
-#apijsBox.debug    h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#bug"); }
-#apijsBox.download h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#document-save"); }
-#apijsBox.error    h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#dialog-error"); }
-#apijsBox.print    h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#document-print"); }
-#apijsBox.warning  h1 { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#dialog-warning"); }
-
-#apijsBox div.control button.cancel  { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#dialog-no"); }
-#apijsBox div.control button.confirm { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#dialog-ok"); }
-#apijsBox div.control .browse        { background-image:url("../../../images/luigifab/apijs/humanity-sprites.svg#browser-upload"); }
-
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-
-	#apijsBox.information  h1 { background-image:url("../../../images/luigifab/apijs/humanity-dialog-information.svg"); }
-	#apijsBox.confirmation h1 { background-image:url("../../../images/luigifab/apijs/humanity-dialog-question.svg"); }
-	#apijsBox.options  h1 { background-image:url("../../../images/luigifab/apijs/humanity-preferences-system.svg"); }
-	#apijsBox.upload   h1 { background-image:url("../../../images/luigifab/apijs/humanity-document-new.svg"); }
-	#apijsBox.progress h1 { background-image:url("../../../images/luigifab/apijs/humanity-clock.svg"); }
-	#apijsBox.waiting  h1 { background-image:url("../../../images/luigifab/apijs/humanity-clock.svg"); }
-	#apijsBox.debug    h1 { background-image:url("../../../images/luigifab/apijs/humanity-bug.svg"); }
-	#apijsBox.download h1 { background-image:url("../../../images/luigifab/apijs/humanity-document-save.svg"); }
-	#apijsBox.error    h1 { background-image:url("../../../images/luigifab/apijs/humanity-dialog-error.svg"); }
-	#apijsBox.print    h1 { background-image:url("../../../images/luigifab/apijs/humanity-document-print.svg"); }
-	#apijsBox.warning  h1 { background-image:url("../../../images/luigifab/apijs/humanity-dialog-warning.svg"); }
-
-	#apijsBox div.control button.cancel  { background-image:url("../../../images/luigifab/apijs/humanity-dialog-no.svg"); }
-	#apijsBox div.control button.confirm { background-image:url("../../../images/luigifab/apijs/humanity-dialog-ok.svg"); }
-	#apijsBox div.control .browse        { background-image:url("../../../images/luigifab/apijs/humanity-browser-upload.svg"); }
 }

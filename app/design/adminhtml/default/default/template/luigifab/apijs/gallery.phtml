@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated L/27/10/2014
- * Version 7
+ * Updated J/14/05/2015
+ * Version 10
  *
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,7 +20,6 @@
 
 $product = Mage::registry('current_product');
 $attributes = $product->getMediaAttributes();
-
 $storeId = intval($this->getRequest()->getParam('store', 0));
 
 $images = $product->getMediaGalleryImages();
@@ -110,14 +109,14 @@ $i = 0;
 						<td>
 							<?php if ($storeId > 0): /* ?>
 								<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
-								<input type="radio" <?php echo ($product->getData($attribute->getAttributeCode()) == $image->getFile()) ? 'checked="checked"' : ''; ?> disabled="disabled" />
+								<input type="radio" <?php echo ($product->getData($attribute->getAttributeCode()) === $image->getFile()) ? 'checked="checked"' : ''; ?> disabled="disabled" />
 								<?php if (!$attribute->isScopeGlobal()): ?>
 									<span><?php echo substr($this->__('[STORE VIEW]'), 1, -1) ?></span>
-									<input type="radio" name="apijs-<?php echo $attribute->getAttributeCode() ?>" <?php echo ($product->getData($attribute->getAttributeCode()) == $image->getFile()) ? 'checked="checked"' : ''; ?> />
+									<input type="radio" name="apijs-<?php echo $attribute->getAttributeCode() ?>" <?php echo ($product->getData($attribute->getAttributeCode()) === $image->getFile()) ? 'checked="checked"' : ''; ?> />
 								<?php endif ?>
 							<?php */ else: ?>
 								<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
-								<input type="radio" name="apijs-<?php echo $attribute->getAttributeCode() ?>" <?php echo ($product->getData($attribute->getAttributeCode()) == $image->getFile()) ? 'checked="checked"' : ''; ?> onchange="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" />
+								<input type="radio" name="apijs-<?php echo $attribute->getAttributeCode() ?>" <?php echo ($product->getData($attribute->getAttributeCode()) === $image->getFile()) ? 'checked="checked"' : ''; ?> onchange="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" />
 							<?php endif ?>
 						</td>
 					<?php endforeach ?>
@@ -136,6 +135,21 @@ $i = 0;
 						<button type="button" class="scalable back" onclick="setLocation('<?php echo $this->getDownloadUrl($product->getId(), $image->getId()) ?>');"><?php echo $this->__('Download') ?></button>
 						<button type="button" disabled="disabled" class="scalable save ici" onclick="apijsActionSave(this, '<?php echo $this->getSaveUrl($product->getId(), $storeId, $image->getId()) ?>');"><?php echo $this->helper('adminhtml')->__('Save') ?></button>
 						<button type="button" class="scalable delete" onclick="apijsDeleteAttachment('<?php echo $this->getDeleteUrl($product->getId(), $image->getId()) ?>');"><?php echo $this->helper('adminhtml')->__('Remove') ?></button>
+
+						<div style="margin-top:1em;"><?php if (is_file($file)) {
+							$size = filesize(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().$image->getFile());
+
+							if ($size < (1024 * 1024)) {
+								$size = number_format($size / 1024, 2);
+								$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+								echo $this->helper('apijs')->__('%s KB', $size);
+							}
+							else {
+								$size = number_format($size / 1024 / 1024, 2);
+								$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+								echo $this->helper('apijs')->__('%s MB', $size);
+							}
+						} ?></div>
 					</td>
 				</tr>
 			<?php endforeach ?>

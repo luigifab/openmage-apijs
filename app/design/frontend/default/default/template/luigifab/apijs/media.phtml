@@ -1,10 +1,10 @@
 <?php
 /**
  * Created M/15/01/2013
- * Updated S/25/10/2014
- * Version 7
+ * Updated D/19/04/2015
+ * Version 9
  *
- * Copyright 2008-2014 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -18,20 +18,22 @@
  * GNU General Public License (GPL) for more details.
  */
 
-$number = 0;
-$product = $this->getProduct();
+$images = array();
+foreach ($this->getGalleryImages() as $image)
+	$images[] = $image;
+
 $class = (Mage::getStoreConfig('apijs/gallery/hoverload') === '1') ? 'gallery hoverload' : 'gallery';
+$total = count($images);
+$id = 0;
 ?>
 
-<?php if ($product->getImage()): ?>
-	<div class="<?php echo $class ?>" id="slideshow.0">
-		<?php echo $this->getPhoto() ?>
-		<?php if (count($this->getGalleryImages()) > 1): ?>
-			<ul>
-				<?php foreach ($this->getGalleryImages() as $image): ?>
-					<li><?php echo $this->getThumbnail($image, $number++) ?></li>
-				<?php endforeach ?>
-			</ul>
-		<?php endif ?>
-	</div>
-<?php endif ?>
+<div class="<?php echo $class ?>" id="slideshow.0">
+	<?php echo $this->getBaseImage($images, $total) ?>
+	<?php if ($total > 1): ?>
+		<ul>
+			<?php foreach ($images as $image): ?>
+				<li><?php echo $this->getThumbnail($image, $id++) ?></li>
+			<?php endforeach ?>
+		</ul>
+	<?php endif ?>
+</div>
