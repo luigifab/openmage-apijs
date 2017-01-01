@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated V/22/05/2015
- * Version 22
+ * Updated M/08/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -33,7 +32,7 @@
 			</action>
 			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_css</type>
-				<name>css/luigifab/apijs/styles.min.css</name>
+				<name>css/luigifab/apijs/apijs-magento.min.css</name>
 				<params>media="screen, projection"</params>
 			</action>
 			<action method="addItem" ifconfig="apijs/general/backend">
@@ -41,13 +40,51 @@
 				<name>js/luigifab/apijs/apijs.min.js</name>
 			</action>
 		</reference>
+		<reference name="notifications">
+			<block type="core/template" template="luigifab/apijs/browser.phtml" name="apijs_browser" />
+		</reference>
 	</default>
+
+	<editor>
+		<reference name="head">
+			<!-- avant Magento 1.9.3.0 -->
+			<action method="removeItem" ifconfig="apijs/general/backend">
+				<type>js</type>
+				<name>lib/flex.js</name>
+			</action>
+			<action method="removeItem" ifconfig="apijs/general/backend">
+				<type>js</type>
+				<name>lib/FABridge.js</name>
+			</action>
+			<action method="removeItem" ifconfig="apijs/general/backend">
+				<type>js</type>
+				<name>mage/adminhtml/flexuploader.js</name>
+			</action>
+			<!-- Magento 1.9.3.0 et plus -->
+			<action method="removeItem" ifconfig="apijs/general/backend">
+				<type>js</type>
+				<name>lib/uploader/flow.min.js</name>
+			</action>
+			<action method="removeItem" ifconfig="apijs/general/backend">
+				<type>js</type>
+				<name>lib/uploader/fusty-flow.js</name>
+			</action>
+			<action method="removeItem" ifconfig="apijs/general/backend">
+				<type>js</type>
+				<name>lib/uploader/fusty-flow-factory.js</name>
+			</action>
+			<action method="removeItem" ifconfig="apijs/general/backend">
+				<type>js</type>
+				<name>mage/adminhtml/uploader/instance.js</name>
+			</action>
+		</reference>
+	</editor>
 
 	<adminhtml_catalog_product_edit>
 		<reference name="head">
 			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_js</type>
-				<name>js/luigifab/apijs/album.min.js</name>
+				<name>js/luigifab/apijs/apijs-album.min.js</name>
 			</action>
 		</reference>
 	</adminhtml_catalog_product_edit>
@@ -56,8 +93,17 @@
 		<reference name="head">
 			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_js</type>
-				<name>js/luigifab/apijs/album.min.js</name>
+				<name>js/luigifab/apijs/apijs-album.min.js</name>
 			</action>
 		</reference>
 	</adminhtml_cms_page_edit>
+
+	<adminhtml_cms_block_edit>
+		<reference name="head">
+			<action method="addItem" ifconfig="apijs/general/backend">
+				<type>skin_js</type>
+				<name>js/luigifab/apijs/apijs-album.min.js</name>
+			</action>
+		</reference>
+	</adminhtml_cms_block_edit>
 </layout>

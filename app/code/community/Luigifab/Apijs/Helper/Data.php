@@ -1,10 +1,9 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated L/27/10/2014
- * Version 6
+ * Updated D/27/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -25,10 +24,25 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 	public function getStatus($type = 'frontend') {
-		return (Mage::getStoreConfig('apijs/general/'.$type) === '1') ? $this->__('Enabled') : $this->__('Disabled');
+		return (Mage::getStoreConfigFlag('apijs/general/'.$type)) ? $this->__('Enabled') : $this->__('Disabled');
 	}
 
-	public function renderBlock($product) {
+	public function getDirectTabLink($id, $old = null) {
+
+		$tab = null;
+		$groups = Mage::getResourceModel('eav/entity_attribute_group_collection')->load();
+
+		foreach ($groups as $group) {
+			if ($group->getAttributeGroupName() === 'Images') {
+				$tab = 'product_info_tabs_group_'.$group->getId();
+				break;
+			}
+		}
+
+		return Mage::helper('adminhtml')->getUrl('*/catalog_product/edit', array('id' => $id, 'tab' => $tab, 'old' => $old));
+	}
+
+	public function renderGalleryBlock($product) {
 
 		$product->load($product->getId());
 		Mage::register('current_product', $product);
@@ -39,18 +53,25 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		return 'success-'.$block->toHtml();
 	}
 
-	public function createDirectTabLink($id, $old = null) {
+	public function getNumberToHumanSize($number) {
 
-		$tab = null;
-		$groups = Mage::getResourceModel('eav/entity_attribute_group_collection')->load();
-
-		foreach ($groups as $group) {
-			if ($group->getAttributeGroupName() == 'Images') {
-				$tab = 'product_info_tabs_group_'.$group->getId();
-				break;
-			}
+		if ($number < 1) {
+			return '';
 		}
-
-		return Mage::helper('adminhtml')->getUrl('*/catalog_product/edit', array('id' => $id, 'tab' => $tab, 'old' => $old));
+		else if (($number / 1024) < 1024) {
+			$size = $number / 1024;
+			$size = Zend_Locale_Format::toNumber($size, array('precision' => 2));
+			return $this->__('%s kB', str_replace(array('.00',',00'), '', $size));
+		}
+		else if (($number / 1024 / 1024) < 1024) {
+			$size = $number / 1024 / 1024;
+			$size = Zend_Locale_Format::toNumber($size, array('precision' => 2));
+			return $this->__('%s MB', str_replace(array('.00',',00'), '', $size));
+		}
+		else {
+			$size = $number / 1024 / 1024 / 1024;
+			$size = Zend_Locale_Format::toNumber($size, array('precision' => 2));
+			return $this->__('%s GB', str_replace(array('.00',',00'), '', $size));
+		}
 	}
 }

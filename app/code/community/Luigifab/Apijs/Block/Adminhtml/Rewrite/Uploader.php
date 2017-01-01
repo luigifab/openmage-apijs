@@ -1,10 +1,9 @@
 <?php
 /**
  * Created V/22/05/2015
- * Updated V/22/05/2015
- * Version 1
+ * Updated M/08/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -26,10 +25,10 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Uploader extends Mage_Adminhtml_Blo
 
 	public function _toHtml() {
 
-		if (Mage::getStoreConfig('apijs/general/backend') === '1')
-			return '<button type="button" class="scalable add" onclick="apijsSendFile(\''.$this->getAddUrl().'\', '.$this->getMaxSize().');">'.$this->__('Add an image').'</button>';
-		else
-			return parent::_toHtml();
+		if (Mage::getStoreConfigFlag('apijs/general/backend'))
+			return '<button type="button" class="scalable add" onclick="apijsSendFile(\''.$this->getAddUrl().'\', '.$this->getMaxSize().');">'.$this->__('Add a photo').'</button>';
+
+		return parent::_toHtml();
 	}
 
 	private function getMaxSize() {
@@ -38,7 +37,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Uploader extends Mage_Adminhtml_Blo
 	}
 
 	private function getAddUrl() {
-		return $this->helper('adminhtml')->getUrl('*/apijs_media/uploadWidget', array(
-			'form_key' => Mage::getSingleton('core/session')->getFormKey()));
+		$key = Mage::getSingleton('core/session')->getFormKey();
+		return $this->getUrl('*/apijs_media/uploadWidget', array('form_key' => $key));
 	}
 }

@@ -1,10 +1,9 @@
 <?php
 /**
  * Created V/23/05/2014
- * Updated D/01/06/2014
- * Version 2
+ * Updated M/08/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -22,6 +21,6 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 
 	public function render(Varien_Data_Form_Element_Abstract $element) {
 		$url = 'https://redmine.luigifab.info/projects/magento/wiki/apijs';
-		return '<p class="box">Luigifab/Apijs '.$this->helper('apijs')->getVersion().' <a href="'.$url.'" onclick="window.open(this.href); return false;" style="float:right;">'.$url.'</a></p>';
+		return sprintf('<p class="box">Luigifab/Apijs %s <a href="%s" onclick="window.open(this.href); return false;" style="float:right;">%2$s</a></p>', $this->helper('apijs')->getVersion(), $url);
 	}
 }

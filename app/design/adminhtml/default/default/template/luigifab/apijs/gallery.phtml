@@ -1,10 +1,9 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/14/05/2015
- * Version 10
+ * Updated M/08/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -32,23 +31,22 @@ $i = 0;
 	<table cellspacing="0" cellpadding="0" class="data border gallery">
 		<thead>
 			<tr class="headings">
-				<th><?php echo $this->helper('catalog')->__('Image'),'<br />',$this->__('[GLOBAL]') ?></th>
-				<th><?php echo $this->helper('catalog')->__('Label'),'<br />',$this->__('[STORE VIEW]') ?></th>
-				<th style="width:100px;"><?php echo $this->helper('catalog')->__('Sort Order'),'<br />',$this->__('[STORE VIEW]') ?></th>
+				<th><?php echo $this->__('Image'),'<br /><small>',$this->__('[GLOBAL]'),'</small>' ?></th>
+				<th><?php echo $this->__('Label and Sort order'),'<br /><small>',$this->__('[STORE VIEW]'),'</small>' ?></th>
 				<?php foreach ($attributes as $attribute): ?>
-					<th class="type"><?php echo $attribute->getFrontend()->getLabel(),'<br />',$this->getScopeLabel($attribute) ?></th>
+					<th class="type"><?php echo $attribute->getFrontend()->getLabel(),'<br /><small>',$this->getScopeLabel($attribute),'</small>' ?></th>
 				<?php endforeach ?>
-				<th class="type"><?php echo $this->helper('catalog')->__('Exclude'),'<br />',$this->__('[STORE VIEW]') ?></th>
-				<th style="width:100px;" class="last"></th>
+				<th class="type"><?php echo $this->__('Exclude'),'<br /><small>',$this->__('[STORE VIEW]'),'</small>' ?></th>
+				<th style="width:110px;" class="last"></th>
 			</tr>
 		</thead>
 		<tfoot>
 			<tr>
-				<td colspan="<?php echo count($attributes) + 3 ?>">
-					<p><?php echo $this->__('The added or deleted images are automatically saved.<br /><strong>Warning:</strong> all modification on the images must be saved with the save button of the image.') ?></p>
+				<td colspan="<?php echo count($attributes) + 2 ?>">
+					<p><?php echo $this->__('The added or deleted photos are automatically saved.<br /><strong>Warning:</strong> any modification on photos must be saved via the appropriate save button.') ?></p>
 				</td>
 				<td colspan="2" class="last">
-					<button type="button" class="scalable add" onclick="apijsSendFile('<?php echo $this->getAddUrl($product->getId()) ?>', <?php echo $this->getMaxSize() ?>);"><?php echo $this->__('Add an image') ?></button>
+					<button type="button" class="scalable add" onclick="apijsSendFile('<?php echo $this->getAddUrl($product->getId(), $storeId) ?>', <?php echo $this->getMaxSize() ?>);"><?php echo $this->__('Add a photo') ?></button>
 				</td>
 			</tr>
 		</tfoot>
@@ -58,7 +56,7 @@ $i = 0;
 			?>
 				<tr id="attachmentId<?php echo $image->getId() ?>">
 					<td>
-						<?php if (is_file($file)):
+						<?php if (is_file($file) && is_readable($file)):
 
 							$ressource = $this->helper('catalog/image')->init($product, 'image', $image->getFile());
 
@@ -75,80 +73,66 @@ $i = 0;
 							// l'image de l'image = une miniature en cache
 						?>
 							<a href="<?php echo $ressource ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false;" id="slideshow.0.<?php echo $i++ ?>">
-								<?php $this->helper('catalog/image')->init($product, 'image', $image->getFile())->resize(200, 150) ?>
-								<img src="<?php echo $ressource ?>" width="200" height="150" alt="<?php echo $image->getLabel() ?>" />
+								<img src="<?php echo $this->helper('catalog/image')->init($product, 'thumbnail', $image->getFile())->resize(200, 150) ?>" width="200" height="150" alt="<?php echo $image->getLabel() ?>" />
 								<input type="hidden" value="false|false|<?php echo $image->getLabel() ?>" />
 							</a>
+						<?php else: ?>
+							<?php echo $this->__('File not found') ?>
 						<?php endif ?>
 					</td>
 					<td>
+						<span><?php echo $this->__('Label') ?></span>
 						<?php if ($storeId > 0): /* ?>
-							<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
+							<span><?php echo $this->__('[GLOBAL]') ?></span>
 							<input type="text" value="<?php echo htmlentities($image->getLabelDefault()) ?>" disabled="disabled" class="input-text" />
-							<span><?php echo substr($this->__('[STORE VIEW]'), 1, -1) ?></span>
+							<span><?php echo $this->__('[STORE VIEW]') ?></span>
 							<input type="text" name="apijs-label" value="<?php echo htmlentities($image->getLabel()) ?>" maxlength="200" class="input-text" />
 							<a class="default"><?php echo $this->__('Use default value') ?></a>
 						<?php */ else: ?>
-							<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
-							<input type="text" name="apijs-label" value="<?php echo htmlentities($image->getLabel()) ?>" maxlength="200" class="input-text" onfocus="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" onchange="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" />
+							<input type="text" name="apijs-label" value="<?php echo htmlentities($image->getLabel()) ?>" maxlength="200" class="input-text" onchange="apijsEnableButtonSave(this, event);" onkeyup="apijsEnableButtonSave(this, event);" />
 						<?php endif ?>
-					</td>
-					<td>
+						<span><?php echo $this->__('Sort Order') ?></span>
 						<?php if ($storeId > 0): /* ?>
-							<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
-							<input type="text" value="<?php echo $image->getPositionDefault() ?>" disabled="disabled" class="input-text" />
-							<span><?php echo substr($this->__('[STORE VIEW]'), 1, -1) ?></span>
-							<input type="text" name="apijs-position" value="<?php echo $image->getPosition() ?>" maxlength="5" class="input-text" />
+							<span><?php echo $this->__('[GLOBAL]') ?></span>
+							<input type="number" value="<?php echo $image->getPositionDefault() ?>" disabled="disabled" class="input-text" />
+							<span><?php echo $this->__('[STORE VIEW]') ?></span>
+							<input type="number" min="1" name="apijs-position" value="<?php echo $image->getPosition() ?>" maxlength="5" class="input-text" />
 							<a class="default"><?php echo $this->__('Use default value') ?></a>
 						<?php */ else: ?>
-							<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
-							<input type="text" name="apijs-position" value="<?php echo $image->getPosition() ?>" maxlength="5" class="input-text" onfocus="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" onchange="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" />
+							<input type="number" min="1" name="apijs-position" value="<?php echo $image->getPosition() ?>" maxlength="5" class="input-text" onchange="apijsEnableButtonSave(this, event);" onkeyup="apijsEnableButtonSave(this, event);" />
 						<?php endif ?>
 					</td>
 					<?php foreach ($attributes as $attribute): ?>
 						<td>
 							<?php if ($storeId > 0): /* ?>
-								<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
+								<span><?php echo $this->__('[GLOBAL]') ?></span>
 								<input type="radio" <?php echo ($product->getData($attribute->getAttributeCode()) === $image->getFile()) ? 'checked="checked"' : ''; ?> disabled="disabled" />
 								<?php if (!$attribute->isScopeGlobal()): ?>
-									<span><?php echo substr($this->__('[STORE VIEW]'), 1, -1) ?></span>
+									<span><?php echo $this->__('[STORE VIEW]') ?></span>
 									<input type="radio" name="apijs-<?php echo $attribute->getAttributeCode() ?>" <?php echo ($product->getData($attribute->getAttributeCode()) === $image->getFile()) ? 'checked="checked"' : ''; ?> />
 								<?php endif ?>
 							<?php */ else: ?>
-								<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
-								<input type="radio" name="apijs-<?php echo $attribute->getAttributeCode() ?>" <?php echo ($product->getData($attribute->getAttributeCode()) === $image->getFile()) ? 'checked="checked"' : ''; ?> onchange="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" />
+								<input type="radio" name="apijs-<?php echo $attribute->getAttributeCode() ?>" <?php echo ($product->getData($attribute->getAttributeCode()) === $image->getFile()) ? 'checked="checked"' : ''; ?> onchange="apijsEnableButtonSave(this, event);" onkeyup="apijsEnableButtonSave(this, event);" />
 							<?php endif ?>
 						</td>
 					<?php endforeach ?>
 					<td>
 						<?php if ($storeId > 0): /* ?>
-							<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
+							<span><?php echo $this->__('[GLOBAL]') ?></span>
 							<input type="checkbox" <?php echo ($image->getDisabledDefault()) ? 'checked="checked"' : ''; ?> disabled="disabled" />
-							<span><?php echo substr($this->__('[STORE VIEW]'), 1, -1) ?></span>
+							<span><?php echo $this->__('[STORE VIEW]') ?></span>
 							<input type="checkbox" name="apijs-disabled" <?php echo ($image->getDisabled()) ? 'checked="checked"' : ''; ?> />
 						<?php */ else: ?>
-							<span><?php echo substr($this->__('[GLOBAL]'), 1, -1) ?></span>
-							<input type="checkbox" name="apijs-disabled" <?php echo ($image->getDisabled()) ? 'checked="checked"' : ''; ?> onchange="this.parentNode.parentNode.querySelector('button.ici').removeAttribute('disabled');" />
+							<input type="checkbox" name="apijs-disabled" <?php echo ($image->getDisabled()) ? 'checked="checked"' : ''; ?> onchange="apijsEnableButtonSave(this, event);" onkeyup="apijsEnableButtonSave(this, event);" />
 						<?php endif ?>
 					</td>
 					<td class="last">
-						<button type="button" class="scalable back" onclick="setLocation('<?php echo $this->getDownloadUrl($product->getId(), $image->getId()) ?>');"><?php echo $this->__('Download') ?></button>
-						<button type="button" disabled="disabled" class="scalable save ici" onclick="apijsActionSave(this, '<?php echo $this->getSaveUrl($product->getId(), $storeId, $image->getId()) ?>');"><?php echo $this->helper('adminhtml')->__('Save') ?></button>
-						<button type="button" class="scalable delete" onclick="apijsDeleteAttachment('<?php echo $this->getDeleteUrl($product->getId(), $image->getId()) ?>');"><?php echo $this->helper('adminhtml')->__('Remove') ?></button>
-
-						<div style="margin-top:1em;"><?php if (is_file($file)) {
+						<button type="button" <?php echo (is_file($file)) ? '' : 'disabled="disabled"' ?> class="scalable back" onclick="setLocation('<?php echo $this->getDownloadUrl($product->getId(), $image->getId()) ?>');"><?php echo $this->__('Download') ?></button>
+						<button type="button" disabled="disabled" class="scalable save ici" onclick="apijsActionSave(this, '<?php echo $this->getSaveUrl($product->getId(), $storeId, $image->getId()) ?>');"><?php echo $this->__('Save') ?></button>
+						<button type="button" class="scalable delete" onclick="apijsDeleteAttachment('<?php echo $this->getDeleteUrl($product->getId(), $image->getId()) ?>');"><?php echo $this->__('Remove') ?></button>
+						<div style="margin-top:1em;"><?php if (is_file($file) && is_readable($file)) {
 							$size = filesize(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().$image->getFile());
-
-							if ($size < (1024 * 1024)) {
-								$size = number_format($size / 1024, 2);
-								$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
-								echo $this->helper('apijs')->__('%s KB', $size);
-							}
-							else {
-								$size = number_format($size / 1024 / 1024, 2);
-								$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
-								echo $this->helper('apijs')->__('%s MB', $size);
-							}
+							echo $this->helper('apijs')->getNumberToHumanSize($size);
 						} ?></div>
 					</td>
 				</tr>

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated L/23/03/2015
- * Version 5
+ * Updated M/08/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -26,6 +25,7 @@
 			<depends>
 				<Mage_Core />
 				<Mage_Adminhtml />
+				<Mage_Catalog />
 			</depends>
 			<!-- see https://redmine.luigifab.info/projects/magento/wiki/modules for more information -->
 			<update>http://www.luigifab.info/magento/rss.xml</update>

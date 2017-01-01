@@ -1,10 +1,9 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated J/11/06/2015
- * Version 39
+ * Updated D/27/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -21,9 +20,7 @@
 $wysiwygDir = Mage::getBaseDir('media').'/wysiwyg/';
 $cacheDir = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().'/cache/';
 $mediaDir = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().'/';
-$wysiwygSize = 0;
-$cacheSize = 0;
-$mediaSize = 0;
+$wysiwygSize = $cacheSize = $mediaSize = 0;
 
 if (is_dir($wysiwygDir)) {
 
@@ -31,14 +28,15 @@ if (is_dir($wysiwygDir)) {
 	$wysiwygSize = trim(implode($wysiwygSize));
 
 	// 1G - 500M - 5M - 1.2M - 225K
-	$size = number_format(floatval($wysiwygSize), 2);
-	$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+	$size = floatval($wysiwygSize);
+	$size = Zend_Locale_Format::toNumber($size, array('precision' => 2));
 	if (stripos($wysiwygSize, 'G') !== false)
 		$wysiwygSize = $this->__('%s GB', $size);
 	else if (stripos($wysiwygSize, 'M') !== false)
 		$wysiwygSize = $this->__('%s MB', $size);
 	else if (stripos($wysiwygSize, 'K') !== false)
-		$wysiwygSize = $this->__('%s KB', intval($size));
+		$wysiwygSize = $this->__('%s kB', intval($size));
+	$wysiwygSize = str_replace(array(',00','.00'), '', $wysiwygSize);
 }
 
 if (is_dir($cacheDir)) {
@@ -47,50 +45,55 @@ if (is_dir($cacheDir)) {
 	$cacheSize = trim(implode($cacheSize));
 
 	// 1G - 500M - 5M - 1.2M - 225K
-	$size = number_format(floatval($cacheSize), 2);
-	$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+	$size = floatval($cacheSize);
+	$size = Zend_Locale_Format::toNumber($size, array('precision' => 2));
 	if (stripos($cacheSize, 'G') !== false)
 		$cacheSize = $this->__('%s GB', $size);
 	else if (stripos($cacheSize, 'M') !== false)
 		$cacheSize = $this->__('%s MB', $size);
 	else if (stripos($cacheSize, 'K') !== false)
-		$cacheSize = $this->__('%s KB', intval($size));
+		$cacheSize = $this->__('%s kB', intval($size));
+	$cacheSize = str_replace(array(',00','.00'), '', $cacheSize);
 }
 
 if (is_dir($mediaDir)) {
 
-	exec('du -hs '.$mediaDir.' | cut -f1', $mediaSize);
+	exec('du -hs '.$mediaDir.' --exclude=cache | cut -f1', $mediaSize);
 	$mediaSize = trim(implode($mediaSize));
 
 	// 1G - 500M - 5M - 1.2M - 225K
-	$size = number_format(floatval($mediaSize), 2);
-	$size = Zend_Locale_Format::toNumber($size, array('locale' => Mage::app()->getLocale()->getLocaleCode()));
+	$size = floatval($mediaSize);
+	$size = Zend_Locale_Format::toNumber($size, array('precision' => 2));
 	if (stripos($mediaSize, 'G') !== false)
 		$mediaSize = $this->__('%s GB', $size);
 	else if (stripos($mediaSize, 'M') !== false)
 		$mediaSize = $this->__('%s MB', $size);
 	else if (stripos($mediaSize, 'K') !== false)
-		$mediaSize = $this->__('%s KB', intval($size));
+		$mediaSize = $this->__('%s kB', intval($size));
+	$mediaSize = str_replace(array(',00','.00'), '', $mediaSize);
 }
+
+$link1 = 'href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;"';
+$link2 = 'href="https://redmine.luigifab.info/projects/magento/wiki/apijs" onclick="window.open(this.href); return false;"';
+$link3 = 'href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="window.open(this.href); return false;"';
 ?>
 
 <ul style="list-style:none; line-height:120%;">
-	<li><?php echo $this->__('Documentation: <a %s%s>apijs</a>, <a %s%s>module</a>, <a %s%s>translation</a>', 'href="http://www.luigifab.info/apijs/index.php', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/magento/wiki/Apijs-', '" onclick="window.open(this.href); return false;"', 'href="https://redmine.luigifab.info/projects/apijs/wiki', '" onclick="window.open(this.href); return false;"') ?></li>
+	<li><?php echo $this->__('Documentation: <a %s>apijs</a>, <a %s>module</a>, <a %s>translation</a>', $link1, $link2, $link3) ?></li>
 	<li><?php echo $this->__('Version:'),' <strong>',$this->helper('apijs')->getVersion(),'</strong>' ?></li>
 	<li><?php echo $this->__('State:'),' <strong>',$this->helper('apijs')->getStatus('backend'),'</strong>' ?></li>
-	<?php if (Mage::getStoreConfig('apijs/general/backend') === '1'): ?>
+	<?php if (Mage::getStoreConfigFlag('apijs/general/backend')): ?>
 		<li>
 			<?php echo $this->__('Examples:') ?>
 			<button onclick="apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>');" type="button">1</button>
-			<button onclick="apijs.dialog.dialogInformation('<?php echo $this->__('Surprise!') ?>','[p]<?php echo addslashes($this->__('You are looking this video without proprietary extension thanks to the new [em]video[/em] tag included in the [strong]HTML 5[/strong] format.')) ?>[/p][p]<?php echo addslashes($this->__('Website: %s', '[a href=\'http://www.luigifab.info/\' class=\'popup\']www.luigifab.info[/a]')) ?>[/p]');" type="button">2</button>
-			<button onclick="apijs.dialog.dialogInformation('<?php echo $this->__('Surprise!') ?>','[p]<?php echo addslashes($this->__('See the title on emoicons for help...')) ?>[/p][p style=\'width:75%; text-align:center;\'] :D - :) - :p - :( - ;) - :lol - 8) - :@ - (6) - :o - :s - :| - :/ - (L) - (!) - (?) - (i) - (u) - (y) - (n) [/p]','notransition warning');" type="button">3</button>
+			<button onclick="apijs.dialog.dialogInformation('<?php echo $this->__('Surprise!') ?>','[p]<?php echo addslashes($this->__('You are looking this video without proprietary extension thanks to the new [em]video[/em] tag included in the [strong]HTML 5[/strong] language.')) ?>[/p][p]<?php echo addslashes($this->__('Website: %s', '[a href=\'http://www.luigifab.info/\' class=\'popup\']www.luigifab.info[/a]')) ?>[/p]');" type="button">2</button>
 		</li>
 	<?php endif ?>
 </ul>
 
-<?php if (Mage::getStoreConfig('apijs/general/frontend') === '1'): ?>
-	<p style="margin-top:1em;"><?php echo $this->__('You can use one of this lines to test this module on the frontend.') ?></p>
-	<pre style="margin-bottom:0.8em; font-size:0.9em; line-height:1.4em;"><code>{{block type="core/template" template="luigifab/apijs/demo.phtml"}}
+<?php if (Mage::getStoreConfigFlag('apijs/general/frontend')): ?>
+	<p style="margin-top:1em;"><?php echo $this->__('You can use one of the following lines to test this module on the frontend.') ?></p>
+	<pre style="margin-bottom:0.8em; font-size:0.9em; line-height:1.4em;"><code style="white-space:pre-wrap;">{{block type="core/template" template="luigifab/apijs/demo.phtml"}}
 &lt;block type="core/template" template="luigifab/apijs/demo.phtml" /&gt;
 &lt;?php echo $this->getLayout()->createBlock('core/template')->setTemplate('luigifab/apijs/demo.phtml')->toHtml() ?&gt;
 </code></pre>
@@ -99,7 +102,7 @@ if (is_dir($mediaDir)) {
 <p style="margin-top:1.2em;"><?php echo $this->__('Directories size:') ?></p>
 <ul style="list-style:none; line-height:110%;">
 	<li><?php echo $wysiwygDir ?> <b><?php echo $wysiwygSize ?></b></li>
-	<li><?php echo $mediaDir ?> <b><?php echo $mediaSize ?></b></li>
+	<li><?php echo $mediaDir ?> <b><?php echo $mediaSize ?></b> <?php echo $this->__('(without the cache)') ?></li>
 	<li><?php echo $cacheDir ?> <b><?php echo $cacheSize ?></b></li>
 </ul>
 

@@ -1,10 +1,9 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/22/05/2015
- * Version 6
+ * Updated M/08/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -27,9 +26,9 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 	public function __construct() {
 
 		parent::__construct();
+		$id = Mage::registry('current_product')->getId();
 
-		if ((Mage::getStoreConfig('apijs/general/backend') === '1') && (Mage::registry('current_product')->getId() > 0) &&
-		    ($this->getRequest()->getParam('old', false) === false))
+		if (Mage::getStoreConfigFlag('apijs/general/backend') && ($id > 0) && ($this->getRequest()->getParam('old', false) === false))
 			$this->setTemplate('luigifab/apijs/gallery.phtml');
 	}
 
@@ -37,15 +36,15 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 
 		$id = Mage::registry('current_product')->getId();
 
-		if ((Mage::getStoreConfig('apijs/general/backend') === '1') && ($id > 0)) {
+		if (Mage::getStoreConfigFlag('apijs/general/backend') && ($id > 0)) {
 
 			if ($this->getRequest()->getParam('old', false) === false) {
-				$url = $this->helper('apijs')->createDirectTabLink($id, true);
+				$url = $this->helper('apijs')->getDirectTabLink($id, true);
 				$text = $this->__('Back to Magento default gallery');
 			}
 			else {
-				$url = $this->helper('apijs')->createDirectTabLink($id);
-				$text = $this->__('Show the apijs gallery');
+				$url = $this->helper('apijs')->getDirectTabLink($id);
+				$text = $this->__('See the apijs gallery');
 			}
 
 			return '<a href="'.$url.'" class="apijslink">'.$text.'</a>'.parent::_toHtml();
@@ -56,28 +55,26 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 	}
 
 	public function getMaxSize() {
-		$max = max(intval(ini_get('upload_max_filesize')), intval(ini_get('post_max_size')));
+		$max = min(intval(ini_get('upload_max_filesize')), intval(ini_get('post_max_size')));
 		return ($max > 9) ? 9 : $max;
 	}
 
-	public function getAddUrl($productId) {
-		return $this->helper('adminhtml')->getUrl('*/apijs_media/uploadProduct', array(
-			'product' => $productId, 'form_key' => Mage::getSingleton('core/session')->getFormKey()));
+	public function getAddUrl($productId, $storeId) {
+		$key = Mage::getSingleton('core/session')->getFormKey();
+		return $this->getUrl('*/apijs_media/uploadProduct', array('product' => $productId, 'store' => $storeId, 'form_key' => $key));
 	}
 
 	public function getSaveUrl($productId, $storeId, $imageId) {
-		return $this->helper('adminhtml')->getUrl('*/apijs_media/save', array(
-			'product' => $productId, 'store' => $storeId, 'image' => $imageId, 'form_key' => Mage::getSingleton('core/session')->getFormKey()));
+		$key = Mage::getSingleton('core/session')->getFormKey();
+		return $this->getUrl('*/apijs_media/save', array('product' => $productId, 'image' => $imageId, 'store' => $storeId, 'form_key' => $key));
 	}
 
 	public function getDownloadUrl($productId, $imageId) {
-		return $this->helper('adminhtml')->getUrl('*/apijs_media/download', array(
-			'product' => $productId, 'image' => $imageId));
+		return $this->getUrl('*/apijs_media/download', array('product' => $productId, 'image' => $imageId));
 	}
 
 	public function getDeleteUrl($productId, $imageId) {
-		return $this->helper('adminhtml')->getUrl('*/apijs_media/delete', array(
-			'product' => $productId, 'image' => $imageId, 'form_key' => Mage::getSingleton('core/session')->getFormKey()));
+		return $this->getUrl('*/apijs_media/delete', array('product' => $productId, 'image' => $imageId));
 	}
 
 	public function getScopeLabel($attribute) {

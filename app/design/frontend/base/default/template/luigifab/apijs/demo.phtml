@@ -1,0 +1,36 @@
+<?php
+/**
+ * Created J/01/12/2011
+ * Updated M/08/11/2016
+ *
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * https://redmine.luigifab.info/projects/magento/wiki/apijs
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+
+$link1 = 'href="http://www.luigifab.info/apijs/index.php" onclick="window.open(this.href); return false;"';
+$link2 = 'href="https://redmine.luigifab.info/projects/magento/wiki/apijs" onclick="window.open(this.href); return false;"';
+$link3 = 'href="https://redmine.luigifab.info/projects/apijs/wiki" onclick="window.open(this.href); return false;"';
+?>
+
+<ul style="padding:1em; border:1px solid gray; background-color:#CCC; list-style:none;">
+	<li><?php echo $this->__('Documentation: <a %s>apijs</a>, <a %s>module</a>, <a %s>translation</a>', $link1, $link2, $link3) ?></li>
+	<li><?php echo $this->__('Version:'),' <strong>',$this->helper('apijs')->getVersion(),'</strong>' ?></li>
+	<li><?php echo $this->__('State:'),' <strong>',$this->helper('apijs')->getStatus('frontend'),'</strong>' ?></li>
+	<?php if (Mage::getStoreConfigFlag('apijs/general/frontend')): ?>
+		<li>
+			<?php echo $this->__('Examples:') ?>
+			<button onclick="apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>');" type="button">1</button>
+			<button onclick="apijs.dialog.dialogInformation('<?php echo $this->__('Surprise!') ?>','[p]<?php echo addslashes($this->__('You are looking this video without proprietary extension thanks to the new [em]video[/em] tag included in the [strong]HTML 5[/strong] language.')) ?>[/p][p]<?php echo addslashes($this->__('Website: %s', '[a href=\'http://www.luigifab.info/\' class=\'popup\']www.luigifab.info[/a]')) ?>[/p]');" type="button">2</button>
+		</li>
+	<?php endif ?>
+</ul>

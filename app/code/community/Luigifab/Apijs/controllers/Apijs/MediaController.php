@@ -1,10 +1,9 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated S/06/06/2015
- * Version 7
+ * Updated M/08/11/2016
  *
- * Copyright 2008-2015 | Fabrice Creuzot (luigifab) <code~luigifab~info>
+ * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
  * https://redmine.luigifab.info/projects/magento/wiki/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -29,17 +28,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 		// désactivation des tampons
 		// en Ajax uniquement car cela permet d'afficher 100% dans la barre de progression, voir http://stackoverflow.com/a/25835968
 		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
-
 			header('Content-Encoding: chunked', true);
 			header('Content-Type: text/plain; charset=utf-8', true);
 			header('Cache-Control: no-cache, must-revalidate', true);
-			header('Pragma: no-cache', true);
-
 			ini_set('output_buffering', false);
 			ini_set('implicit_flush', true);
 			ob_implicit_flush(true);
 			sleep(2);
-
 			try {
 				for ($i = 0; $i < ob_get_level(); $i++)
 					ob_end_clean();
@@ -57,7 +52,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 			$uploader->setAllowRenameFiles(true);
 			$uploader->setFilesDispersion(false);
 
-			$file = $uploader->save(Mage::getModel('cms/wysiwyg_images_storage')->getSession()->getCurrentPath());
+			$file = $uploader->save(Mage::getSingleton('cms/wysiwyg_images_storage')->getSession()->getCurrentPath());
 			$result = 'success-'.array_pop($file); // Array ( => 20100724-152008.jpg => image/jpeg => /tmp/php1EUOZr => 0 => 1141633 => /media/documents/internet/www/sites/14/web/media/catalog/product => /2/0/20100724-152008.jpg )
 		}
 		catch (Exception $e) {
@@ -67,14 +62,14 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 		// texte en Ajax (avec exit(0) sinon HEADERS ALREADY SENT)
 		// ou redirection vers le bon onglet
 		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
-			sleep(3);
+			sleep(2);
 			echo $result;
 			exit(0);
 		}
 		else {
 			if (strpos($result, 'success-') !== 0)
 				Mage::getSingleton('adminhtml/session')->addError($result);
-			$this->_redirect('*//', array('' => 0));
+			$this->_redirect('*/*/', array('' => 0));
 		}
 	}
 
@@ -85,17 +80,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 		// désactivation des tampons
 		// en Ajax uniquement car cela permet d'afficher 100% dans la barre de progression, voir http://stackoverflow.com/a/25835968
 		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
-
 			header('Content-Encoding: chunked', true);
 			header('Content-Type: text/plain; charset=utf-8', true);
 			header('Cache-Control: no-cache, must-revalidate', true);
-			header('Pragma: no-cache', true);
-
 			ini_set('output_buffering', false);
 			ini_set('implicit_flush', true);
 			ob_implicit_flush(true);
 			sleep(2);
-
 			try {
 				for ($i = 0; $i < ob_get_level(); $i++)
 					ob_end_clean();
@@ -120,23 +111,22 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 			$file = $uploader->save(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath());
 			$file = array_pop($file); // Array ( => 20100724-152008.jpg => image/jpeg => /tmp/php1EUOZr => 0 => 1141633 => /media/documents/internet/www/sites/14/web/media/catalog/product => /2/0/20100724-152008.jpg )
 
-			// FUCK OFF! no model = direct sql
 			// enregistre le fichier dans la base de données
 			$resource = Mage::getSingleton('core/resource');
 			$write = $resource->getConnection('core_write');
 
-			$write->query('
-				INSERT INTO '.$resource->getTableName('catalog_product_entity_media_gallery').' (attribute_id, entity_id, value)
-				VALUES ('.intval(Mage::getResourceModel('eav/entity_attribute')->getIdByCode('catalog_product', 'media_gallery')).',
-				        '.$productId.', "'.$file.'")
-			');
-
-			$write->query('
-				INSERT INTO '.$resource->getTableName('catalog_product_entity_media_gallery_value').' (value_id, store_id, position, disabled)
-				VALUES ('.$write->lastInsertId().', 0, (
-					SELECT COUNT(*) AS nb FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE entity_id = '.$productId.'
-				), 0)
-			');
+			$write->query(
+				'INSERT INTO '.$resource->getTableName('catalog_product_entity_media_gallery').'
+					(attribute_id, entity_id, value) VALUES (?, ?, ?)',
+				array(Mage::getResourceModel('eav/entity_attribute')->getIdByCode('catalog_product', 'media_gallery'), $productId, $file)
+			);
+			$write->query(
+				'INSERT INTO '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
+					(value_id, store_id, position, disabled) VALUES (?, 0, (
+						SELECT COUNT(*) AS nb FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE entity_id = ?
+					), 0)',
+				array($write->lastInsertId(), $productId)
+			);
 
 			// attribution de l'image par défaut
 			// utilise le nouveau fichier si aucune image n'est sélectionnée
@@ -145,14 +135,15 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 				if (in_array($product->getData($attribute->getAttributeCode()), array('no_selection', '')))
 					$product->setData($attribute->getAttributeCode(), $file);
 			}
-			$product->save();
+			if ($product->hasDataChanges())
+				$product->save();
 
 			// à partir de Magento 1.8
 			// rafraichi le cache des blocs HTML
-			if (version_compare(Mage::getVersion(), '1.8.0', '>='))
+			if (version_compare(Mage::getVersion(), '1.8', '>='))
 				Mage::app()->getCacheInstance()->cleanType('block_html');
 
-			$result = Mage::helper('apijs')->renderBlock($product);
+			$result = Mage::helper('apijs')->renderGalleryBlock($product);
 		}
 		catch (Exception $e) {
 			$result = $e->getMessage();
@@ -161,13 +152,14 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 		// texte en Ajax (avec exit(0) sinon HEADERS ALREADY SENT)
 		// ou redirection vers le bon onglet
 		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
+			sleep(2);
 			echo $result;
 			exit(0);
 		}
 		else {
 			if (strpos($result, 'success-') !== 0)
 				Mage::getSingleton('adminhtml/session')->addError($result);
-			$this->_redirectUrl(Mage::helper('apijs')->createDirectTabLink($productId));
+			$this->_redirectUrl(Mage::helper('apijs')->getDirectTabLink($productId));
 		}
 	}
 
@@ -179,24 +171,29 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 
 		$this->getResponse()->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
 		$this->getResponse()->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
-		$this->getResponse()->setHeader('Pragma', 'no-cache', true);
 
 		try {
-			// FUCK OFF! no model = direct sql
 			// met à jour la description, la position et l'état du fichier
 			$resource = Mage::getSingleton('core/resource');
 			$write = $resource->getConnection('core_write');
 			$read = $resource->getConnection('core_read');
 
 			if ($storeId > 0) {
-				$write->query('INSERT IGNORE INTO '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-					VALUES ('.$imageId.', '.$storeId.', "", 0, 0)');
-
-				$write->query('UPDATE '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-					SET label = "'.$this->getRequest()->getPost('label', '').'",
-					    position = '.intval($this->getRequest()->getPost('position', 0)).',
-					    disabled = '.intval($this->getRequest()->getPost('disabled', 0)).'
-					WHERE value_id = '.$imageId.' AND store_id = '.$storeId);
+				$write->query(
+					'INSERT IGNORE INTO '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
+						VALUES (?, ?, "", 0, 0)',
+					array($imageId, $storeId)
+				);
+				$write->query(
+					'UPDATE '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
+						SET label = ?, position = ?, disabled = ? WHERE value_id = ? AND store_id = ?',
+					array(
+						$this->getRequest()->getPost('label', ''),
+						intval($this->getRequest()->getPost('position', 0)),
+						intval($this->getRequest()->getPost('disabled', 0)),
+						$imageId, $storeId
+					)
+				);
 
 				// CECI NE FONCTIONNE PAS (Magento 1.4 et 1.9)
 				// en effet, le product->save un peu plus loin réajoute les valeurs, même pour les autres images du produit
@@ -208,32 +205,37 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 				//	FROM '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
 				//	WHERE value_id = '.$imageId.' AND store_id = '.$storeId);
 				//
-				//if (implode($default) == implode($current))
+				//if (implode($default) === implode($current))
 				//	$write->query('DELETE FROM '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
 				//		WHERE value_id = '.$imageId.' AND store_id = '.$storeId);
 			}
 			else {
-				$write->query('UPDATE '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-					SET label = "'.$this->getRequest()->getPost('label', '').'",
-					    position = '.intval($this->getRequest()->getPost('position', 0)).',
-					    disabled = '.intval($this->getRequest()->getPost('disabled', 0)).'
-					WHERE value_id = '.$imageId.' AND store_id = 0');
+				$write->query(
+					'UPDATE '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
+						SET label = ?, position = ?, disabled = ? WHERE value_id = ? AND store_id = ?',
+					array(
+						$this->getRequest()->getPost('label', ''),
+						intval($this->getRequest()->getPost('position', 0)),
+						intval($this->getRequest()->getPost('disabled', 0)),
+						$imageId, $storeId
+					)
+				);
 			}
 
 			// attribution de l'image par défaut
 			// commence par rechercher le nom du fichier
-			// input type radio coché = true via encodeURIComponent(elems[elem].checked)=true/false
+			// input type radio coché=true via encodeURIComponent(elems[elem].checked)=true/false
 			$product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($productId);
-			$new = $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE value_id = '.$imageId);
 			foreach ($product->getMediaAttributes() as $attribute) {
-				if ($this->getRequest()->getPost($attribute->getAttributeCode(), 'false') == 'true')
-					$product->setData($attribute->getAttributeCode(), $new);
+				if ($this->getRequest()->getPost($attribute->getAttributeCode(), 'false') === 'true')
+					$product->setData($attribute->getAttributeCode(), $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE value_id = '.$imageId));
 			}
-			$product->save();
+			if ($product->hasDataChanges())
+				$product->save();
 
 			// à partir de Magento 1.8
 			// rafraichi le cache des blocs HTML
-			if (version_compare(Mage::getVersion(), '1.8.0', '>='))
+			if (version_compare(Mage::getVersion(), '1.8', '>='))
 				Mage::app()->getCacheInstance()->cleanType('block_html');
 
 			$this->getResponse()->setBody('success-'.$imageId);
@@ -252,13 +254,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 			if (($productId < 1) || ($imageId < 1))
 				Mage::throwException('Invalid product or attachment id!');
 
-			// FUCK OFF! no model = direct sql
 			// recherche le nom du fichier avant de le supprimer dans la base de données
 			$resource = Mage::getSingleton('core/resource');
 			$write = $resource->getConnection('core_write');
 			$read = $resource->getConnection('core_read');
 
-			$file = $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE value_id = '.$imageId);
+			$file = $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').
+				' WHERE value_id = '.$imageId);
 			$file = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().$file;
 
 			if (!is_file($file))
@@ -268,7 +270,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 		}
 		catch (Exception $e) {
 			Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
-			$this->_redirectUrl(Mage::helper('apijs')->createDirectTabLink($productId));
+			$this->_redirectUrl(Mage::helper('apijs')->getDirectTabLink($productId));
 		}
 	}
 
@@ -279,19 +281,18 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 
 		$this->getResponse()->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
 		$this->getResponse()->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
-		$this->getResponse()->setHeader('Pragma', 'no-cache', true);
 
 		try {
 			if (($productId < 1) || ($imageId < 1))
 				Mage::throwException('Invalid product or attachment id!');
 
-			// FUCK OFF! no model = direct sql
 			// recherche le nom du fichier avant de le supprimer dans la base de données
 			$resource = Mage::getSingleton('core/resource');
 			$write = $resource->getConnection('core_write');
 			$read = $resource->getConnection('core_read');
 
-			$file = $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE value_id = '.$imageId);
+			$file = $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').
+				' WHERE value_id = '.$imageId);
 			$filename = basename($file);
 
 			if ((strlen($file) < 2) || (strlen($filename) < 2))
@@ -305,26 +306,28 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Act
 			$product = Mage::getModel('catalog/product')->load($productId);
 			$new = (count($product->getMediaGalleryImages()) > 0) ? $product->getMediaGalleryImages()->getFirstItem()->getFile() : 'no_selection';
 			foreach ($product->getMediaAttributes() as $attribute) {
-				if ($product->getData($attribute->getAttributeCode()) == $file)
+				if ($product->getData($attribute->getAttributeCode()) === $file)
 					$product->setData($attribute->getAttributeCode(), $new);
 			}
-			$product->save();
+			if ($product->hasDataChanges())
+				$product->save();
 
 			// suppression des fichiers
 			// recherche tous les fichiers avec la commande find
 			// uniquement si le nom du fichier contient des caractères simples
 			// preg_match() retourne 1 si le pattern fourni correspond, 0 s'il ne correspond pas, ou FALSE si une erreur survient
-			if (preg_match('#^[a-z0-9_\-]+\.[a-z0-9]{3,5}$#i', $filename) === 1) {
-				Mage::log('Removing all '.$filename.' images with system(find...) for product '.$productId, Zend_Log::INFO);
-				system('find '.Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().' -name '.$filename.' | xargs rm');
+			if (Mage::getStoreConfigFlag('apijs/general/delete_cache') && (preg_match('#^[a-z0-9_\-]+\.[a-z0-9]{3,5}$#i', $filename) === 1)) {
+				Mage::log(sprintf('Removing all %s images with exec(find...) for product %d', $filename, $productId),
+					Zend_Log::INFO, 'apijs.log');
+				exec('find '.Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().' -name '.$filename.' | xargs rm');
 			}
 
-			// à partir de Magento 1.8
 			// rafraichi le cache des blocs HTML
-			if (version_compare(Mage::getVersion(), '1.8.0', '>='))
+			// à partir de Magento 1.8
+			if (version_compare(Mage::getVersion(), '1.8', '>='))
 				Mage::app()->getCacheInstance()->cleanType('block_html');
 
-			$this->getResponse()->setBody(Mage::helper('apijs')->renderBlock($product));
+			$this->getResponse()->setBody(Mage::helper('apijs')->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
 			$this->getResponse()->setBody($e->getMessage());
