@@ -1,10 +1,10 @@
 <?php
 /**
  * Created M/15/01/2013
- * Updated M/08/11/2016
+ * Updated D/26/01/2020
  *
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/magento/wiki/apijs
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/magento/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -23,77 +23,70 @@ class Luigifab_Apijs_Block_Rewrite_Media extends Mage_Catalog_Block_Product_View
 		$this->setModuleName('Mage_Catalog');
 	}
 
-	public function getBaseImage($images, $total) {
+	public function resizeImage(...$args) {
+		return $this->helper('apijs')->resizeImage($this->getProduct(), ...$args);
+	}
 
-		$product = $this->getProduct();
-		$this->setDefaultFile($product->getImage());
+	public function getBaseImage($images, $total, $id = 0) {
 
-		$mainWidth  = intval(Mage::getStoreConfig('apijs/gallery/picture_width'));
-		$mainHeight = intval(Mage::getStoreConfig('apijs/gallery/picture_height'));
+		$this->setData('default_file', $this->getProduct()->getData('image'));
+
+		$bWidth  = (int) Mage::getStoreConfig('apijs/gallery/picture_width');
+		$bHeight = (int) Mage::getStoreConfig('apijs/gallery/picture_height');
+		$class   = '';
 
 		// utilise l'image sélectionnée en tant qu'image de base (si l'image existe encore)
-		$id = 0;
 		foreach ($images as $image) {
-
-			if ($image->getFile() === $this->getDefaultFile()) {
+			if ($image->getData('file') == $this->getData('default_file')) {
 				$class = ($id > 0) ? 'class="slideshow.0.'.$id.'"' : '';
-				$label = $this->htmlEscape($image->getLabel());
-				$file  = $image->getPath();
+				$path  = $image->getData('file');
+				$file  = $this->helper('apijs')->getCatalogProductImageDir().$path;
+				$label = $this->helper('apijs')->escapeEntities($image->getData('label'), true);
 				break;
 			}
-			else {
-				$id++;
-			}
+			$id++;
 		}
 
 		// utilise la première image existante en tant qu'image de base
 		// si l'image sélectionnée en tant qu'image de base n'existe plus
-		if (!empty($images) && !isset($file)) {
-
-			$image = $images[0]; // NO: array_shift($images);
-			$this->setDefaultFile($image->getFile());
-
-			$id = 0;
-			$class = '';
-			$label = $this->htmlEscape($image->getLabel());
-			$file  = $image->getPath();
+		if (!empty($images) && empty($path)) {
+			$image = $images[0];
+			$path  = $image->getData('file');
+			$file  = $this->helper('apijs')->getCatalogProductImageDir().$path;
+			$label = $this->helper('apijs')->escapeEntities($image->getData('label'), true);
+			$this->setData('default_file', $path);
 		}
 
-		// <img>
+		// <img src srcset>
 		// l'image de l'image = une miniature en cache
 		// utilise l'image par défaut en tant qu'image de base si aucune image n'existe
 		// utilise l'image par défaut en tant qu'image de base si le produit n'a pas d'image
-		if (empty($images) || !isset($file)) {
-			$ressource = $this->helper('catalog/image')->init($product, 'small_image', $this->getDefaultFile())->resize($mainWidth, $mainHeight);
-			return '<img src="'.$ressource.'" width="'.$mainWidth.'" height="'.$mainHeight.'" alt="" />';
+		if (empty($images) || empty($path)) {
+			$img1 = $this->resizeImage('image', $this->getData('default_file'), $bWidth, $bHeight);
+			$img2 = $this->resizeImage('image', $this->getData('default_file'), $bWidth * 2, $bHeight * 2);
+			return '<img src="'.$img1.'" srcset="'.$img2.' 2x" width="'.$bWidth.'" height="'.$bHeight.'" alt="" />';
 		}
 
-		// redimensionne l'image si l'image dépasse 1200x900 px
-		// ne fait rien dans les autres cas (utilise l'image source)
-		$ressource = $this->helper('catalog/image')->init($product, 'image', $image->getFile());
-		list($width, $height) = getimagesize($file);
-
-		if ($width > 1200)
-			$ressource->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)->resize(1200, null);
-		else if ($height > 900)
-			$ressource->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)->resize(null, 900);
-
-		// <a> <img> id=0.999 [class=0.$id si l'image de base n'est pas la première image)
+		// <a> <img src srcset> id=0.99999
 		// l'image du lien = une image redimensionnée en cache
 		// l'image de l'image = une miniature en cache (main)
 		if ($total > 1) {
-			$data  = '<a href="'.$ressource.'" type="'.mime_content_type($file).'" title="'.$label.'" onclick="return false;" '.$class.' id="slideshow.0.999">';
-			$ressource = $this->helper('catalog/image')->init($product, 'small_image', $image->getFile())->resize($mainWidth, $mainHeight);
-			$data .=  '<img src="'.$ressource.'" width="'.$mainWidth.'" height="'.$mainHeight.'" alt="'.$label.'" />';
+			$img0  = $this->resizeImage('image', $path, 1200, 900, true);
+			$data  = '<a href="'.$img0.'" type="'.mime_content_type($file).'" title="'.$label.'" onclick="return false" '.$class.' id="slideshow.0.99999">';
+			$img1  = $this->resizeImage('image', $path, $bWidth, $bHeight);
+			$img2  = $this->resizeImage('image', $path, $bWidth * 2, $bHeight * 2);
+			$data .=  '<img src="'.$img1.'" srcset="'.$img2.' 2x" width="'.$bWidth.'" height="'.$bHeight.'" alt="'.$label.'" />';
 			$data .= '</a>';
 		}
-		// <a> <img> <input> id=0.0
+		// <a> <img src srcset> <input> id=0.0
 		// l'image du lien = une image redimensionnée en cache
 		// l'image de l'image = une miniature en cache (main)
 		else {
-			$data  = '<a href="'.$ressource.'" type="'.mime_content_type($file).'" title="'.$label.'" onclick="return false;" id="slideshow.0.0">';
-			$ressource = $this->helper('catalog/image')->init($product, 'small_image', $image->getFile())->resize($mainWidth, $mainHeight);
-			$data .=  '<img src="'.$ressource.'" width="'.$mainWidth.'" height="'.$mainHeight.'" alt="'.$label.'" />';
+			$img0  = $this->resizeImage('image', $path, 1200, 900, true);
+			$data  = '<a href="'.$img0.'" type="'.mime_content_type($file).'" title="'.$label.'" onclick="return false" id="slideshow.0.0">';
+			$img1  = $this->resizeImage('image', $path, $bWidth, $bHeight);
+			$img2  = $this->resizeImage('image', $path, $bWidth * 2, $bHeight * 2);
+			$data .=  '<img src="'.$img1.'" srcset="'.$img2.' 2x" width="'.$bWidth.'" height="'.$bHeight.'" alt="'.$label.'" />';
 			$data .=  '<input type="hidden" value="false|false|'.$label.'" />';
 			$data .= '</a>';
 		}
@@ -103,35 +96,28 @@ class Luigifab_Apijs_Block_Rewrite_Media extends Mage_Catalog_Block_Product_View
 
 	public function getThumbnail($image, $id) {
 
-		$thumbWidth  = intval(Mage::getStoreConfig('apijs/gallery/thumbnail_width'));
-		$thumbHeight = intval(Mage::getStoreConfig('apijs/gallery/thumbnail_height'));
-		$mainWidth   = intval(Mage::getStoreConfig('apijs/gallery/picture_width'));
-		$mainHeight  = intval(Mage::getStoreConfig('apijs/gallery/picture_height'));
+		$tWidth  = (int) Mage::getStoreConfig('apijs/gallery/thumbnail_width');
+		$tHeight = (int) Mage::getStoreConfig('apijs/gallery/thumbnail_height');
+		$bWidth  = (int) Mage::getStoreConfig('apijs/gallery/picture_width');
+		$bHeight = (int) Mage::getStoreConfig('apijs/gallery/picture_height');
 
-		$product = $this->getProduct();
-		$class = ($image->getFile() === $this->getDefaultFile()) ? 'class="current"' : '';
-		$label = $this->htmlEscape($image->getLabel());
-		$file  = $image->getPath();
+		$path  = $image->getData('file');
+		$file  = $this->helper('apijs')->getCatalogProductImageDir().$path;
+		$label = $this->helper('apijs')->escapeEntities($image->getData('label'), true);
+		$class = ($path == $this->getData('default_file')) ? 'class="current"' : '';
 
-		// redimensionne l'image si l'image dépasse 1200x900 px
-		// ne fait rien dans les autres cas (utilise l'image source)
-		$ressource = $this->helper('catalog/image')->init($product, 'image', $image->getFile());
-		list($width, $height) = getimagesize($file);
-
-		if ($width > 1200)
-			$ressource->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)->resize(1200, null);
-		else if ($height > 900)
-			$ressource->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)->resize(null, 900);
-
-		// <a> <img> <input> id=0.$id
+		// <a> <img src srcset> <input> id=0.$id
 		// l'image du lien = une image redimensionnée en cache
 		// l'image de l'image = une petite miniature en cache (thumb)
 		// l'image de l'input = une miniature en cache (main)
-		$data  = '<a href="'.$ressource.'" type="'.mime_content_type($file).'" onclick="return false;" '.$class.' id="slideshow.0.'.$id.'">';
-		$ressource = $this->helper('catalog/image')->init($product, 'thumbnail', $image->getFile())->resize($thumbWidth, $thumbHeight);
-		$data .=  '<img src="'.$ressource.'" width="'.$thumbWidth.'" height="'.$thumbHeight.'" alt="'.$label.'" />';
-		$ressource = $this->helper('catalog/image')->init($product, 'small_image', $image->getFile())->resize($mainWidth, $mainHeight);
-		$data .=  '<input type="hidden" value="'.$ressource.'|false|false|'.$label.'" />';
+		$img0  = $this->resizeImage('image', $path, 1200, 900, true);
+		$data  = '<a href="'.$img0.'" type="'.mime_content_type($file).'" onclick="return false" '.$class.' id="slideshow.0.'.$id.'">';
+		$img1  = $this->resizeImage('thumbnail', $path, $tWidth, $tHeight);
+		$img2  = $this->resizeImage('thumbnail', $path, $tWidth * 2, $tHeight * 2);
+		$data .=  '<img src="'.$img1.'" srcset="'.$img2.' 2x" width="'.$tWidth.'" height="'.$tHeight.'" alt="'.$label.'" />';
+		$img1  = $this->resizeImage('image', $path, $bWidth, $bHeight);
+		$img2  = $this->resizeImage('image', $path, $bWidth * 2, $bHeight * 2);
+		$data .=  '<input type="hidden" value="'.$img1.';'.$img2.' 2x|false|false|'.$label.'" />';
 		$data .= '</a>';
 
 		return $data;

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated M/08/11/2016
+ * Updated S/01/02/2020
  *
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/magento/wiki/apijs
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/magento/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>5.3.0</version>
+			<version>6.0.0</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -30,8 +30,8 @@
 			</apijs>
 			<adminhtml>
 				<rewrite>
-					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Field</system_config_form_field_image>
-					<cms_wysiwyg_images_content_uploader>Luigifab_Apijs_Block_Adminhtml_Rewrite_Uploader</cms_wysiwyg_images_content_uploader>
+					<cms_wysiwyg_images_tree>Luigifab_Apijs_Block_Adminhtml_Rewrite_Tree</cms_wysiwyg_images_tree>
+					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Config</system_config_form_field_image>
 					<catalog_product_helper_form_gallery_content>Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery</catalog_product_helper_form_gallery_content>
 				</rewrite>
 			</adminhtml>
@@ -45,24 +45,42 @@
 			<apijs>
 				<class>Luigifab_Apijs_Helper</class>
 			</apijs>
+			<catalog>
+				<rewrite>
+					<image>Luigifab_Apijs_Helper_Rewrite_Image</image>
+				</rewrite>
+			</catalog>
 		</helpers>
 		<models>
 			<apijs>
 				<class>Luigifab_Apijs_Model</class>
+				<adaptators>
+					<default>Varien_Image</default>
+				</adaptators>
 			</apijs>
+			<catalog>
+				<rewrite>
+					<product_attribute_backend_media>Luigifab_Apijs_Model_Rewrite_Media</product_attribute_backend_media>
+				</rewrite>
+			</catalog>
+			<catalog_resource>
+				<rewrite>
+					<product_attribute_backend_media>Luigifab_Apijs_Model_Rewrite_Mediares</product_attribute_backend_media>
+				</rewrite>
+			</catalog_resource>
 		</models>
+		<resources>
+			<apijs_setup>
+				<setup>
+					<module>Luigifab_Apijs</module>
+					<class>Mage_Eav_Model_Entity_Setup</class>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</apijs_setup>
+		</resources>
 	</global>
-	<admin>
-		<routers>
-			<adminhtml>
-				<args>
-					<modules>
-						<luigifab_apijs before="Mage_Adminhtml">Luigifab_Apijs</luigifab_apijs>
-					</modules>
-				</args>
-			</adminhtml>
-		</routers>
-	</admin>
 	<frontend>
 		<layout>
 			<updates>
@@ -81,16 +99,43 @@
 			</modules>
 		</translate>
 	</frontend>
+	<admin>
+		<routers>
+			<adminhtml>
+				<args>
+					<modules>
+						<Luigifab_Apijs before="Mage_Adminhtml">Luigifab_Apijs</Luigifab_Apijs>
+					</modules>
+				</args>
+			</adminhtml>
+		</routers>
+	</admin>
 	<adminhtml>
 		<events>
 			<catalog_product_delete_after_done>
 				<observers>
-					<apijs_delete>
+					<apijs_delete_image>
 						<class>apijs/observer</class>
 						<method>deleteProductFiles</method>
-					</apijs_delete>
+					</apijs_delete_image>
 				</observers>
 			</catalog_product_delete_after_done>
+			<controller_action_predispatch_adminhtml_apijs_media_save>
+				<observers>
+					<apijs_save_product>
+						<class>apijs/observer</class>
+						<method>updatePostForGallery</method>
+					</apijs_save_product>
+				</observers>
+			</controller_action_predispatch_adminhtml_apijs_media_save>
+			<controller_action_predispatch_adminhtml_catalog_product_save>
+				<observers>
+					<apijs_save_product>
+						<class>apijs/observer</class>
+						<method>updatePostForGallery</method>
+					</apijs_save_product>
+				</observers>
+			</controller_action_predispatch_adminhtml_catalog_product_save>
 		</events>
 		<layout>
 			<updates>
@@ -112,6 +157,7 @@
 	<default>
 		<apijs>
 			<general>
+				<type>Varien_Image</type>
 				<delete_cache>1</delete_cache>
 				<browser>1</browser>
 			</general>

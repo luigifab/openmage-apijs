@@ -1,8 +1,0 @@
-@charset "utf-8";
-/**
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/magento/wiki/apijs - 5.3.0
- * This program is free software, you can redistribute it or modify
- * it under the terms of the GNU General Public License (GPL).
- */
-#apijsBox{display:inline-block;text-align:left;font:.8rem sans-serif}#apijsBox button{font-family:sans-serif;font-weight:normal}#apijsBox .left,#apijsBox .right{float:inherit !important}#apijsBox.error,#apijsBox .error,#apijsBox .required,#apijsBox .validation-advice{font-weight:normal !important;color:black !important}#apijsBox.photo.loading,#apijsBox.video.loading{background-image:url("../../../images/luigifab/apijs/load.png")}@font-face{src:url("../../../fonts/luigifab/apijs/fontello.woff2") format("woff2"),url("../../../fonts/luigifab/apijs/fontello.woff") format("woff");font-family:apijsFontelloMagento;font-weight:normal;font-style:normal}#apijsBox h1:before,#apijsBox div.control button:before,#apijsBox kbd:before,#apijsBox dl.media dt span:before{font-family:apijsFontelloMagento}div.notification-global.notification-global-apijs{padding:.5em 1em .4em;color:white;background-color:red}div.notification-global.notification-global-apijs a{color:white;text-decoration:underline}div.notification-global.notification-global-apijs em{display:block}

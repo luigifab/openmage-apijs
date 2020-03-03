@@ -1,0 +1,40 @@
+/**
+ * Created D/15/12/2013
+ * Updated S/01/02/2020
+ *
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/magento/apijs
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
+#apijsBox { font:0.8rem sans-serif; }
+#apijsBox.error { font-weight:normal !important; color:black !important; }
+#apijsBox.photo.error, #apijsBox.video.error { background-image:url("../../../images/luigifab/apijs/tv.gif"); }
+
+#apijsBox button { font-family:sans-serif; font-weight:400; background-image:none; }
+#apijsBox button.cancel span, #apijsBox button.delete span { background:none; }
+
+#apijsBox .left, #apijsBox .right, #apijsBox button :before { float:inherit !important; }
+
+@font-face {
+	/* apijsFontelloMagento sinon erreur 404, voir https://stackoverflow.com/a/35034674 */
+	src:url("../../../fonts/luigifab/apijs/fontello.woff2") format("woff2"), url("../../../fonts/luigifab/apijs/fontello.woff") format("woff");
+	font-family:apijsFontelloMagento; font-weight:400; font-style:normal;
+}
+
+#apijsBox h1:before, #apijsBox div.btns button span:before, #apijsBox kbd:before { font-family:apijsFontelloMagento; }
+
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& navigateur &&& */
+div.notification-global.notification-global-apijs { padding:0.5em 1em 0.4em; color:white; background-color:red; }
+div.notification-global.notification-global-apijs a { color:white; text-decoration:underline; }
+div.notification-global.notification-global-apijs em { display:block; }

@@ -1,8 +1,0 @@
-@charset "utf-8";
-/**
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * http://www.luigifab.info/apijs - toujours plus toujours mieux - 5.3.0
- * This program is free software, you can redistribute it or modify
- * it under the terms of the GNU General Public License (GPL).
- */
-div.gallery,div.album{font-size:.85em}div.gallery a:after,div.album a:after{display:none}div.gallery img,div.album img{display:block;overflow:hidden;font-size:.85em;line-height:130%;border:1px solid black}div.gallery{display:inline-block}div.gallery a{display:inline-block;text-decoration:none}div.gallery ul{margin:0;padding:0;list-style:none}div.gallery li{display:inline-block;margin:0;padding:0;vertical-align:middle}div.gallery li a{display:block;margin:.2em}div.gallery li a.current{border-color:gray}div.album{text-align:center}div.album dl{display:inline-block;margin:.5em .4em;vertical-align:top}div.album dt a{display:block;text-decoration:none}div.album dd{margin:.4em 0 0}#apijsDialog{display:none}

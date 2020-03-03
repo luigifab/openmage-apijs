@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created D/26/02/2012
- * Updated M/08/11/2016
+ * Updated D/09/02/2020
  *
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/magento/wiki/apijs
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/magento/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -18,24 +18,50 @@
 -->
 
 <config>
+	<menu>
+		<tools translate="title">
+			<title>Tools</title>
+			<sort_order>101</sort_order>
+			<children>
+				<configuration translate="title">
+					<title>Configuration</title>
+					<sort_order>1</sort_order>
+					<action>adminhtml/system_config</action>
+				</configuration>
+				<apijs translate="title">
+					<title>Media Storage</title>
+					<action>adminhtml/apijs_wysiwyg/index</action>
+					<sort_order>51</sort_order>
+				</apijs>
+			</children>
+		</tools>
+	</menu>
 	<acl>
 		<resources>
 			<admin>
 				<children>
+					<tools translate="title">
+						<title>Tools</title>
+						<sort_order>101</sort_order>
+						<children>
+							<configuration translate="title">
+								<title>Configuration</title>
+								<sort_order>1</sort_order>
+							</configuration>
+							<apijs translate="title">
+								<title>Media Storage</title>
+								<sort_order>51</sort_order>
+							</apijs>
+						</children>
+					</tools>
 					<system>
 						<children>
 							<config>
 								<children>
-									<!--luigifab>
-										<title>luigifab</title>
-										<sort_order>103</sort_order>
-										<children-->
-											<apijs translate="title">
-												<title>Dialogs boxes</title>
-												<sort_order>103051</sort_order>
-											</apijs>
-										<!--/children>
-									</luigifab-->
+									<apijs translate="title">
+										<title>Dialogs boxes</title>
+										<sort_order>103051</sort_order>
+									</apijs>
 								</children>
 							</config>
 						</children>

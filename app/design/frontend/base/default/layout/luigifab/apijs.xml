@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated M/08/11/2016
+ * Updated M/07/01/2020
  *
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/magento/wiki/apijs
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/magento/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -41,7 +41,7 @@
 			</action>
 		</reference>
 		<reference name="after_body_start">
-			<block type="core/template" template="luigifab/apijs/browser.phtml" name="apijs_browser" before="-" />
+			<block type="apijs/browser" template="luigifab/apijs/browser.phtml" name="apijs_browser" before="-" />
 		</reference>
 	</default>
 
@@ -49,6 +49,7 @@
 		<reference name="product.info.media">
 			<action method="setTemplate" ifconfig="apijs/gallery/enabled">
 				<template>luigifab/apijs/media.phtml</template>
+				<old>catalog/product/view/media.phtml</old>
 			</action>
 		</reference>
 	</catalog_product_view>

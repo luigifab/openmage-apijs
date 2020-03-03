@@ -1,10 +1,11 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated M/08/11/2016
+ * Updated S/01/02/2020
  *
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/magento/wiki/apijs
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
+ * https://www.luigifab.fr/magento/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -17,320 +18,294 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Controller_Action {
+require_once(Mage::getModuleDir('controllers', 'Mage_Adminhtml').'/Catalog/ProductController.php');
 
-	protected function _isAllowed() {
-		return Mage::getSingleton('admin/session')->isAllowed('catalog/products');
+class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_ProductController {
+
+	private function disableAllBuffer() {
+
+		// désactivation des tampons
+		// cela permet d'afficher 100% dans la barre de progression
+		// https://stackoverflow.com/a/25835968
+		header('Content-Encoding: chunked');
+		header('Content-Type: text/plain; charset=utf-8');
+		header('Cache-Control: no-cache, must-revalidate');
+		ini_set('output_buffering', 0);
+		ini_set('implicit_flush', 1);
+		ob_implicit_flush(true);
+
+		try {
+			for ($i = 0; $i < ob_get_level(); $i++)
+				ob_end_clean();
+		}
+		catch (Exception $e) { }
+
+		echo ' ';
+	}
+
+	private function formatResult($success, $errors, $data) {
+
+		$result = ['html' => $data];
+
+		if (!empty($errors) && empty($success))
+			$result['bbcode'] = sprintf('[p]%s[/p][ul][li]%s[/li][/ul]',
+				$this->__('[strong]Warning[/strong], no files were saved:'),
+				implode('[/li][li]', $errors));
+		else if (!empty($errors))
+			$result['bbcode'] = sprintf('[p]%s[/p][ul][li]%s[/li][/ul][p]%s[/p][ul][li]%s[/li][/ul]',
+				(count($errors) > 1) ? $this->__('[strong]Warning[/strong], the following files were not saved:') :
+					$this->__('[strong]Warning[/strong], the following file was not saved:'),
+				implode('[/li][li]', $errors),
+				(count($success) > 1) ? $this->__('[strong]However[/strong], the following files were successfully saved:') :
+					$this->__('[strong]However[/strong], the following file was successfully saved:'),
+				implode('[/li][li]', $success));
+
+		return 'success-'.json_encode($result);
 	}
 
 	public function uploadWidgetAction() {
 
-		// désactivation des tampons
-		// en Ajax uniquement car cela permet d'afficher 100% dans la barre de progression, voir http://stackoverflow.com/a/25835968
-		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
-			header('Content-Encoding: chunked', true);
-			header('Content-Type: text/plain; charset=utf-8', true);
-			header('Cache-Control: no-cache, must-revalidate', true);
-			ini_set('output_buffering', false);
-			ini_set('implicit_flush', true);
-			ob_implicit_flush(true);
-			sleep(2);
-			try {
-				for ($i = 0; $i < ob_get_level(); $i++)
-					ob_end_clean();
-			}
-			catch (Exception $e) { }
-			echo ' ';
-		}
+		$this->setUsedModuleName('Luigifab_Apijs');
+		$this->disableAllBuffer();
 
-		// traitement du fichier
-		// la classe à l'international
+		$success = $errors = [];
+
 		try {
-			// sauvegarde du fichier
-			$uploader = new Varien_File_Uploader('myimage');
-			$uploader->setAllowedExtensions(array('jpg','jpeg','gif','png'));
-			$uploader->setAllowRenameFiles(true);
-			$uploader->setFilesDispersion(false);
+			if (empty($_FILES))
+				Mage::throwException('No files uploaded.');
 
-			$file = $uploader->save(Mage::getSingleton('cms/wysiwyg_images_storage')->getSession()->getCurrentPath());
-			$result = 'success-'.array_pop($file); // Array ( => 20100724-152008.jpg => image/jpeg => /tmp/php1EUOZr => 0 => 1141633 => /media/documents/internet/www/sites/14/web/media/catalog/product => /2/0/20100724-152008.jpg )
+			// sauvegarde du ou des fichiers
+			$keys = array_keys($_FILES);
+			foreach ($keys as $key) {
+
+				try {
+					$uploader = new Varien_File_Uploader($key);
+					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png']);
+					$uploader->setAllowRenameFiles(true);
+					$uploader->setFilesDispersion(false);
+					$uploader->addValidateCallback(Mage_Core_Model_File_Validator_Image::NAME,
+						Mage::getModel('core/file_validator_image'), 'validate');
+
+					$filepath = $uploader->save(Mage::getSingleton('cms/wysiwyg_images_storage')->getSession()->getCurrentPath());
+					$filepath = array_pop($filepath);
+
+					$success[] = $filepath;
+				}
+				catch (Exception $e) {
+					$errors[] = $e->getMessage();
+				}
+			}
+
+			// retour
+			$result = $this->formatResult($success, $errors, 'ok');
 		}
 		catch (Exception $e) {
 			$result = $e->getMessage();
 		}
 
-		// texte en Ajax (avec exit(0) sinon HEADERS ALREADY SENT)
-		// ou redirection vers le bon onglet
-		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
-			sleep(2);
-			echo $result;
-			exit(0);
-		}
-		else {
-			if (strpos($result, 'success-') !== 0)
-				Mage::getSingleton('adminhtml/session')->addError($result);
-			$this->_redirect('*/*/', array('' => 0));
-		}
+		sleep(1);
+		echo $result;
+		exit(0);
 	}
 
 	public function uploadProductAction() {
 
-		$productId = intval($this->getRequest()->getParam('product', 0));
+		$this->setUsedModuleName('Luigifab_Apijs');
+		$this->disableAllBuffer();
 
-		// désactivation des tampons
-		// en Ajax uniquement car cela permet d'afficher 100% dans la barre de progression, voir http://stackoverflow.com/a/25835968
-		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
-			header('Content-Encoding: chunked', true);
-			header('Content-Type: text/plain; charset=utf-8', true);
-			header('Cache-Control: no-cache, must-revalidate', true);
-			ini_set('output_buffering', false);
-			ini_set('implicit_flush', true);
-			ob_implicit_flush(true);
-			sleep(2);
-			try {
-				for ($i = 0; $i < ob_get_level(); $i++)
-					ob_end_clean();
-			}
-			catch (Exception $e) { }
-			echo ' ';
-		}
+		$attribute = Mage::getResourceModel('eav/entity_attribute')->getIdByCode('catalog_product', 'media_gallery');
+		$productId = (int) $this->getRequest()->getParam('product', 0);
+		$storeId   = (int) $this->getRequest()->getParam('store', 0);
 
-		// traitement du fichier
-		// la classe à l'international
+		$database = Mage::getSingleton('core/resource');
+		$write = $database->getConnection('core_write');
+		$table = $database->getTableName('catalog_product_entity_media_gallery');
+
+		$success = $errors = [];
+
 		try {
-			if ($productId < 1)
-				Mage::throwException('Invalid product or attachment id!');
+			if (empty($productId))
+				Mage::throwException('Invalid product id.');
+			if (empty($_FILES))
+				Mage::throwException('No files uploaded.');
 
-			// sauvegarde du fichier
-			$uploader = new Varien_File_Uploader('myimage');
-			$uploader->setAllowedExtensions(array('jpg','jpeg','gif','png'));
-			$uploader->addValidateCallback('catalog_product_image', Mage::helper('catalog/image'), 'validateaction');
-			$uploader->setAllowRenameFiles(true);
-			$uploader->setFilesDispersion(true);
+			// sauvegarde du ou des fichiers
+			$keys = array_keys($_FILES);
+			foreach ($keys as $key) {
 
-			$file = $uploader->save(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath());
-			$file = array_pop($file); // Array ( => 20100724-152008.jpg => image/jpeg => /tmp/php1EUOZr => 0 => 1141633 => /media/documents/internet/www/sites/14/web/media/catalog/product => /2/0/20100724-152008.jpg )
+				try {
+					$uploader = new Varien_File_Uploader($key);
+					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png']);
+					$uploader->addValidateCallback('catalog_product_image', Mage::helper('catalog/image'), 'validateUploadFile');
+					$uploader->setAllowRenameFiles(true);
+					$uploader->setFilesDispersion(true);
+					$uploader->addValidateCallback(Mage_Core_Model_File_Validator_Image::NAME,
+						Mage::getModel('core/file_validator_image'), 'validate');
 
-			// enregistre le fichier dans la base de données
-			$resource = Mage::getSingleton('core/resource');
-			$write = $resource->getConnection('core_write');
+					$filepath = $uploader->save(Mage::helper('apijs')->getCatalogProductImageDir());
+					Mage::dispatchEvent('catalog_product_gallery_upload_image_after', ['result' => $filepath, 'action' => $this]);
+					$filepath = array_pop($filepath);
 
-			$write->query(
-				'INSERT INTO '.$resource->getTableName('catalog_product_entity_media_gallery').'
-					(attribute_id, entity_id, value) VALUES (?, ?, ?)',
-				array(Mage::getResourceModel('eav/entity_attribute')->getIdByCode('catalog_product', 'media_gallery'), $productId, $file)
-			);
-			$write->query(
-				'INSERT INTO '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-					(value_id, store_id, position, disabled) VALUES (?, 0, (
-						SELECT COUNT(*) AS nb FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE entity_id = ?
-					), 0)',
-				array($write->lastInsertId(), $productId)
-			);
+					$write->query(
+						'INSERT INTO '.$table.' (attribute_id, entity_id, value) VALUES (?, ?, ?)',
+						[$attribute, $productId, $filepath]
+					);
+					$write->query(
+						'INSERT INTO '.$database->getTableName('catalog_product_entity_media_gallery_value').'
+							(value_id, store_id, position, disabled) VALUES (?, 0, (
+								SELECT COUNT(entity_id) AS nb FROM '.$table.' WHERE entity_id = ?
+							), 0)',
+						[$write->lastInsertId(), $productId]
+					);
 
-			// attribution de l'image par défaut
-			// utilise le nouveau fichier si aucune image n'est sélectionnée
-			$product = Mage::getModel('catalog/product')->load($productId);
-			foreach ($product->getMediaAttributes() as $attribute) {
-				if (in_array($product->getData($attribute->getAttributeCode()), array('no_selection', '')))
-					$product->setData($attribute->getAttributeCode(), $file);
+					$success[] = $filepath;
+				}
+				catch (Exception $e) {
+					$errors[] = $e->getMessage();
+				}
 			}
-			if ($product->hasDataChanges())
+
+			// image par défaut
+			$product = Mage::getModel('catalog/product')->load($productId);
+
+			if (!empty($success) && !empty($product->getMediaGallery('images'))) {
+
+				$attributes = $product->getMediaAttributes();
+				foreach ($attributes as $code => $attribute) {
+					// si dans eav_attribute, attribute_model = xyz/source_xyz
+					// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
+					if (($attribute->getIsCheckbox() !== true) && empty($product->getData($code)))
+						$product->setData($code, $success[0]);
+				}
+
 				$product->save();
+			}
 
-			// à partir de Magento 1.8
-			// rafraichi le cache des blocs HTML
-			if (version_compare(Mage::getVersion(), '1.8', '>='))
-				Mage::app()->getCacheInstance()->cleanType('block_html');
+			if (!empty($storeId))
+				$product->setStoreId($storeId)->load($product->getId());
 
-			$result = Mage::helper('apijs')->renderGalleryBlock($product);
+			// html
+			Mage::app()->getCacheInstance()->cleanType('block_html');
+			$result = $this->formatResult($success, $errors, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
 			$result = $e->getMessage();
 		}
 
-		// texte en Ajax (avec exit(0) sinon HEADERS ALREADY SENT)
-		// ou redirection vers le bon onglet
-		if ($this->getRequest()->getParam('isAjax', false) && !$this->getRequest()->getParam('noAjax', false)) {
-			sleep(2);
-			echo $result;
-			exit(0);
-		}
-		else {
-			if (strpos($result, 'success-') !== 0)
-				Mage::getSingleton('adminhtml/session')->addError($result);
-			$this->_redirectUrl(Mage::helper('apijs')->getDirectTabLink($productId));
-		}
+		sleep(1);
+		echo $result;
+		exit(0);
 	}
 
 	public function saveAction() {
 
-		$productId = intval($this->getRequest()->getParam('product', 0));
-		$storeId = intval($this->getRequest()->getParam('store', 0));
-		$imageId = intval($this->getRequest()->getParam('image', 0));
-
+		$this->setUsedModuleName('Luigifab_Apijs');
 		$this->getResponse()->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
 		$this->getResponse()->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
 
+		$productId = (int) $this->getRequest()->getParam('product', 0);
+		$storeId   = (int) $this->getRequest()->getParam('store', 0);
+
 		try {
-			// met à jour la description, la position et l'état du fichier
-			$resource = Mage::getSingleton('core/resource');
-			$write = $resource->getConnection('core_write');
-			$read = $resource->getConnection('core_read');
+			if (empty($productId))
+				Mage::throwException('Invalid product id.');
+			if (empty($gallery = $this->getRequest()->getPost('media_gallery_apijs')) || !is_array($gallery))
+				Mage::throwException('No data sent.');
 
-			if ($storeId > 0) {
-				$write->query(
-					'INSERT IGNORE INTO '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-						VALUES (?, ?, "", 0, 0)',
-					array($imageId, $storeId)
-				);
-				$write->query(
-					'UPDATE '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-						SET label = ?, position = ?, disabled = ? WHERE value_id = ? AND store_id = ?',
-					array(
-						$this->getRequest()->getPost('label', ''),
-						intval($this->getRequest()->getPost('position', 0)),
-						intval($this->getRequest()->getPost('disabled', 0)),
-						$imageId, $storeId
-					)
-				);
-
-				// CECI NE FONCTIONNE PAS (Magento 1.4 et 1.9)
-				// en effet, le product->save un peu plus loin réajoute les valeurs, même pour les autres images du produit
-				// suppression des valeurs en double (lorsque global = store courant)
-				//$default = $read->fetchRow('SELECT label, position, disabled
-				//	FROM '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-				//	WHERE value_id = '.$imageId.' AND store_id = 0');
-				//$current = $read->fetchRow('SELECT label, position, disabled
-				//	FROM '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-				//	WHERE value_id = '.$imageId.' AND store_id = '.$storeId);
-				//
-				//if (implode($default) === implode($current))
-				//	$write->query('DELETE FROM '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-				//		WHERE value_id = '.$imageId.' AND store_id = '.$storeId);
-			}
-			else {
-				$write->query(
-					'UPDATE '.$resource->getTableName('catalog_product_entity_media_gallery_value').'
-						SET label = ?, position = ?, disabled = ? WHERE value_id = ? AND store_id = ?',
-					array(
-						$this->getRequest()->getPost('label', ''),
-						intval($this->getRequest()->getPost('position', 0)),
-						intval($this->getRequest()->getPost('disabled', 0)),
-						$imageId, $storeId
-					)
-				);
-			}
-
-			// attribution de l'image par défaut
-			// commence par rechercher le nom du fichier
-			// input type radio coché=true via encodeURIComponent(elems[elem].checked)=true/false
 			$product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($productId);
-			foreach ($product->getMediaAttributes() as $attribute) {
-				if ($this->getRequest()->getPost($attribute->getAttributeCode(), 'false') === 'true')
-					$product->setData($attribute->getAttributeCode(), $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE value_id = '.$imageId));
+
+			if (!empty($gallery)) {
+
+				$product->setData('media_gallery', $gallery);
+				foreach ($gallery['values'] as $code => $value)
+					$product->setData($code, $value);
+
+				if ($product->hasDataChanges())
+					$product->save();
 			}
-			if ($product->hasDataChanges())
-				$product->save();
 
-			// à partir de Magento 1.8
-			// rafraichi le cache des blocs HTML
-			if (version_compare(Mage::getVersion(), '1.8', '>='))
-				Mage::app()->getCacheInstance()->cleanType('block_html');
-
-			$this->getResponse()->setBody('success-'.$imageId);
+			// html
+			Mage::app()->getCacheInstance()->cleanType('block_html');
+			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
-			$this->getResponse()->setBody($e->getMessage());
+			$result = $e->getMessage();
 		}
-	}
 
-	public function downloadAction() {
-
-		$productId = intval($this->getRequest()->getParam('product', 0));
-		$imageId = intval($this->getRequest()->getParam('image', 0));
-
-		try {
-			if (($productId < 1) || ($imageId < 1))
-				Mage::throwException('Invalid product or attachment id!');
-
-			// recherche le nom du fichier avant de le supprimer dans la base de données
-			$resource = Mage::getSingleton('core/resource');
-			$write = $resource->getConnection('core_write');
-			$read = $resource->getConnection('core_read');
-
-			$file = $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').
-				' WHERE value_id = '.$imageId);
-			$file = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().$file;
-
-			if (!is_file($file))
-				Mage::throwException('File does not exist!');
-
-			$this->_prepareDownloadResponse(basename($file), file_get_contents($file), mime_content_type($file));
-		}
-		catch (Exception $e) {
-			Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
-			$this->_redirectUrl(Mage::helper('apijs')->getDirectTabLink($productId));
-		}
+		$this->getResponse()->setBody($result);
 	}
 
 	public function deleteAction() {
 
-		$productId = intval($this->getRequest()->getParam('product', 0));
-		$imageId = intval($this->getRequest()->getParam('image', 0));
-
+		$this->setUsedModuleName('Luigifab_Apijs');
 		$this->getResponse()->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
 		$this->getResponse()->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
 
+		$productId = (int) $this->getRequest()->getParam('product', 0);
+		$imageId   = (int) $this->getRequest()->getParam('image', 0);
+		$storeId   = (int) $this->getRequest()->getParam('store', 0);
+
+		$database = Mage::getSingleton('core/resource');
+		$read  = $database->getConnection('core_read');
+		$write = $database->getConnection('core_write');
+
 		try {
-			if (($productId < 1) || ($imageId < 1))
-				Mage::throwException('Invalid product or attachment id!');
+			if (empty($productId) || empty($imageId))
+				Mage::throwException('Invalid product/image id.');
 
-			// recherche le nom du fichier avant de le supprimer dans la base de données
-			$resource = Mage::getSingleton('core/resource');
-			$write = $resource->getConnection('core_write');
-			$read = $resource->getConnection('core_read');
+			// recherche et supprime le nom du fichier
+			$table = $database->getTableName('catalog_product_entity_media_gallery');
+			$filepath = $read->fetchOne('SELECT value FROM '.$table.' WHERE value_id = '.$imageId);
+			$filename = basename($filepath);
 
-			$file = $read->fetchOne('SELECT value FROM '.$resource->getTableName('catalog_product_entity_media_gallery').
-				' WHERE value_id = '.$imageId);
-			$filename = basename($file);
+			if (empty($filepath) || empty($filename))
+				Mage::throwException('File does not exist.');
 
-			if ((strlen($file) < 2) || (strlen($filename) < 2))
-				Mage::throwException('File does not exist!');
+			$write->query('DELETE FROM '.$table.' WHERE value_id = ?', $imageId);
 
-			$write->query('DELETE FROM '.$resource->getTableName('catalog_product_entity_media_gallery').' WHERE value_id = '.$imageId);
+			// supprime lorsque l'image supprimée est l'image par défaut
+			$table = $database->getTableName('catalog_product_entity_varchar');
+			$write->query('DELETE FROM '.$table.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]);
 
-			// vérification de l'image par défaut
-			// utilise la première image du produit si le fichier supprimé est l'image par défaut
-			// s'il n'y a plus d'image utilise no_selection
-			$product = Mage::getModel('catalog/product')->load($productId);
-			$new = (count($product->getMediaGalleryImages()) > 0) ? $product->getMediaGalleryImages()->getFirstItem()->getFile() : 'no_selection';
-			foreach ($product->getMediaAttributes() as $attribute) {
-				if ($product->getData($attribute->getAttributeCode()) === $file)
-					$product->setData($attribute->getAttributeCode(), $new);
+			foreach (['image_label', 'small_image_label', 'thumbnail_label'] as $code) {
+				$attrId = Mage::getModel('eav/config')->getAttribute('catalog_product', $code)->getId();
+				$write->query('DELETE FROM '.$table.' WHERE entity_id = ? AND attribute_id = ?', [$productId, $attrId]);
 			}
+
+			// image par défaut
+			$product = Mage::getModel('catalog/product')->load($productId);
+
+			if (!empty($product->getMediaGallery('images'))) {
+
+				$value = $product->getMediaGallery('images')[0]['file'];
+
+				$attributes = $product->getMediaAttributes();
+				foreach ($attributes as $code => $attribute) {
+					// si dans eav_attribute, attribute_model = xyz/source_xyz
+					// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
+					if (($attribute->getIsCheckbox() !== true) && (empty($product->getData($code)) || ($product->getData($code) == $filepath)))
+						$product->setData($code, $value);
+				}
+			}
+
 			if ($product->hasDataChanges())
 				$product->save();
+			if (!empty($storeId))
+				$product->setStoreId($storeId)->load($product->getId());
 
-			// suppression des fichiers
-			// recherche tous les fichiers avec la commande find
-			// uniquement si le nom du fichier contient des caractères simples
-			// preg_match() retourne 1 si le pattern fourni correspond, 0 s'il ne correspond pas, ou FALSE si une erreur survient
-			if (Mage::getStoreConfigFlag('apijs/general/delete_cache') && (preg_match('#^[a-z0-9_\-]+\.[a-z0-9]{3,5}$#i', $filename) === 1)) {
-				Mage::log(sprintf('Removing all %s images with exec(find...) for product %d', $filename, $productId),
-					Zend_Log::INFO, 'apijs.log');
-				exec('find '.Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath().' -name '.$filename.' | xargs rm');
-			}
+			// supprime enfin les fichiers
+			Mage::helper('apijs')->deletedFiles(
+				Mage::helper('apijs')->getCatalogProductImageDir(), $filename, // pas uniquement dans le cache
+				sprintf('Remove all %s images with exec(find) for product %d', $filename, $productId));
 
-			// rafraichi le cache des blocs HTML
-			// à partir de Magento 1.8
-			if (version_compare(Mage::getVersion(), '1.8', '>='))
-				Mage::app()->getCacheInstance()->cleanType('block_html');
-
-			$this->getResponse()->setBody(Mage::helper('apijs')->renderGalleryBlock($product));
+			// html
+			Mage::app()->getCacheInstance()->cleanType('block_html');
+			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
-			$this->getResponse()->setBody($e->getMessage());
+			$result = $e->getMessage();
 		}
+
+		$this->getResponse()->setBody($result);
 	}
 }

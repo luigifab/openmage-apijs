@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/19/03/2016
- * Updated M/08/11/2016
+ * Updated M/25/02/2020
  *
- * Copyright 2008-2017 | Fabrice Creuzot (luigifab) <code~luigifab~info>
- * https://redmine.luigifab.info/projects/magento/wiki/apijs
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/magento/apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -18,29 +18,33 @@
  */
 ?>
 
-<?php if (/*Mage::getStoreConfigFlag('apijs/general/frontend') &&*/ Mage::getStoreConfigFlag('apijs/general/browser')): ?>
-	<?php
-		$browser = Mage::getSingleton('apijs/useragentparser')->parse();
-		$browser['version'] = floatval((isset($_GET['browser']) || isset($_GET['debug'])) ? 1 : $browser['version']);
-		//$browser['lang'] = getenv('HTTP_ACCEPT_LANGUAGE');
+<?php if (Mage::getStoreConfigFlag('apijs/general/browser')):
 
-		if (isset($browser['browser'], $browser['version']) && ($browser['browser'] === 'MSIE') && ($browser['version'] < 11)) {
-			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>, otherwise you will encounter difficulties to browse this website.', 'Internet Explorer', $browser['version'], 'href="https://support.microsoft.com/help/17621/internet-explorer-downloads" onclick="window.open(this.href); return false;"').' '.$this->__('You can\'t? Try to install <a %s>Chrome Frame</a> for Internet Explorer.', 'href="https://tools.google.com/dlpage/chromeframe" onclick="window.open(this.href); return false;"');
+	$data = $this->getBrowserData();
+
+	if (!empty($data['browser']) && !empty($data['version'])) {
+		$data['version'] = empty(Mage::app()->getRequest()->getParam('browser')) ? (float) $data['version'] : 1;
+		if (($data['browser'] == 'MSIE') && ($data['version'] < 14)) {
+			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Internet Explorer', $data['version'], 'href="https://www.microsoft.com/windows/microsoft-edge"');
 		}
-		else if (isset($browser['browser'], $browser['version']) && ($browser['browser'] === 'Firefox') && ($browser['version'] < 22)) {
-			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>, otherwise you will encounter difficulties to browse this website.', 'Firefox', $browser['version'], 'href="http://www.mozilla.org/firefox" onclick="window.open(this.href); return false;"');
+		else if (($data['browser'] == 'Edge') && ($data['version'] < 14)) {
+			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Edge', $data['version'], 'href="https://www.microsoft.com/windows/microsoft-edge"');
 		}
-		else if (isset($browser['browser'], $browser['version']) && ($browser['browser'] === 'Chrome') && ($browser['version'] < 26)) {
-			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>, otherwise you will encounter difficulties to browse this website.', 'Chrome', $browser['version'], 'href="http://www.google.com/chrome" onclick="window.open(this.href); return false;"');
+		else if (($data['browser'] == 'Firefox') && ($data['version'] < 27)) {
+			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Firefox', $data['version'], 'href="https://www.mozilla.org/firefox"');
 		}
-		else if (isset($browser['browser'], $browser['version']) && ($browser['browser'] === 'Opera') && ($browser['version'] < 15)) {
-			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>, otherwise you will encounter difficulties to browse this website.', 'Opera', $browser['version'], 'href="http://www.opera.com/" onclick="window.open(this.href); return false;"');
+		else if (($data['browser'] == 'Chrome') && ($data['version'] < 29)) {
+			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Chrome', $data['version'], 'href="https://www.google.com/chrome"');
 		}
-		else if (isset($browser['browser'], $browser['version']) && ($browser['browser'] === 'Safari') && ($browser['version'] < 6.1)) {
-			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>, otherwise you will encounter difficulties to browse this website.', 'Safari', $browser['version'], 'href="http://www.apple.com/safari/" onclick="window.open(this.href); return false;"');
+		else if (($data['browser'] == 'Opera') && ($data['version'] < 17)) {
+			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Opera', $data['version'], 'href="https://www.opera.com/"');
 		}
-	?>
-	<?php if (isset($text)): ?>
+		else if (($data['browser'] == 'Safari') && ($data['version'] < 9)) {
+			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Safari', $data['version'], 'href="https://www.apple.com/safari/"');
+		}
+	}
+?>
+	<?php if (!empty($text)): ?>
 		<div class="notification-global notification-global-error notification-global-apijs" id="oldBrowser"><?php echo $text ?></div>
 	<?php endif ?>
 <?php endif ?>
