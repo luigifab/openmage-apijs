@@ -1,7 +1,7 @@
 <?php
 /**
  * Created L/26/10/2015
- * Updated M/21/01/2020
+ * Updated V/13/03/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/magento/apijs
@@ -33,7 +33,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Config extends Mage_Adminhtml_Block
 			if ($this->getValue()) {
 				$url   = $this->_getUrl();
 				$url   = (mb_stripos($url, 'http') === 0) ? $url : Mage::getBaseUrl('media').$url;
-				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s</a> ', $url, addslashes($this->getValue()), $this->getHtmlId(), $this->helper('apijs')->__('Preview'));
+				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s</a> ', $url, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'));
 			}
 
 			$html .= Varien_Data_Form_Element_Abstract::getElementHtml();
