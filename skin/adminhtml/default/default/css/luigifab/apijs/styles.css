@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated S/01/02/2020
+ * Updated L/30/03/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/magento/apijs
@@ -39,6 +39,14 @@ button.slink {
 	display:inline; margin:0; padding:0; line-height:1;
 	font-weight:400; text-decoration:underline; color:#EA7601; border:0; background:none;
 }
+
+td div.image.preview {
+	display:inline-block; padding:3px;
+	border-width:1px; border-style:solid; border-color:#AAA #C8C8C8 #C8C8C8 #AAA; background-color:white;
+}
+
+td div.image.preview input { font-size:12px; border:0; background:white; }
+td div.image.preview a { display:block; margin:4px 25px 3px; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& galerie photo &&& */
 #apijsGallery table.gallery { width:100%; }

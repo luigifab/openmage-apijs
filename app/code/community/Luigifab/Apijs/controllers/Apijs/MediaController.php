@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated S/01/02/2020
+ * Updated L/30/03/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
@@ -47,11 +47,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 		$result = ['html' => $data];
 
-		if (!empty($errors) && empty($success))
+		if (!empty($errors) && empty($success)) {
 			$result['bbcode'] = sprintf('[p]%s[/p][ul][li]%s[/li][/ul]',
 				$this->__('[strong]Warning[/strong], no files were saved:'),
 				implode('[/li][li]', $errors));
-		else if (!empty($errors))
+			$result['bbcode'] = str_replace('Disalollowed file format.', 'Exceeded maximum width/height.', $result['bbcode']);
+		}
+		else if (!empty($errors)) {
 			$result['bbcode'] = sprintf('[p]%s[/p][ul][li]%s[/li][/ul][p]%s[/p][ul][li]%s[/li][/ul]',
 				(count($errors) > 1) ? $this->__('[strong]Warning[/strong], the following files were not saved:') :
 					$this->__('[strong]Warning[/strong], the following file was not saved:'),
@@ -59,6 +61,8 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				(count($success) > 1) ? $this->__('[strong]However[/strong], the following files were successfully saved:') :
 					$this->__('[strong]However[/strong], the following file was successfully saved:'),
 				implode('[/li][li]', $success));
+			$result['bbcode'] = str_replace('Disalollowed file format.', 'Exceeded maximum width/height.', $result['bbcode']);
+		}
 
 		return 'success-'.json_encode($result);
 	}
@@ -224,6 +228,9 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 					$product->save();
 			}
 
+			if (!empty($storeId)) // reload
+				$product->setStoreId($storeId)->load($product->getId());
+
 			// html
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
@@ -290,7 +297,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 			if ($product->hasDataChanges())
 				$product->save();
-			if (!empty($storeId))
+			if (!empty($storeId)) // reload
 				$product->setStoreId($storeId)->load($product->getId());
 
 			// supprime enfin les fichiers

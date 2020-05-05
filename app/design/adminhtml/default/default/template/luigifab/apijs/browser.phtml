@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/19/03/2016
- * Updated M/25/02/2020
+ * Updated L/27/04/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/magento/apijs
@@ -24,7 +24,7 @@
 
 	if (!empty($data['browser']) && !empty($data['version'])) {
 		$data['version'] = empty(Mage::app()->getRequest()->getParam('browser')) ? (float) $data['version'] : 1;
-		if (($data['browser'] == 'MSIE') && ($data['version'] < 14)) {
+		if (($data['browser'] == 'MSIE') && ($data['version'] < 13)) {
 			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Internet Explorer', $data['version'], 'href="https://www.microsoft.com/windows/microsoft-edge"');
 		}
 		else if (($data['browser'] == 'Edge') && ($data['version'] < 14)) {

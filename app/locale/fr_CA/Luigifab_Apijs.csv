@@ -39,4 +39,4 @@
 "Label and Sort order","Libellé et Ordre de tri"
 "Save images","Sauvegarder les images"
 "The added or deleted images are automatically saved.","Les images ajoutées ou supprimées sont automatiquement enregistrées."
-"Maximum images width and height is %s x %s pixels.","La largeur et la hauteur maximale des images est de %s x %s pixels."
+"Maximum images width and height is <a %s>%s x %s pixels</a>.","La largeur et la hauteur maximale des images est de <a %s>%s x %s pixels</a>."

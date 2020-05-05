@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated J/06/02/2020
+ * Updated L/30/03/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/magento/apijs
@@ -127,7 +127,7 @@ var apijsMagento = new (function () {
 		if (data.indexOf('{') > -1) {
 			data = JSON.parse(data.slice(data.indexOf('{')));
 			if (data.bbcode)
-				this.error(data.bbcode);
+				apijsMagento.error(data.bbcode);
 		}
 
 		// produit ou widget cms
@@ -137,8 +137,8 @@ var apijsMagento = new (function () {
 			elem.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function (elem) {
 				elem.checked = elem.hasAttribute('checked');
 				if (elem.hasAttribute('onchange'))
-					this.checkVal(elem);
-			}, this); // pour que ci-dessus this = this
+					apijsMagento.checkVal(elem);
+			});
 
 			apijs.slideshow.init();
 			if (!apijs.dialog.has('error')) // ferme sauf en cas d'erreur

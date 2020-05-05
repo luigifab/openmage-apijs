@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated S/01/02/2020
+ * Updated S/25/04/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/magento/apijs
@@ -37,7 +37,7 @@ if (is_dir($wysiwygCacheDir)) {
 		$wysiwygCacheSize = $this->__('%s MB', $size);
 	else if (mb_stripos($wysiwygCacheSize, 'K') !== false)
 		$wysiwygCacheSize = $this->__('%s kB', (int) $size);
-	$wysiwygCacheSize = str_replace([',00', '.00'], '', $wysiwygCacheSize);
+	$wysiwygCacheSize = preg_replace('#[.,]00[[:>:]]#', '', $wysiwygCacheSize);
 }
 else {
 	$wysiwygCacheSize = 0;
@@ -57,7 +57,7 @@ if (is_dir($wysiwygDir)) {
 		$wysiwygSize = $this->__('%s MB', $size);
 	else if (mb_stripos($wysiwygSize, 'K') !== false)
 		$wysiwygSize = $this->__('%s kB', (int) $size);
-	$wysiwygSize = str_replace([',00', '.00'], '', $wysiwygSize);
+	$wysiwygSize = preg_replace('#[.,]00[[:>:]]#', '', $wysiwygSize);
 }
 else {
 	$wysiwygSize = 0;
@@ -81,7 +81,7 @@ if (is_dir($catalogCacheDir)) {
 		$catalogCacheSize = $this->__('%s MB', $size);
 	else if (mb_stripos($catalogCacheSize, 'K') !== false)
 		$catalogCacheSize = $this->__('%s kB', (int) $size);
-	$catalogCacheSize = str_replace([',00', '.00'], '', $catalogCacheSize);
+	$catalogCacheSize = preg_replace('#[.,]00[[:>:]]#', '', $catalogCacheSize);
 }
 else {
 	$catalogCacheSize = 0;
@@ -101,7 +101,7 @@ if (is_dir($catalogDir)) {
 		$catalogSize = $this->__('%s MB', $size);
 	else if (mb_stripos($catalogSize, 'K') !== false)
 		$catalogSize = $this->__('%s kB', (int) $size);
-	$catalogSize = str_replace([',00', '.00'], '', $catalogSize);
+	$catalogSize = preg_replace('#[.,]00[[:>:]]#', '', $catalogSize);
 }
 else {
 	$catalogSize = 0;
@@ -125,7 +125,7 @@ if (is_dir($categoryCacheDir)) {
 		$categoryCacheSize = $this->__('%s MB', $size);
 	else if (mb_stripos($categoryCacheSize, 'K') !== false)
 		$categoryCacheSize = $this->__('%s kB', (int) $size);
-	$categoryCacheSize = str_replace([',00', '.00'], '', $categoryCacheSize);
+	$categoryCacheSize = preg_replace('#[.,]00[[:>:]]#', '', $categoryCacheSize);
 }
 else {
 	$categoryCacheSize = 0;
@@ -145,11 +145,14 @@ if (is_dir($categoryDir)) {
 		$categorySize = $this->__('%s MB', $size);
 	else if (mb_stripos($categorySize, 'K') !== false)
 		$categorySize = $this->__('%s kB', (int) $size);
-	$categorySize = str_replace([',00', '.00'], '', $categorySize);
+	$categorySize = preg_replace('#[.,]00[[:>:]]#', '', $categorySize);
 }
 else {
 	$categorySize = 0;
 }
+
+// config
+$values = $help->getMaxSizes(true);
 ?>
 
 <?php if (Mage::getStoreConfigFlag('apijs/general/backend')): ?>
@@ -190,5 +193,11 @@ else {
 		(<button type="button" class="slink" onclick="apijsMagento.clearCache('<?php echo $this->getUrl('*/apijs_cache/clearCache', ['type' => 'category']) ?>');"><?php echo $this->__('clear cache') ?></button>)
 	</li>
 </ul>
+
+<code style="display:block; margin-bottom:0.8em; font-size:0.9em; line-height:1.4em;">
+<?php foreach ($values as $key => $value): ?>
+	<br /><?php echo $key ?> = <?php echo $help->getNumberToHumanSize($value * 1024 * 1024) // de Mo à octets ?>
+<?php endforeach ?>
+</code>
 
 <hr style="margin:1em 0; border:0; border-top:1px solid #BBB;" />

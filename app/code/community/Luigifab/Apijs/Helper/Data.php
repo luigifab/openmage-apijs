@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated J/23/01/2020
+ * Updated S/25/04/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/magento/apijs
@@ -39,17 +39,17 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		else if (($number / 1024) < 1024) {
 			$data = $number / 1024;
 			$data = Zend_Locale_Format::toNumber($data, ['precision' => 2]);
-			$data = $this->__('%s kB', str_replace(['.00', ',00'], '', $data));
+			$data = $this->__('%s kB', preg_replace('#[.,]00[[:>:]]#', '', $data));
 		}
 		else if (($number / 1024 / 1024) < 1024) {
 			$data = $number / 1024 / 1024;
 			$data = Zend_Locale_Format::toNumber($data, ['precision' => 2]);
-			$data = $this->__('%s MB', str_replace(['.00', ',00'], '', $data));
+			$data = $this->__('%s MB', preg_replace('#[.,]00[[:>:]]#', '', $data));
 		}
 		else {
 			$data = $number / 1024 / 1024 / 1024;
 			$data = Zend_Locale_Format::toNumber($data, ['precision' => 2]);
-			$data = $this->__('%s GB', str_replace(['.00', ',00'], '', $data));
+			$data = $this->__('%s GB', preg_replace('#[.,]00[[:>:]]#', '', $data));
 		}
 
 		return $data;
@@ -99,21 +99,37 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		}
 	}
 
-	public function getMaxSizes() {
+	public function getMaxSizes($dump = false) {
 
-		// config admise en Mo, maxsize et multiplemaxsize
-		return min(20, (int) ini_get('upload_max_filesize'), (int) ini_get('post_max_size')).', '.
-			min((int) ini_get('upload_max_filesize'), (int) ini_get('post_max_size'));
+		// config admise en Mo, "one file, all files"
+		if ($dump === true) {
+			return [
+				'config.xml one_max_size' => (int) Mage::getStoreConfig('apijs/general/one_max_size'),
+				'config.xml all_max_size' => (int) Mage::getStoreConfig('apijs/general/all_max_size'),
+				'php upload_max_filesize' => (int) ini_get('upload_max_filesize'),
+				'php post_max_size'       => (int) ini_get('post_max_size')
+			];
+		}
+
+		return min(
+			(int) Mage::getStoreConfig('apijs/general/one_max_size'),
+			(int) ini_get('upload_max_filesize'),
+			(int) ini_get('post_max_size')
+		).', '.min(
+			(int) Mage::getStoreConfig('apijs/general/all_max_size'),
+			(int) ini_get('upload_max_filesize'),
+			(int) ini_get('post_max_size')
+		);
 	}
 
 	public function getTabName($product = null) {
 
 		$product = is_object($product) ? $product : Mage::registry('current_product');
-		$groups  = Mage::getResourceModel('eav/entity_attribute_group_collection')
+		$egroups = Mage::getResourceModel('eav/entity_attribute_group_collection')
 			->setAttributeSetFilter($product->getData('attribute_set_id'))
 			->load();
 
-		foreach ($groups as $group) {
+		foreach ($egroups as $group) {
 			$attributes = $product->getAttributes($group->getId(), true);
 			foreach ($attributes as $key => $attribute) {
 				if (in_array($attribute->getData('attribute_code'), ['media_gallery', 'gallery']))

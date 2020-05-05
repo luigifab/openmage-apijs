@@ -1,18 +1,20 @@
 <?php
 /**
- * https://github.com/donatj/PhpUserAgent 0.15.1
+ * Copyright 2013-2020 | Jesse G. Donat <donatj~gmail~com>
+ * https://github.com/donatj/PhpUserAgent
+ *
+ * Copyright 2019-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.0.0-fork2)
+ *
  * Parses a user agent string into its important parts
  * Licensed under the MIT License
- * Jesse G. Donat <donatj~gmail~com> 2013-2019
  */
 
 class Luigifab_Apijs_Model_Useragentparser {
 
 	public function parse($userAgent = null) {
 
-		if (empty($userAgent)) {
-			$userAgent = getenv('HTTP_USER_AGENT');
-		}
+		if (empty($userAgent)) $userAgent = getenv('HTTP_USER_AGENT');
 
 		$platform = null;
 		$browser  = null;
@@ -28,24 +30,21 @@ class Luigifab_Apijs_Model_Useragentparser {
 				$parentMatches[1], $result);
 			$result['platform'] = array_unique($result['platform']);
 			if (count($result['platform']) > 1) {
-				if ($keys = array_intersect($priority, $result['platform'])) {
+				if (!empty($keys = array_intersect($priority, $result['platform'])))
 					$platform = reset($keys);
-				}
-				else {
+				else
 					$platform = $result['platform'][0];
-				}
 			}
 			else if (isset($result['platform'][0])) {
 				$platform = $result['platform'][0];
 			}
 		}
 
-		if ($platform == 'linux-gnu' || $platform == 'X11') {
+		if ($platform == 'linux-gnu' || $platform == 'X11')
 			$platform = 'Linux';
-		}
-		else if ($platform == 'CrOS') {
+		else if ($platform == 'CrOS')
 			$platform = 'Chrome OS';
-		}
+
 
 		preg_match_all( // ["browser" => ["Firefox"...], "version" => ["45.0"...]]
 			'/(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|Baiduspider|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?P<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix',
@@ -59,7 +58,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 				return [
 					'platform' => $platform ?: null,
 					'browser'  => $result['browser'],
-					'version'  => !empty($result['version']) ? $result['version'] : null
+					'version'  => empty($result['version']) ? null : $result['version']
 				];
 			}
 
@@ -78,10 +77,10 @@ class Luigifab_Apijs_Model_Useragentparser {
 		$key = 0;
 		$val = '';
 
-		if ($browser == 'Iceweasel' || strtolower($browser) == 'icecat') {
-			$browser = 'Firefox';
+		if ($this->findT($lowerBrowser, ['OPR' => 'Opera', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge'], $key, $browser)) {
+			$version = $result['version'][$key];
 		}
-		else if ($this->find($lowerBrowser, 'Playstation Vita', $key)) {
+		else if ($this->find($lowerBrowser, 'Playstation Vita', $key, $platform)) {
 			$platform = 'PlayStation Vita';
 			$browser  = 'Browser';
 		}
@@ -98,10 +97,6 @@ class Luigifab_Apijs_Model_Useragentparser {
 		}
 		else if ($this->find($lowerBrowser, 'Kindle', $key, $platform)) {
 			$browser = $result['browser'][$key];
-			$version = $result['version'][$key];
-		}
-		else if ($this->find($lowerBrowser, 'OPR', $key)) {
-			$browser = 'Opera';
 			$version = $result['version'][$key];
 		}
 		else if ($this->find($lowerBrowser, 'Opera', $key, $browser)) {
@@ -121,34 +116,18 @@ class Luigifab_Apijs_Model_Useragentparser {
 				}
 			}
 		}
-		else if ($this->find($lowerBrowser, 'YaBrowser', $key, $browser)) {
-			$browser = 'Yandex';
+		else if ($this->find($lowerBrowser, ['IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome'], $key, $browser)) {
 			$version = $result['version'][$key];
 		}
-		else if ($this->find($lowerBrowser, ['Edge', 'Edg'], $key, $browser)) {
-			$browser = 'Edge';
-			$version = $result['version'][$key];
-		}
-		else if ($this->find($lowerBrowser, ['IEMobile', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome'], $key, $browser)) {
-			$version = $result['version'][$key];
-		}
-		else if ($rv_result && $this->find($lowerBrowser, 'Trident', $key)) {
+		else if ($rv_result && $this->find($lowerBrowser, 'Trident')) {
 			$browser = 'MSIE';
 			$version = $rv_result;
-		}
-		else if ($this->find($lowerBrowser, 'UCBrowser', $key)) {
-			$browser = 'UC Browser';
-			$version = $result['version'][$key];
-		}
-		else if ($this->find($lowerBrowser, 'CriOS', $key)) {
-			$browser = 'Chrome';
-			$version = $result['version'][$key];
 		}
 		else if ($browser == 'AppleWebKit') {
 			if ($platform == 'Android') {
 				$browser = 'Android Browser';
 			}
-			else if (strpos($platform, 'BB') === 0) {
+			else if (strncmp($platform, 'BB', 2) === 0) {
 				$browser  = 'BlackBerry Browser';
 				$platform = 'BlackBerry';
 			}
@@ -161,7 +140,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 			$this->find($lowerBrowser, 'Version', $key);
 			$version = $result['version'][$key];
 		}
-		else if ($pKey = preg_grep('/playstation \d/i', $result['browser'])) {
+		else if (!empty($pKey = preg_grep('/playstation \d/i', $result['browser']))) {
 			$pKey     = reset($pKey);
 			$platform = 'PlayStation '.preg_replace('/\D/', '', $pKey);
 			$browser  = 'NetFront';
@@ -170,7 +149,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 		return ['platform' => $platform ?: null, 'browser' => $browser ?: null, 'version' => $version ?: null];
 	}
 
-	private function find($lowerBrowser, $search, &$key, &$value = null) {
+	private function find($lowerBrowser, $search, &$key = null, &$value = null) {
 
 		$search = (array) $search;
 
@@ -181,6 +160,18 @@ class Luigifab_Apijs_Model_Useragentparser {
 				$key   = $xkey;
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	private function findT($lowerBrowser, array $search, &$key = null, &$value = null) {
+
+		$value2 = null;
+
+		if ($this->find($lowerBrowser, array_keys($search), $key, $value2)) {
+			$value = $search[$value2];
+			return true;
 		}
 
 		return false;

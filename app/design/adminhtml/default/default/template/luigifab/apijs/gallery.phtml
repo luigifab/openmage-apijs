@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated D/26/01/2020
+ * Updated L/27/04/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
@@ -57,7 +57,8 @@ $sid  = $product->getStoreId();
 						<span><span><?php echo $this->__('Add one or multiple files') ?></span></span>
 					</button>
 					<p><?php echo $this->__('The added or deleted images are automatically saved.') ?>
-					<br /><?php echo $this->__('Maximum images width and height is %s x %s pixels.',
+					<br /><?php echo $this->__('Maximum images width and height is <a %s>%s x %s pixels</a>.',
+						'href="'.$this->getUrl('*/system_config/edit', ['section' => 'catalog']).'"',
 						Zend_Locale_Format::toNumber($maxWidth), Zend_Locale_Format::toNumber($maxWidth)) ?></p>
 				</td>
 			</tr>
@@ -144,12 +145,14 @@ $sid  = $product->getStoreId();
 										?> class="def inl" onchange="apijsMagento.checkVal(this);" />
 										/ <?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 									</label>
-									<input type="text" name="apijs[<?php echo $iid ?>][label]" value="<?php
-										echo $help->escapeEntities(($image->getData('label') != $image->getData('label_default')) ?
-											$image->getData('label') : $image->getData('label_default'), true);
-									?>" <?php
-										echo $this->isUseGlobal($image, 'label', 'disabled');
-									?> maxlength="250" class="input-text val" />
+									<label>
+										<input type="text" name="apijs[<?php echo $iid ?>][label]" value="<?php
+											echo $help->escapeEntities(($image->getData('label') != $image->getData('label_default')) ?
+												$image->getData('label') : $image->getData('label_default'), true);
+										?>" <?php
+											echo $this->isUseGlobal($image, 'label', 'disabled');
+										?> maxlength="250" class="input-text val" />
+									</label>
 								<?php else: ?>
 									<label>
 										<?php echo $this->__('Label') ?> / <?php echo trim($this->__('[GLOBAL]'), '[]') ?>
@@ -166,12 +169,14 @@ $sid  = $product->getStoreId();
 										?> class="def inl" onchange="apijsMagento.checkVal(this);" />
 										/ <?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 									</label>
-									<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php
-										echo $help->escapeEntities(($image->getData('position') != $image->getData('position_default')) ?
-											$image->getData('position') : $image->getData('position_default'), true);
-									?>" <?php
-										echo $this->isUseGlobal($image, 'position', 'disabled');
-									?> class="input-text val" />
+									<label>
+										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php
+											echo $help->escapeEntities(($image->getData('position') != $image->getData('position_default')) ?
+												$image->getData('position') : $image->getData('position_default'), true);
+										?>" <?php
+											echo $this->isUseGlobal($image, 'position', 'disabled');
+										?> class="input-text val" />
+									</label>
 								<?php else: ?>
 									<label>
 										<?php echo $this->__('Sort Order') ?> / <?php echo trim($this->__('[GLOBAL]'), '[]') ?>

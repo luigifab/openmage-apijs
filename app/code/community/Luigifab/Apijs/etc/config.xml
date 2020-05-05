@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated V/13/03/2020
+ * Updated S/25/04/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/magento/apijs
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>6.0.1</version>
+			<version>6.1.0</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -32,6 +32,7 @@
 				<rewrite>
 					<cms_wysiwyg_images_tree>Luigifab_Apijs_Block_Adminhtml_Rewrite_Tree</cms_wysiwyg_images_tree>
 					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Config</system_config_form_field_image>
+					<catalog_category_helper_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Category</catalog_category_helper_image>
 					<catalog_product_helper_form_gallery_content>Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery</catalog_product_helper_form_gallery_content>
 				</rewrite>
 			</adminhtml>
@@ -160,6 +161,8 @@
 				<type>Varien_Image</type>
 				<delete_cache>1</delete_cache>
 				<browser>1</browser>
+				<one_max_size>25</one_max_size>
+				<all_max_size>300</all_max_size>
 			</general>
 			<gallery>
 				<picture_width>280</picture_width>
