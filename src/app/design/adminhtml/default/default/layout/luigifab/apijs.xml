@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created S/19/11/2011
+ * Updated J/18/06/2020
+ *
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/apijs
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<layout version="0.1.0">
+	<default>
+		<reference name="head">
+			<action method="addItem" ifconfig="apijs/general/backend">
+				<type>skin_css</type>
+				<name>css/luigifab/apijs/apijs-screen.min.css</name>
+				<params>media="screen, projection"</params>
+			</action>
+			<action method="addItem" ifconfig="apijs/general/backend">
+				<type>skin_css</type>
+				<name>css/luigifab/apijs/apijs-print.min.css</name>
+				<params>media="print"</params>
+			</action>
+			<action method="addItem">
+				<type>skin_css</type>
+				<name>css/luigifab/apijs/apijs-openmage.min.css</name>
+				<params>media="screen, projection"</params>
+			</action>
+			<action method="addItem" ifconfig="apijs/general/backend">
+				<type>skin_js</type>
+				<name>js/luigifab/apijs/apijs.min.js</name>
+			</action>
+			<action method="addItem">
+				<type>skin_js</type>
+				<name>js/luigifab/apijs/apijs-openmage.min.js</name>
+			</action>
+		</reference>
+		<reference name="notifications">
+			<block type="apijs/browser" template="luigifab/apijs/browser.phtml" name="apijs_browser" />
+		</reference>
+	</default>
+
+	<adminhtml_catalog_product_edit>
+		<reference name="product_tabs">
+			<action method="setActiveTab" ifconfig="apijs/general/show_gallery_tab">
+				<var helper="apijs/getTabName" />
+			</action>
+		</reference>
+	</adminhtml_catalog_product_edit>
+
+	<adminhtml_apijs_wysiwyg_index>
+		<reference name="left">
+			<block type="adminhtml/cms_wysiwyg_images_content" name="wysiwyg_images.js" template="cms/browser/js.phtml" />
+			<block type="adminhtml/cms_wysiwyg_images_tree" name="wysiwyg_images.tree" template="cms/browser/tree.phtml" />
+		</reference>
+		<reference name="content">
+			<block type="adminhtml/cms_wysiwyg_images_content" name="wysiwyg_images.content" template="cms/browser/content.phtml">
+				<action method="setTemplate" ifconfig="apijs/general/backend">
+					<template>luigifab/apijs/content.phtml</template>
+					<old>cms/browser/content.phtml</old>
+				</action>
+				<block type="adminhtml/cms_wysiwyg_images_content_uploader" name="wysiwyg_images.uploader" template="media/uploader.phtml">
+					<block type="adminhtml/template" name="additional_scripts" template="cms/browser/content/uploader.phtml" />
+				</block>
+				<block type="adminhtml/cms_wysiwyg_images_content_newfolder" name="wysiwyg_images.newfolder" template="cms/browser/content/newfolder.phtml" />
+			</block>
+		</reference>
+		<update handle="editor" />
+	</adminhtml_apijs_wysiwyg_index>
+
+	<adminhtml_cms_wysiwyg_images_index>
+		<reference name="wysiwyg_images.content">
+			<action method="setTemplate" ifconfig="apijs/general/backend">
+				<template>luigifab/apijs/content.phtml</template>
+				<old>cms/browser/content.phtml</old>
+			</action>
+		</reference>
+	</adminhtml_cms_wysiwyg_images_index>
+
+	<adminhtml_cms_wysiwyg_images_contents>
+		<reference name="wysiwyg_images.files">
+			<action method="setTemplate" ifconfig="apijs/general/backend">
+				<template>luigifab/apijs/files.phtml</template>
+				<old>cms/browser/content/files.phtml</old>
+			</action>
+		</reference>
+	</adminhtml_cms_wysiwyg_images_contents>
+</layout>

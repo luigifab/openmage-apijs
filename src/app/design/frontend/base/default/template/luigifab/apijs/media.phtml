@@ -1,0 +1,45 @@
+<?php
+/**
+ * Created M/15/01/2013
+ * Updated J/02/07/2020
+ *
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/apijs
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+
+if (is_object($this->getGalleryImages())):
+
+	$help    = $this->helper('apijs');
+	$product = $this->getProduct();
+	$default = $product->getData('image');
+	$images  = [];
+
+	foreach ($this->getGalleryImages() as $image) {
+		if (is_file($image->getData('path')))
+			$images[] = $image;
+	}
+
+	$total = count($images);
+	$id = 0;
+?>
+	<div class="<?php echo Mage::getStoreConfigFlag('apijs/gallery/hoverload') ? 'gallery hoverload' : 'gallery' ?>" id="slideshow.0">
+		<?php echo $help->getBaseImage($product, $default, $images, $total) ?>
+		<?php if ($total > 1): ?>
+			<ul>
+				<?php foreach ($images as $image): ?>
+					<li><?php echo $help->getThumbnail($product, $default, $image, $id++) ?></li>
+				<?php endforeach ?>
+			</ul>
+		<?php endif ?>
+	</div>
+<?php endif ?>

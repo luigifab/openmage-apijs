@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created S/19/11/2011
+ * Updated D/12/07/2020
+ *
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/apijs
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<config>
+	<modules>
+		<Luigifab_Apijs>
+			<version>6.2.0</version>
+		</Luigifab_Apijs>
+	</modules>
+	<global>
+		<blocks>
+			<apijs>
+				<class>Luigifab_Apijs_Block</class>
+			</apijs>
+			<adminhtml>
+				<rewrite>
+					<cms_wysiwyg_images_tree>Luigifab_Apijs_Block_Adminhtml_Rewrite_Tree</cms_wysiwyg_images_tree>
+					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Config</system_config_form_field_image>
+					<catalog_category_helper_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Category</catalog_category_helper_image>
+					<catalog_product_helper_form_gallery_content>Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery</catalog_product_helper_form_gallery_content>
+				</rewrite>
+			</adminhtml>
+		</blocks>
+		<helpers>
+			<apijs>
+				<class>Luigifab_Apijs_Helper</class>
+			</apijs>
+			<catalog>
+				<rewrite>
+					<image>Luigifab_Apijs_Helper_Rewrite_Image</image>
+				</rewrite>
+			</catalog>
+		</helpers>
+		<models>
+			<apijs>
+				<class>Luigifab_Apijs_Model</class>
+			</apijs>
+			<catalog>
+				<rewrite>
+					<product_attribute_backend_media>Luigifab_Apijs_Model_Rewrite_Media</product_attribute_backend_media>
+				</rewrite>
+			</catalog>
+			<catalog_resource>
+				<rewrite>
+					<product_attribute_backend_media>Luigifab_Apijs_Model_Rewrite_Mediares</product_attribute_backend_media>
+				</rewrite>
+			</catalog_resource>
+			<core>
+				<rewrite>
+					<file_validator_image>Luigifab_Apijs_Model_Rewrite_Validator</file_validator_image>
+				</rewrite>
+			</core>
+		</models>
+		<resources>
+			<apijs_setup>
+				<setup>
+					<module>Luigifab_Apijs</module>
+					<class>Mage_Eav_Model_Entity_Setup</class>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</apijs_setup>
+		</resources>
+	</global>
+	<frontend>
+		<layout>
+			<updates>
+				<apijs>
+					<file>luigifab/apijs.xml</file>
+				</apijs>
+			</updates>
+		</layout>
+		<translate>
+			<modules>
+				<Luigifab_Apijs>
+					<files>
+						<default>Luigifab_Apijs.csv</default>
+					</files>
+				</Luigifab_Apijs>
+			</modules>
+		</translate>
+	</frontend>
+	<admin>
+		<routers>
+			<adminhtml>
+				<args>
+					<modules>
+						<Luigifab_Apijs before="Mage_Adminhtml">Luigifab_Apijs</Luigifab_Apijs>
+					</modules>
+				</args>
+			</adminhtml>
+		</routers>
+	</admin>
+	<adminhtml>
+		<events>
+			<catalog_product_delete_commit_after>
+				<observers>
+					<apijs_remove_image>
+						<class>apijs/observer</class>
+						<method>removeProductImages</method>
+					</apijs_remove_image>
+				</observers>
+			</catalog_product_delete_commit_after>
+			<catalog_category_delete_commit_after>
+				<observers>
+					<apijs_remove_image>
+						<class>apijs/observer</class>
+						<method>removeCategoryImages</method>
+					</apijs_remove_image>
+				</observers>
+			</catalog_category_delete_commit_after>
+			<controller_action_predispatch_adminhtml_apijs_media_save>
+				<observers>
+					<apijs_save_product>
+						<class>apijs/observer</class>
+						<method>updatePostForGallery</method>
+					</apijs_save_product>
+				</observers>
+			</controller_action_predispatch_adminhtml_apijs_media_save>
+			<controller_action_predispatch_adminhtml_catalog_product_save>
+				<observers>
+					<apijs_save_product>
+						<class>apijs/observer</class>
+						<method>updatePostForGallery</method>
+					</apijs_save_product>
+				</observers>
+			</controller_action_predispatch_adminhtml_catalog_product_save>
+			<controller_action_predispatch_adminhtml_catalog_category_save>
+				<observers>
+					<apijs_save_category>
+						<class>apijs/observer</class>
+						<method>removeCategoryImages</method>
+					</apijs_save_category>
+				</observers>
+			</controller_action_predispatch_adminhtml_catalog_category_save>
+		</events>
+		<layout>
+			<updates>
+				<apijs>
+					<file>luigifab/apijs.xml</file>
+				</apijs>
+			</updates>
+		</layout>
+		<translate>
+			<modules>
+				<Luigifab_Apijs>
+					<files>
+						<default>Luigifab_Apijs.csv</default>
+					</files>
+				</Luigifab_Apijs>
+			</modules>
+		</translate>
+	</adminhtml>
+	<default>
+		<apijs>
+			<general>
+				<remove_cache>1</remove_cache>
+				<browser>1</browser>
+				<one_max_size>25</one_max_size>
+				<all_max_size>300</all_max_size>
+			</general>
+			<gallery>
+				<picture_width>280</picture_width>
+				<picture_height>210</picture_height>
+				<thumbnail_width>64</thumbnail_width>
+				<thumbnail_height>48</thumbnail_height>
+			</gallery>
+		</apijs>
+	</default>
+</config>

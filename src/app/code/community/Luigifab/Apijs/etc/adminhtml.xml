@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Created D/26/02/2012
+ * Updated D/09/02/2020
+ *
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://www.luigifab.fr/openmage/apijs
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+-->
+
+<config>
+	<menu>
+		<tools translate="title">
+			<title>Tools</title>
+			<sort_order>101</sort_order>
+			<children>
+				<configuration translate="title">
+					<title>Configuration</title>
+					<sort_order>1</sort_order>
+					<action>adminhtml/system_config</action>
+				</configuration>
+				<apijs translate="title">
+					<title>Media Storage</title>
+					<action>adminhtml/apijs_wysiwyg/index</action>
+					<sort_order>51</sort_order>
+				</apijs>
+			</children>
+		</tools>
+	</menu>
+	<acl>
+		<resources>
+			<admin>
+				<children>
+					<tools translate="title">
+						<title>Tools</title>
+						<sort_order>101</sort_order>
+						<children>
+							<configuration translate="title">
+								<title>Configuration</title>
+								<sort_order>1</sort_order>
+							</configuration>
+							<apijs translate="title">
+								<title>Media Storage</title>
+								<sort_order>51</sort_order>
+							</apijs>
+						</children>
+					</tools>
+					<system>
+						<children>
+							<config>
+								<children>
+									<apijs translate="title">
+										<title>Dialogs boxes</title>
+										<sort_order>103051</sort_order>
+									</apijs>
+								</children>
+							</config>
+						</children>
+					</system>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+</config>

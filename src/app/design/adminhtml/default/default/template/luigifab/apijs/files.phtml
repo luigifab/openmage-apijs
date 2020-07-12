@@ -1,0 +1,84 @@
+<?php
+/**
+ * Created D/08/09/2019
+ * Updated L/06/07/2020
+ *
+ * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
+ * https://www.luigifab.fr/openmage/apijs
+ *
+ * This program is free software, you can redistribute it or modify
+ * it under the terms of the GNU General Public License (GPL) as published
+ * by the free software foundation, either version 2 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but without any warranty, without even the implied warranty of
+ * merchantability or fitness for a particular purpose. See the
+ * GNU General Public License (GPL) for more details.
+ */
+
+$images = $this->getFiles()->toArray();
+$images = array_reverse(empty($images['items']) ? [] : $images['items']);
+
+$help = $this->helper('apijs');
+$date = Mage::getSingleton('core/locale')->date();
+$prev = null;
+?>
+
+<?php if ($this->getFilesCount() > 0): ?>
+	<div class="album" id="slideshow.0">
+		<?php $i = 0; foreach ($images as $image):
+			$image = is_object($image) ? $image : new Varien_Object($image);
+			$file  = $image->getData('filename');
+			$name  = $help->escapeEntities(basename($file), true);
+		?>
+			<?php if (is_file($file)): ?>
+				<?php $curr = $date->setTimestamp(filemtime($file))->toString(Zend_Date::MONTH_SHORT) ?>
+				<?php if ($curr != $prev): ?>
+					<h4><?php echo $date->toString(Zend_Date::MONTH_NAME.' '.Zend_Date::YEAR) ?></h4>
+					<?php $prev = $curr ?>
+				<?php endif ?>
+				<div class="filecnt" id="<?php echo $image->getId() ?>">
+					<p class="img">
+						<?php
+							// <a> <img src srcset> <input>
+							// l'image du lien = une image redimensionnée en cache
+							// l'image de l'image = une miniature en cache
+						?>
+						<a href="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" id="slideshow.0.<?php echo $i++ ?>">
+							<img src="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 200, 150, true) ?>" srcset="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $name ?>" />
+							<input type="hidden" value="<?php echo $name ?>|false|" />
+						</a>
+					</p>
+					<p class="desc">
+						<?php echo $image->getData('short_name') ?>
+						<br /><a href="<?php echo $image->getData('url') ?>" type="<?php echo mime_content_type($file) ?>" download=""><?php echo $this->__('Download') ?></a> / <button type="button" class="slink" onclick="apijsOpenMage.removeMedia(this);"><?php echo $this->__('Remove') ?></button>
+					</p>
+					<p class="desc">
+						<?php echo $help->getNumberToHumanSize(filesize($file)) ?>
+						<?php if (!empty($image->getData('width'))): ?>
+							/ <?php echo Zend_Locale_Format::toNumber($image->getData('width')) ?> x
+							  <?php echo Zend_Locale_Format::toNumber($image->getData('height')) ?>
+						<?php endif ?>
+						<br /><?php echo $date->setTimestamp(filemtime($file))->toString() ?>
+					</p>
+				</div>
+			<?php else: ?>
+				<div class="filecnt" id="<?php echo $image->getId() ?>">
+					<p class="img"><?php echo $this->__('File not found') ?></p>
+					<p class="desc"><?php echo $image->getData('short_name') ?></p>
+				</div>
+			<?php endif ?>
+		<?php endforeach ?>
+		<script type="text/javascript">try { apijs.slideshow.init(); } catch (e) { }</script>
+	</div>
+<?php else: ?>
+	<?php echo $this->__('No files found') ?>
+<?php endif ?>
+
+<script type="text/javascript">
+var elem = document.querySelector('#breadcrumbs li:last-child a');
+if (elem && (document.querySelectorAll('#breadcrumbs li').length > 1))
+	elem.textContent = "<?php $dir = explode('/', trim($this->helper('cms/wysiwyg_images')->getCurrentPath(), '/')); echo array_pop($dir); ?>";
+</script>

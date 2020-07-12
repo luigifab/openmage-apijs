@@ -1,0 +1,63 @@
+{
+    "type": "magento-module",
+    "name": "luigifab/openmage-apijs",
+    "description": "Beautiful javascript popup and slideshow for OpenMage and Magento.",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Fabrice Creuzot (luigifab)",
+            "email": "code@luigifab.fr"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "openmage/magento-lts": ">=19.4.0",
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "ext-curl": "*"
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "map": [
+            ["src/app/locale/cs_CZ/Luigifab_Apijs.csv", "app/locale/cs_CZ/Luigifab_Apijs.csv"],
+            ["src/app/locale/de_AT/Luigifab_Apijs.csv", "app/locale/de_AT/Luigifab_Apijs.csv"],
+            ["src/app/locale/de_CH/Luigifab_Apijs.csv", "app/locale/de_CH/Luigifab_Apijs.csv"],
+            ["src/app/locale/de_DE/Luigifab_Apijs.csv", "app/locale/de_DE/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_AR/Luigifab_Apijs.csv", "app/locale/es_AR/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_CL/Luigifab_Apijs.csv", "app/locale/es_CL/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_CO/Luigifab_Apijs.csv", "app/locale/es_CO/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_CR/Luigifab_Apijs.csv", "app/locale/es_CR/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_ES/Luigifab_Apijs.csv", "app/locale/es_ES/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_MX/Luigifab_Apijs.csv", "app/locale/es_MX/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_PA/Luigifab_Apijs.csv", "app/locale/es_PA/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_PE/Luigifab_Apijs.csv", "app/locale/es_PE/Luigifab_Apijs.csv"],
+            ["src/app/locale/es_VE/Luigifab_Apijs.csv", "app/locale/es_VE/Luigifab_Apijs.csv"],
+            ["src/app/locale/fr_CA/Luigifab_Apijs.csv", "app/locale/fr_CA/Luigifab_Apijs.csv"],
+            ["src/app/locale/fr_FR/Luigifab_Apijs.csv", "app/locale/fr_FR/Luigifab_Apijs.csv"],
+            ["src/app/locale/it_CH/Luigifab_Apijs.csv", "app/locale/it_CH/Luigifab_Apijs.csv"],
+            ["src/app/locale/it_IT/Luigifab_Apijs.csv", "app/locale/it_IT/Luigifab_Apijs.csv"],
+            ["src/app/locale/ja_JP/Luigifab_Apijs.csv", "app/locale/ja_JP/Luigifab_Apijs.csv"],
+            ["src/app/locale/nl_NL/Luigifab_Apijs.csv", "app/locale/nl_NL/Luigifab_Apijs.csv"],
+            ["src/app/locale/pl_PL/Luigifab_Apijs.csv", "app/locale/pl_PL/Luigifab_Apijs.csv"],
+            ["src/app/locale/pt_BR/Luigifab_Apijs.csv", "app/locale/pt_BR/Luigifab_Apijs.csv"],
+            ["src/app/locale/pt_PT/Luigifab_Apijs.csv", "app/locale/pt_PT/Luigifab_Apijs.csv"],
+            ["src/app/locale/ru_RU/Luigifab_Apijs.csv", "app/locale/ru_RU/Luigifab_Apijs.csv"],
+            ["src/app/locale/tr_TR/Luigifab_Apijs.csv", "app/locale/tr_TR/Luigifab_Apijs.csv"],
+            ["src/app/locale/zh_CN/Luigifab_Apijs.csv", "app/locale/zh_CN/Luigifab_Apijs.csv"],
+            ["src/app/etc/modules/Luigifab_Apijs.xml", "app/etc/modules/Luigifab_Apijs.xml"],
+            ["src/app/code/community/Luigifab/Apijs/", "app/code/community/Luigifab/Apijs/"],
+            ["src/app/design/adminhtml/default/default/layout/luigifab/apijs.xml", "app/design/adminhtml/default/default/layout/luigifab/apijs.xml"],
+            ["src/app/design/adminhtml/default/default/template/luigifab/apijs/", "app/design/adminhtml/default/default/template/luigifab/apijs/"],
+            ["src/app/design/frontend/base/default/layout/luigifab/apijs.xml", "app/design/frontend/base/default/layout/luigifab/apijs.xml"],
+            ["src/app/design/frontend/base/default/template/luigifab/apijs/", "app/design/frontend/base/default/template/luigifab/apijs/"],
+            ["src/skin/adminhtml/default/default/css/luigifab/apijs/", "skin/adminhtml/default/default/css/luigifab/apijs/"],
+            ["src/skin/adminhtml/default/default/fonts/luigifab/apijs/", "skin/adminhtml/default/default/fonts/luigifab/apijs/"],
+            ["src/skin/adminhtml/default/default/images/luigifab/apijs/", "skin/adminhtml/default/default/images/luigifab/apijs/"],
+            ["src/skin/adminhtml/default/default/js/luigifab/apijs/", "skin/adminhtml/default/default/js/luigifab/apijs/"],
+            ["src/skin/frontend/base/default/css/luigifab/apijs/", "skin/frontend/base/default/css/luigifab/apijs/"],
+            ["src/skin/frontend/base/default/fonts/luigifab/apijs/", "skin/frontend/base/default/fonts/luigifab/apijs/"],
+            ["src/skin/frontend/base/default/images/luigifab/apijs/", "skin/frontend/base/default/images/luigifab/apijs/"],
+            ["src/skin/frontend/base/default/js/luigifab/apijs/", "skin/frontend/base/default/js/luigifab/apijs/"]
+        ]
+    }
+}
