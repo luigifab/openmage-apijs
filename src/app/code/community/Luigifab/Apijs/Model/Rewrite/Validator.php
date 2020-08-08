@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated S/04/07/2020
+ * Updated D/26/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -21,12 +21,15 @@ class Luigifab_Apijs_Model_Rewrite_Validator extends Mage_Core_Model_File_Valida
 
 	public function validate($path) {
 
-		if (!Mage::getStoreConfigFlag('apijs/general/pythonpil'))
+		if (is_file($path) && in_array(mime_content_type($path), ['image/svg', 'image/svg+xml']))
+			return true;
+
+		if (!Mage::getStoreConfigFlag('apijs/general/python'))
 			return parent::validate($path);
 
 		// replace tmp image with re-sampled copy to exclude images with malicious data
 		try {
-			$processor = Mage::getSingleton('apijs/pillow');
+			$processor = Mage::getSingleton('apijs/python');
 			$processor->setFilename($path)->resize($processor->getOriginalWidth(), $processor->getOriginalHeight())->save($path);
 		}
 		catch (Exception $e) {

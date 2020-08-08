@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated S/04/07/2020
+ * Updated D/26/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -17,13 +17,15 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Apijs_Model_Pillow extends Varien_Image {
+class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	// singleton
 	protected $_quality = 100;
+	protected $_files = [];
 	protected $_pids = [];
 	protected $_core = 1;
 	protected $_python;
+	protected $_svg;
 
 	public function __construct($file = null, $adapter = null) {
 
@@ -47,13 +49,14 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 		}
 	}
 
-	public function getProgramVersions() {
+	public function getProgramVersions($helpPil, $helpSco) {
 
 		$cmd = $this->_python;
 
-		if (strpos($cmd, ':') !== false) { // pas de mb_strpos
-			$pyt = 'not available';
+		if (empty($cmd)) { // pas de mb_strpos
+			$pyt = 'not found';
 			$pil = $pyt;
+			$sco = $pyt;
 		}
 		else {
 			exec($cmd.' --version 2>&1', $pyt);
@@ -66,9 +69,17 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 				$pil = 'not available';
 			else if (mb_stripos($pil, '__version__') !== false)
 				$pil = 'available';
+
+			exec($cmd.' -c "import scour; print(scour.__version__)" 2>&1', $sco);
+			$sco = trim(implode($sco));
+
+			if (mb_stripos($sco, 'o module named') !== false)
+				$sco = 'not available';
+			else if (mb_stripos($sco, '__version__') !== false)
+				$sco = 'available';
 		}
 
-		return sprintf('python %s / python-pil %s / %d cpu', $pyt, $pil, $this->_core);
+		return sprintf('python %s / python-pil %s %s / python-scour %s %s / %d cpu', $pyt, $pil, $helpPil, $sco, $helpSco, $this->_core);
 	}
 
 	public function open() {
@@ -79,7 +90,7 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 		return $this;
 	}
 
-	public function save($destination = null, $newFileName = null) {
+	public function save($destination = null, $newFilename = null) {
 
 		$this->open();
 
@@ -107,8 +118,12 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 				empty($this->_resizeFixed) ? '' : 'fixed'
 			);
 
-			$this->_pids[] = exec($cmd);
-			Mage::log($cmd, Zend_Log::INFO, 'apijs.log');
+			// ne génère pas deux fois la même image
+			if (!in_array($destination, $this->_files)) {
+				$this->_files[] = $destination;
+				$this->_pids[]  = exec($cmd);
+				Mage::log($cmd, Zend_Log::INFO, 'apijs.log');
+			}
 
 			$this->reset();
 		}
@@ -128,6 +143,9 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 
 	public function getOriginalWidth() {
 
+		if ($this->_svg)
+			return 0;
+
 		if (empty($this->_imagesize)) {
 			$this->open();
 			$this->_imagesize = getimagesize($this->_fileName);
@@ -138,6 +156,9 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 
 	public function getOriginalHeight() {
 
+		if ($this->_svg)
+			return 0;
+
 		if (empty($this->_imagesize)) {
 			$this->open();
 			$this->_imagesize = getimagesize($this->_fileName);
@@ -147,6 +168,9 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 	}
 
 	public function getMimeType() {
+
+		if ($this->_svg)
+			return 'image/svg+xml';
 
 		if (empty($this->_imagesize)) {
 			$this->open();
@@ -245,6 +269,7 @@ class Luigifab_Apijs_Model_Pillow extends Varien_Image {
 
 	public function setFilename($value) {
 		$this->_fileName = $value;
+		$this->_svg = (is_file($value) && in_array(mime_content_type($value), ['image/svg', 'image/svg+xml']));
 		return $this;
 	}
 

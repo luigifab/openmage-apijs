@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated J/09/07/2020
+ * Updated J/16/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -27,7 +27,9 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 
 			foreach ($product->getMediaGallery('images') as $image) {
 				$filename = basename($image['file']);
-				$this->removeFiles(Mage::helper('apijs')->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
+				// pas uniquement dans le cache
+				if (!empty($filename))
+					$this->removeFiles(Mage::helper('apijs')->getCatalogProductImageDir(), $filename);
 			}
 		}
 	}
@@ -134,19 +136,21 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 
 			foreach ($attributes as $attribute) {
 				$filename = $category->getData($attribute->getData('attribute_code'));
-				$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $filename); // pas uniquement dans le cache
+				// pas uniquement dans le cache
+				if (!empty($filename))
+					$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $filename);
 			}
 		}
 
-		$post = $observer->getData('controller_action')->getRequest()->getPost();
+		$post = is_object($observer->getData('controller_action')) ? $observer->getData('controller_action')->getRequest()->getPost() : null;
 		if (!empty($post) && is_array($post)) {
 
 			foreach ($post as $key => $value) {
 				if (is_array($value)) {
 					foreach ($value as $subkey => $subvalue) {
-						if (is_array($subvalue) && !empty($subvalue['delete']) && !empty($subvalue['value'])) {
-							$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $subvalue['value']); // pas uniquement dans le cache
-						}
+						// pas uniquement dans le cache
+						if (is_array($subvalue) && !empty($subvalue['delete']) && !empty($subvalue['value']))
+							$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $subvalue['value']);
 					}
 				}
 			}

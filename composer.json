@@ -2,11 +2,27 @@
     "type": "magento-module",
     "name": "luigifab/openmage-apijs",
     "description": "Beautiful javascript popup and slideshow for OpenMage and Magento.",
+    "homepage": "https://github.com/luigifab/openmage-apijs",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Fabrice Creuzot (luigifab)",
+            "homepage": "https://www.luigifab.fr",
             "email": "code@luigifab.fr"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/luigifab/openmage-apijs/issues",
+        "docs": "https://www.luigifab.fr/openmage/apijs"
+    },
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://www.paypal.me/luigifab"
+        },
+        {
+            "type": "other",
+            "url": "https://gandi.link/f/4b904048"
         }
     ],
     "require": {
@@ -42,6 +58,7 @@
             ["src/app/locale/pt_BR/Luigifab_Apijs.csv", "app/locale/pt_BR/Luigifab_Apijs.csv"],
             ["src/app/locale/pt_PT/Luigifab_Apijs.csv", "app/locale/pt_PT/Luigifab_Apijs.csv"],
             ["src/app/locale/ru_RU/Luigifab_Apijs.csv", "app/locale/ru_RU/Luigifab_Apijs.csv"],
+            ["src/app/locale/sk_SK/Luigifab_Apijs.csv", "app/locale/sk_SK/Luigifab_Apijs.csv"],
             ["src/app/locale/tr_TR/Luigifab_Apijs.csv", "app/locale/tr_TR/Luigifab_Apijs.csv"],
             ["src/app/locale/zh_CN/Luigifab_Apijs.csv", "app/locale/zh_CN/Luigifab_Apijs.csv"],
             ["src/app/etc/modules/Luigifab_Apijs.xml", "app/etc/modules/Luigifab_Apijs.xml"],

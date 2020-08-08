@@ -1,7 +1,7 @@
 "Dialogs boxes","Boîtes de dialogue"
 "Enable in backend","Activer dans le back-office"
 "Enable in frontend","Activer sur le front-office"
-"Use python-pil as image processor","Utiliser python-pil comme processeur d'image"
+"Use python-pil and python-scour as image processor","Utiliser python-pil et python-scour comme processeur d'image"
 "Used even if the apijs is disabled.","Utilisé même si l'apijs est désactivé."
 "Check browser version","Vérifier la version du navigateur"
 "Firefox 36+, Chrome 31+, Opera 19+, Edge 16+, Safari 9+ (checks even if the apijs is disabled).","Firefox 36+, Chrome 31+, Opera 19+, Edge 16+, Safari 9+ (vérifie même si l'apijs est désactivé)."

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated D/12/07/2020
+ * Updated D/26/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -26,6 +26,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 	public function init($product, $attribute, $path = null, $fixed = true) {
 
 		$this->_reset();
+
+		// sans le dossier, cela ne génère pas les miniatures wysiwyg ou category
+		$dir = Mage::helper('apijs')->getCatalogProductImageDir(true);
+		if (!is_dir($dir))
+			mkdir($dir, 0755, true);
 
 		//if (!isset($this->_begin)) $this->_begin = microtime(true);
 		//if (!isset($this->_count)) $this->_count = 0;
@@ -59,11 +64,13 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		if (empty($path))
 			$path = $product->getData($attribute);
 
-		$this->setImageFile($path);
-		$this->setBaseFile($model, $this->getImageFile());
 
-		if (Mage::getStoreConfigFlag('apijs/general/pythonpil')) {
-			$processor = Mage::getSingleton('apijs/pillow')->setFilename($model->getBaseFile())->setFixed($fixed);
+		$this->_svg = (!empty($path) && (mb_substr($path, -4) == '.svg'));
+		$this->setImageFile($path);
+		$this->setBaseFile($model, $path);
+
+		if (Mage::getStoreConfigFlag('apijs/general/python')) {
+			$processor = Mage::getSingleton('apijs/python')->setFilename($model->getBaseFile())->setFixed($fixed);
 			$model->setImageProcessor($processor);
 		}
 
@@ -74,11 +81,19 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		return $this->_getModel()->getImageProcessor();
 	}
 
-	public function setBaseFile($model, $file) {
+	public function getOriginalWidth() {
+		return empty($this->_svg) ? parent::getOriginalWidth() : 0;
+	}
+
+	public function getOriginalHeight() {
+		return empty($this->_svg) ? parent::getOriginalHeight() : 0;
+	}
+
+	public function setBaseFile($model, $path) {
 
 		try {
 			// essaye le fichier source
-			$model->setBaseFile($file);
+			$model->setBaseFile($path);
 		}
 		catch (Exception $e) {
 			try {
@@ -102,9 +117,23 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		}
 	}
 
+	public function validateUploadFile($path) {
+		return (is_file($path) && in_array(mime_content_type($path), ['image/svg', 'image/svg+xml'])) ? true : parent::validateUploadFile($path);
+	}
+
 	public function __toString() {
 
 		$model = $this->_getModel();
+		if (!empty($this->_svg)) {
+			$this->resize(0, 0);
+			if (!Mage::getStoreConfigFlag('apijs/general/python')) {
+				if ($model->getDestinationSubdir() == 'wysiwyg')
+					return Mage::getBaseUrl('media').str_replace('../', '', $this->getImageFile());
+				if ($model->getDestinationSubdir() == 'category')
+					return Mage::getBaseUrl('media').'catalog/category/'.$this->getImageFile();
+				return Mage::getBaseUrl('media').'catalog/product'.$this->getImageFile();
+			}
+		}
 
 		try {
 			$model->setBaseFile($this->getImageFile());

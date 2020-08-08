@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/12/07/2020
+ * Updated J/16/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -189,9 +189,9 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 			Mage::log(sprintf('Remove all %s images with exec(find) in %s', $filename, $dir), Zend_Log::INFO, 'apijs.log');
 
 			if (mb_stripos($filename, '/') === false)
-				exec('find '.$dir.' -name '.escapeshellarg($filename).' | xargs rm');
+				exec('find '.escapeshellarg($dir).' -name '.escapeshellarg($filename).' | xargs rm');
 			else
-				exec('find '.$dir.' -wholename '.escapeshellarg('*/'.$filename).' | xargs rm');
+				exec('find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.$filename).' | xargs rm');
 		}
 	}
 

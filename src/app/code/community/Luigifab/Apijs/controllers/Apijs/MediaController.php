@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated L/06/07/2020
+ * Updated V/24/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
@@ -88,7 +88,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 				try {
 					$uploader = new Varien_File_Uploader($key);
-					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png']);
+					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png','svg']);
 					$uploader->setAllowRenameFiles(true);
 					$uploader->setFilesDispersion(false);
 					$uploader->addValidateCallback(Mage_Core_Model_File_Validator_Image::NAME,
@@ -143,7 +143,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 				try {
 					$uploader = new Varien_File_Uploader($key);
-					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png']);
+					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png','svg']);
 					$uploader->setAllowRenameFiles(true);
 					$uploader->setFilesDispersion(true);
 					$uploader->addValidateCallback(Mage_Core_Model_File_Validator_Image::NAME,

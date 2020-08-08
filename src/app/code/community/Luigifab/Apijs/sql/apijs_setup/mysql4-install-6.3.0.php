@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/05/09/2019
- * Updated D/12/07/2020
+ * Updated L/13/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
@@ -40,9 +40,6 @@ try {
 				' MODIFY COLUMN '.$field['Field'].' '.$field['Type'].' NULL DEFAULT '.(($field['Default'] != '') ? $field['Default'] : 'NULL'));
 		}
 	}
-
-	$this->run('UPDATE '.$this->getTable('core_config_data').' SET path = "apijs/general/remove_cache" WHERE path = "apijs/general/delete_cache"');
-	Mage::getConfig()->reinit();
 }
 catch (Exception $e) {
 	$lock->unlock();

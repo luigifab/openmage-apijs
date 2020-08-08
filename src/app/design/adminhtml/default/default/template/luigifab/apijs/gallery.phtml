@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated L/06/07/2020
+ * Updated D/26/07/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -335,10 +335,16 @@ $sid  = $product->getStoreId();
 						<br /><button type="button" class="slink" onclick="apijsOpenMage.removeAttachment('<?php echo $this->getRemoveUrl($iid) ?>'); return false;"><?php echo $this->__('Remove') ?></button>
 
 						<div style="margin-top:1em;"><?php if (is_file($file)) {
-							$sizes = getimagesize($file);
-							echo $help->getNumberToHumanSize(filesize($file)),
-								'<br />',Zend_Locale_Format::toNumber($sizes[0]),' x ',Zend_Locale_Format::toNumber($sizes[1]),
-								'<br />',$date->setTimestamp(filemtime($file))->toString();
+							if (mb_substr($file, -4) == '.svg') {
+								echo $help->getNumberToHumanSize(filesize($file)),
+									'<br />',$date->setTimestamp(filemtime($file))->toString();
+							}
+							else {
+								$sizes = getimagesize($file);
+								echo $help->getNumberToHumanSize(filesize($file)),
+									'<br />',Zend_Locale_Format::toNumber($sizes[0]),' x ',Zend_Locale_Format::toNumber($sizes[1]),
+									'<br />',$date->setTimestamp(filemtime($file))->toString();
+							}
 						} ?></div>
 					</td>
 				</tr>
