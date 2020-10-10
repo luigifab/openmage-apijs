@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated J/16/07/2020
+ * Updated D/20/09/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -26,10 +26,10 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 		if (is_object($product) && !empty($product->getId())) {
 
 			foreach ($product->getMediaGallery('images') as $image) {
-				$filename = basename($image['file']);
+				$file = basename($image['file']);
 				// pas uniquement dans le cache
-				if (!empty($filename))
-					$this->removeFiles(Mage::helper('apijs')->getCatalogProductImageDir(), $filename);
+				if (!empty($file))
+					$this->removeFiles(Mage::helper('apijs')->getCatalogProductImageDir(), $file);
 			}
 		}
 	}
@@ -135,10 +135,10 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 				->getItems();
 
 			foreach ($attributes as $attribute) {
-				$filename = $category->getData($attribute->getData('attribute_code'));
+				$file = $category->getData($attribute->getData('attribute_code'));
 				// pas uniquement dans le cache
-				if (!empty($filename))
-					$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $filename);
+				if (!empty($file))
+					$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $file);
 			}
 		}
 

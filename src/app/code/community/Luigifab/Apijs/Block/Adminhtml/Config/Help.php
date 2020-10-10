@@ -37,6 +37,7 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 	private function checkRewrites() {
 
 		$rewrites = [
+			['block' => 'adminhtml/cache_additional'],
 			['block' => 'adminhtml/catalog_category_helper_image'],
 			['block' => 'adminhtml/catalog_product_helper_form_gallery_content'],
 			['block' => 'adminhtml/cms_wysiwyg_images_tree'],

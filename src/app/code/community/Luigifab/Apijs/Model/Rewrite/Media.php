@@ -4,7 +4,7 @@
  * Updated D/20/10/2019
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify

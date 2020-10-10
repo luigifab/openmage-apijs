@@ -4,7 +4,7 @@
  * https://github.com/donatj/PhpUserAgent
  *
  * Copyright 2019-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.0.0-fork2)
+ * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.1.0-fork2)
  *
  * Parses a user agent string into its important parts
  * Licensed under the MIT License
@@ -47,7 +47,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 
 
 		preg_match_all( // ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			'/(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|Baiduspider|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?P<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix',
+			'/(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|Baiduspider|Applebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?P<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix',
 			$userAgent, $result);
 
 
@@ -110,13 +110,13 @@ class Luigifab_Apijs_Model_Useragentparser {
 				if (ctype_upper($part)) {
 					$version = substr($version, 0, -2);
 					$flags   = ['IP' => 'iPhone', 'IT' => 'iPad', 'AP' => 'Android', 'AT' => 'Android', 'WP' => 'Windows Phone', 'WT' => 'Windows'];
-					if (array_key_exists($part, $flags)) {
+					if (is_string($part) && array_key_exists($part, $flags)) {
 						$platform = $flags[$part];
 					}
 				}
 			}
 		}
-		else if ($this->find($lowerBrowser, ['IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome'], $key, $browser)) {
+		else if ($this->find($lowerBrowser, ['Applebot', 'IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome'], $key, $browser)) {
 			$version = $result['version'][$key];
 		}
 		else if ($rv_result && $this->find($lowerBrowser, 'Trident')) {

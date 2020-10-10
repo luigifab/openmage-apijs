@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated V/24/07/2020
+ * Updated M/06/10/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>6.3.0</version>
+			<version>6.4.0</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -30,6 +30,7 @@
 			</apijs>
 			<adminhtml>
 				<rewrite>
+					<cache_additional>Luigifab_Apijs_Block_Adminhtml_Rewrite_Additional</cache_additional>
 					<cms_wysiwyg_images_tree>Luigifab_Apijs_Block_Adminhtml_Rewrite_Tree</cms_wysiwyg_images_tree>
 					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Config</system_config_form_field_image>
 					<catalog_category_helper_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Category</catalog_category_helper_image>
@@ -112,42 +113,42 @@
 		<events>
 			<catalog_product_delete_commit_after>
 				<observers>
-					<apijs_remove_image>
+					<apijs>
 						<class>apijs/observer</class>
 						<method>removeProductImages</method>
-					</apijs_remove_image>
+					</apijs>
 				</observers>
 			</catalog_product_delete_commit_after>
 			<catalog_category_delete_commit_after>
 				<observers>
-					<apijs_remove_image>
+					<apijs>
 						<class>apijs/observer</class>
 						<method>removeCategoryImages</method>
-					</apijs_remove_image>
+					</apijs>
 				</observers>
 			</catalog_category_delete_commit_after>
 			<controller_action_predispatch_adminhtml_apijs_media_save>
 				<observers>
-					<apijs_save_product>
+					<apijs>
 						<class>apijs/observer</class>
 						<method>updatePostForGallery</method>
-					</apijs_save_product>
+					</apijs>
 				</observers>
 			</controller_action_predispatch_adminhtml_apijs_media_save>
 			<controller_action_predispatch_adminhtml_catalog_product_save>
 				<observers>
-					<apijs_save_product>
+					<apijs>
 						<class>apijs/observer</class>
 						<method>updatePostForGallery</method>
-					</apijs_save_product>
+					</apijs>
 				</observers>
 			</controller_action_predispatch_adminhtml_catalog_product_save>
 			<controller_action_predispatch_adminhtml_catalog_category_save>
 				<observers>
-					<apijs_save_category>
+					<apijs>
 						<class>apijs/observer</class>
 						<method>removeCategoryImages</method>
-					</apijs_save_category>
+					</apijs>
 				</observers>
 			</controller_action_predispatch_adminhtml_catalog_category_save>
 		</events>

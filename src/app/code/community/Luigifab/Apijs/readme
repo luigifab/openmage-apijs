@@ -5,7 +5,7 @@ Module    : Luigifab/Apijs
 License   : GNU GPL 2+ (https://opensource.org/licenses/gpl-2.0)
 Copyright : 2008-2020 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 Copyright : 2019-2020 Fabrice Creuzot <fabrice~cellublue~com>
-
+Copyright : 2020      Jérôme Siau <jerome~cellublue~com>
 
 
 
@@ -23,6 +23,7 @@ Rewrite
 - adminhtml | template | cms/browser/content.phtml                             | luigifab/apijs/content.phtml
 - adminhtml | template | cms/browser/content/files.phtml                       | luigifab/apijs/files.phtml
 - frontend  | template | catalog/product/view/media.phtml                      | luigifab/apijs/media.phtml
+- global    | block    | adminhtml/cache_additional                            | apijs/adminhtml_rewrite_additional
 - global    | block    | adminhtml/catalog_category_helper_image               | apijs/adminhtml_rewrite_category
 - global    | block    | adminhtml/catalog_product_helper_form_gallery_content | apijs/adminhtml_rewrite_gallery
 - global    | block    | adminhtml/cms_wysiwyg_images_tree                     | apijs/adminhtml_rewrite_tree
@@ -123,7 +124,7 @@ If you like, take some of your time to improve the translations, go to https://b
 
 
 File: /app/code/community/Luigifab/Apijs/Model/Useragentparser.php
-Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.0.0-fork2)
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.1.0-fork2)
 Copyright: 2013-2020 Jesse G. Donat <donatj~gmail~com>
 Copyright: 2019-2020 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 License: MIT (https://opensource.org/licenses/mit)

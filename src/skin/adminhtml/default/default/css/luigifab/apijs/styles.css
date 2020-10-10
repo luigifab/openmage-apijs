@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated V/12/06/2020
+ * Updated D/04/10/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -36,9 +36,14 @@
 	font-family:apijsFontelloOpenMage;
 }
 
+#apijsBox.options.editname input[type="text"] {
+	display:block; padding:0.3em; width:calc(100% - 4px - 0.6em);
+	border:1px solid #888; background-color:#EEE;
+}
+
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& global &&& */
 button.slink {
-	display:inline; margin:0; padding:0; line-height:1;
+	display:inline; margin:0; padding:0 0 1px; line-height:1;
 	font-weight:400; text-decoration:underline; color:#EA7601; border:0; background:none;
 }
 
@@ -85,9 +90,10 @@ body.adminhtml-apijs-wysiwyg-index .main-col .content-header .icon-head { backgr
 body.adminhtml-apijs-wysiwyg-index .main-col #contents { height:inherit; overflow:visible; }
 body.adminhtml-apijs-wysiwyg-index .main-col .album { text-align:left; }
 body.adminhtml-apijs-wysiwyg-index .main-col .filecnt { float:inherit !important; display:inline-block !important; width:200px !important; }
-body.adminhtml-apijs-wysiwyg-index .main-col .filecnt .img a { text-decoration:none; }
 body.adminhtml-apijs-wysiwyg-index .main-col .filecnt.selected { border-color:#CCC !important; background-color:white !important; }
-body.adminhtml-apijs-wysiwyg-index .main-col .desc { margin:0.5em 0 0.1em; text-align:left; }
+body.adminhtml-apijs-wysiwyg-index .main-col .filecnt .img { display:block; margin-bottom:0.5em; text-decoration:none; }
+body.adminhtml-apijs-wysiwyg-index .main-col .filecnt .filename { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+body.adminhtml-apijs-wysiwyg-index .main-col .desc { margin:0.3em 0 0.1em; text-align:left; }
 body.adminhtml-apijs-wysiwyg-index #loading-mask, body.adminhtml-apijs-wysiwyg-index #button_insert_files { display:none; }
 body.adminhtml-apijs-wysiwyg-index #button_delete_files { display:none; }
 
@@ -100,7 +106,8 @@ body #browser_window .main-col .content-header .icon-head { background-image:url
 body #browser_window .main-col #contents { height:500px; }
 body #browser_window .main-col .album { text-align:left; }
 body #browser_window .main-col .filecnt { float:inherit !important; display:inline-block !important; width:200px !important; }
-body #browser_window .main-col .filecnt .img a { text-decoration:none; }
 body #browser_window .main-col .filecnt.selected { border-color:#CCC !important; background-color:white !important; }
-body #browser_window .main-col .desc { margin:0.5em 0 0.1em; text-align:left; }
+body #browser_window .main-col .filecnt .img { display:block; margin-bottom:0.5em; text-decoration:none; }
+body #browser_window .main-col .filecnt .filename { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+body #browser_window .main-col .desc { margin:0.3em 0 0.1em; text-align:left; }
 body #browser_window #button_delete_files { display:none; }

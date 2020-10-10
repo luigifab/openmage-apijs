@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated J/16/07/2020
+ * Updated D/20/09/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -180,18 +180,18 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		return $data;
 	}
 
-	public function removeFiles(string $dir, string $filename) {
+	public function removeFiles(string $dir, string $file) {
 
 		// recherche tous les fichiers avec la commande find
 		// si le nom du fichier contient des caractères simples
-		if (Mage::getStoreConfigFlag('apijs/general/remove_cache') && (preg_match('#[\w\-]+\.\w+$#', $filename) === 1)) {
+		if (Mage::getStoreConfigFlag('apijs/general/remove_cache') && (preg_match('#[\w\-]+\.\w+$#', $file) === 1)) {
 
-			Mage::log(sprintf('Remove all %s images with exec(find) in %s', $filename, $dir), Zend_Log::INFO, 'apijs.log');
+			Mage::log(sprintf('Remove all %s images with exec(find) in %s', $file, $dir), Zend_Log::INFO, 'apijs.log');
 
-			if (mb_stripos($filename, '/') === false)
-				exec('find '.escapeshellarg($dir).' -name '.escapeshellarg($filename).' | xargs rm');
+			if (mb_stripos($file, '/') === false)
+				exec('find '.escapeshellarg($dir).' -name '.escapeshellarg($file).' | xargs rm');
 			else
-				exec('find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.$filename).' | xargs rm');
+				exec('find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.$file).' | xargs rm');
 		}
 	}
 

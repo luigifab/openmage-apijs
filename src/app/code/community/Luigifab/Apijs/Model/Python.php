@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated D/26/07/2020
+ * Updated V/18/09/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -143,7 +143,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	public function getOriginalWidth() {
 
-		if ($this->_svg)
+		if ($this->isSvg())
 			return 0;
 
 		if (empty($this->_imagesize)) {
@@ -156,7 +156,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	public function getOriginalHeight() {
 
-		if ($this->_svg)
+		if ($this->isSvg())
 			return 0;
 
 		if (empty($this->_imagesize)) {
@@ -169,7 +169,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	public function getMimeType() {
 
-		if ($this->_svg)
+		if ($this->isSvg())
 			return 'image/svg+xml';
 
 		if (empty($this->_imagesize)) {
@@ -178,6 +178,16 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		}
 
 		return $this->_imagesize[2];
+	}
+
+	public function isSvg() {
+
+		if (is_null($this->_svg)) {
+			$this->open();
+			$this->_svg = (mb_stripos($this->_fileName, '.svg') !== false) || in_array(mime_content_type($this->_fileName), ['image/svg', 'image/svg+xml']);
+		}
+
+		return $this->_svg;
 	}
 
 	// simple setter
@@ -193,7 +203,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		return $this;
 	}
 
-	public function crop(int $top = 0, int $left = 0, int $right = 0, int $bottom = 0) {
+	public function crop($top = 0, $left = 0, $right = 0, $bottom = 0) {
 		$this->_cropTop = $top;
 		$this->_cropLeft = $left;
 		$this->_cropRight = $right;
@@ -201,7 +211,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		return $this;
 	}
 
-	public function watermark($image, int $positionX = 0, int $positionY = 0, int $opacity = 30, bool $repeat = false) {
+	public function watermark($image, $positionX = 0, $positionY = 0, $opacity = 30, $repeat = false) {
 		if (!is_file($image))
 			Mage::throwException('Required file '.$image.' does not exists.');
 		$this->_watermarkImage = $watermarkImage;
@@ -269,7 +279,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	public function setFilename($value) {
 		$this->_fileName = $value;
-		$this->_svg = (is_file($value) && in_array(mime_content_type($value), ['image/svg', 'image/svg+xml']));
+		$this->_svg = null;
 		return $this;
 	}
 
@@ -302,6 +312,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		$this->_watermarkWidth = null;
 		$this->_watermarkHeigth = null;
 		$this->_fileName = null;
+		$this->_svg = null;
 		$this->_resizeFixed = null;
 		return $this;
 	}

@@ -1,7 +1,7 @@
 <?php
 /**
- * Created S/04/01/2020
- * Updated M/29/09/2020
+ * Created M/06/10/2020
+ * Updated M/06/10/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -17,30 +17,13 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Apijs_Block_Adminhtml_Rewrite_Tree extends Mage_Adminhtml_Block_Cms_Wysiwyg_Images_Tree {
+class Luigifab_Apijs_Block_Adminhtml_Rewrite_Additional extends Mage_Adminhtml_Block_Cache_Additional {
 
 	protected function _construct() {
 		$this->setModuleName('Mage_Adminhtml');
 	}
 
-	public function getTreeJson() {
-
-		$helper = $this->helper('cms/wysiwyg_images');
-		$helper->getStorageRoot(); // très important
-
-		$collection = Mage::registry('storage')->getDirsCollection($helper->getCurrentPath());
-		$items = [];
-
-		foreach ($collection as $item) {
-			if ($item->getBasename() != 'cache') {
-				$items[] = [
-					'text' => $helper->getShortFilename($item->getBasename(), 20),
-					'id'   => $helper->convertPathToId($item->getFilename()),
-					'cls'  => 'folder'
-				];
-			}
-		}
-
-		return Zend_Json::encode($items);
+	public function getCleanImagesUrl() {
+		return $this->getUrl('*/system_config/edit', ['section' => 'apijs']);
 	}
 }

@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/24/07/2020
+ * Updated M/06/10/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -21,10 +21,6 @@
 require_once(Mage::getModuleDir('controllers', 'Mage_Adminhtml').'/Catalog/ProductController.php');
 
 class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_ProductController {
-
-	public function getUsedModuleName() {
-		return 'Luigifab_Apijs';
-	}
 
 	private function disableAllBuffer() {
 
@@ -69,6 +65,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		}
 
 		return 'success-'.json_encode($result);
+	}
+
+	public function getUsedModuleName() {
+		return 'Luigifab_Apijs';
 	}
 
 	public function uploadWidgetAction() {
@@ -193,8 +193,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			if (!empty($storeId))
 				$product->setStoreId($storeId)->load($product->getId());
 
-			// html
+			// très important car les chemins et les urls sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
+
+			// html
 			$result = $this->formatResult($success, $errors, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
@@ -235,8 +237,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			if (!empty($storeId)) // reload
 				$product->setStoreId($storeId)->load($product->getId());
 
-			// html
+			// très important car les chemins et les urls sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
+
+			// html
 			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
@@ -306,8 +310,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			// supprime enfin les fichiers
 			Mage::helper('apijs')->removeFiles(Mage::helper('apijs')->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
 
-			// html
+			// très important car les chemins et les urls sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
+
+			// html
 			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {

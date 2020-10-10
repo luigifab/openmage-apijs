@@ -1,10 +1,10 @@
 <?php
 /**
  * Created M/07/01/2020
- * Updated J/18/06/2020
+ * Updated M/06/10/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -71,6 +71,9 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 		catch (Exception $e) {
 			$this->_getSession()->addError($e->getMessage());
 		}
+
+		// très important car les chemins et les urls sont aussi mis en cache
+		Mage::app()->getCacheInstance()->cleanType('block_html');
 
 		$this->_redirect('*/system_config/edit', ['section' => 'apijs']);
 	}

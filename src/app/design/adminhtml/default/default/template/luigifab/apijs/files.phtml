@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/08/09/2019
- * Updated L/06/07/2020
+ * Updated D/13/09/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019      | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -40,22 +40,22 @@ $prev = null;
 					<?php $prev = $curr ?>
 				<?php endif ?>
 				<div class="filecnt" id="<?php echo $image->getId() ?>">
-					<p class="img">
-						<?php
-							// <a> <img src srcset> <input>
-							// l'image du lien = une image redimensionnée en cache
-							// l'image de l'image = une miniature en cache
-						?>
-						<a href="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" id="slideshow.0.<?php echo $i++ ?>">
-							<img src="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 200, 150, true) ?>" srcset="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $name ?>" />
-							<input type="hidden" value="<?php echo $name ?>|false|" />
-						</a>
+					<?php
+						// <a> <img src srcset> <input>
+						// l'image du lien = une image redimensionnée en cache
+						// l'image de l'image = une miniature en cache
+					?>
+					<a href="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" class="img" id="slideshow.0.<?php echo $i++ ?>">
+						<img src="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 200, 150, true) ?>" srcset="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $name ?>" />
+						<input type="hidden" value="<?php echo $name ?>|false|" />
+					</a>
+					<p class="desc filename" title="<?php echo $help->escapeEntities($image->getData('name'), true) ?>">
+						<?php echo $image->getData('name') ?>
 					</p>
-					<p class="desc">
-						<?php echo $image->getData('short_name') ?>
-						<br /><a href="<?php echo $image->getData('url') ?>" type="<?php echo mime_content_type($file) ?>" download=""><?php echo $this->__('Download') ?></a> / <button type="button" class="slink" onclick="apijsOpenMage.removeMedia(this);"><?php echo $this->__('Remove') ?></button>
+					<p class="desc links">
+						<a href="<?php echo $image->getData('url') ?>" type="<?php echo mime_content_type($file) ?>" download=""><?php echo $this->__('Download') ?></a> | <button type="button" class="slink" onclick="apijsOpenMage.renameMedia(this);"><?php echo $this->__('Rename') ?></button> | <button type="button" class="slink remove" onclick="apijsOpenMage.removeMedia(this);"><?php echo $this->__('Remove') ?></button>
 					</p>
-					<p class="desc">
+					<p class="desc sizes">
 						<?php echo $help->getNumberToHumanSize(filesize($file)) ?>
 						<?php if (!empty($image->getData('width'))): ?>
 							/ <?php echo Zend_Locale_Format::toNumber($image->getData('width')) ?> x

@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated V/24/07/2020
+ * Updated D/27/09/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -24,6 +24,7 @@ var apijsOpenMage = new (function () {
 	this.start = function () {
 
 		var d = apijs.i18n.data;
+		if (!d.frca) d.frca = {};
 		// https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 		// auto start
 		d.cs[252] = "Chyba";
@@ -32,24 +33,32 @@ var apijsOpenMage = new (function () {
 		d.de[252] = "Fehler";
 		d.de[253] = "Sie verfügen nicht über die notwendigen Rechte um diese Operation durchzuführen, bitte [a §]aktualisieren Sie die Seite[/a].";
 		d.de[254] = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
-		d.en[250] = "Remove a file";
+		d.en[250] = "Remove file";
 		d.en[251] = "Are you sure you want to remove this file?[br]Be careful, you can't cancel this operation.";
 		d.en[252] = "Error";
 		d.en[253] = "You are not authorized to perform this operation, please [a §]refresh the page[/a].";
 		d.en[254] = "Sorry, the file no longer exists, please [a §]refresh the page[/a].";
 		d.en[255] = "Clear cache";
 		d.en[256] = "Are you sure you want to clear the cache?[br]Be careful, you can't cancel this operation.";
+		d.en[257] = "Rename file";
+		d.en[258] = "Enter below the new name for the file.";
 		d.es[250] = "Borrar un archivo";
-		d.es[251] = "¿Está usted seguro-a de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
+		d.es[251] = "¿Está usted seguro(a) de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
 		d.es[253] = "No está autorizado-a para llevar a cabo esta operación, por favor [a §]actualice la página[/a].";
 		d.es[254] = "Disculpe, pero el archivo ya no existe, por favor [a §]actualice la página[/a].";
-		d.fr[250] = "Supprimer un fichier";
-		d.fr[251] = "Êtes-vous certain(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
+		d.es[255] = "Vaciar la caché";
+		d.es[256] = "¿Está usted seguro(a) de querer vaciar la caché?[br]Cuidado, esta operación no puede ser cancelada.";
+		d.frca[251] = "Êtes-vous sûr(e) de vouloir supprimer ce fichier?[br]Attention, cette opération n'est pas annulable.";
+		d.frca[256] = "Êtes-vous certain(e) de vouloir vider le cache?[br]Attention, cette opération n'est pas annulable.";
+		d.fr[250] = "Supprimer le fichier";
+		d.fr[251] = "Êtes-vous sûr(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
 		d.fr[252] = "Erreur";
 		d.fr[253] = "Vous n'êtes pas autorisé(e) à effectuer cette opération, veuillez [a §]actualiser la page[/a].";
 		d.fr[254] = "Désolé, le fichier n'existe plus, veuillez [a §]actualiser la page[/a].";
 		d.fr[255] = "Vider le cache";
 		d.fr[256] = "Êtes-vous certain(e) de vouloir vider le cache ?[br]Attention, cette opération n'est pas annulable.";
+		d.fr[257] = "Renommer le fichier";
+		d.fr[258] = "Saisissez ci-dessous le nouveau nom pour ce fichier.";
 		d.it[250] = "Eliminare un file";
 		d.it[251] = "Sicuri di voler eliminare il file?[br]Attenzione, questa operazione non può essere annullata.";
 		d.it[252] = "Errore";
@@ -60,7 +69,7 @@ var apijsOpenMage = new (function () {
 		d.nl[252] = "Fout";
 		d.pl[252] = "Błąd";
 		d.pt[250] = "Suprimir um ficheiro";
-		d.pt[251] = "Tem certeza de que quer suprimir este ficheiro?[br]Atenção, não pode cancelar esta operação.";
+		d.pt[251] = "Tem certeza de que quer suprimir este ficheiro?[br]Cuidado, não pode cancelar esta operação.";
 		d.pt[252] = "Erro";
 		d.pt[253] = "Não é autorizado(a) para efetuar esta operação, por favor [a §]atualize a página[/a].";
 		d.pt[254] = "Lamento, o ficheiro já não existe, por favor [a §]atualize a página[/a].";
@@ -69,14 +78,15 @@ var apijsOpenMage = new (function () {
 		d.ru[252] = "Ошибка";
 		d.ru[253] = "Вы не авторизованы для выполнения этой операции, пожалуйста [a §]обновите страницу[/a].";
 		d.ru[254] = "Извините, но файл не существует, пожалуйста [a §]обновите страницу[/a].";
+		d.sk[252] = "Chyba";
 		d.tr[252] = "Hata";
 		d.zh[252] = "错误信息";
-	// auto end
+		// auto end
 	};
 
 	this.error = function (data) {
 
-		if ((typeof data == 'string') || (data.indexOf('<!DOCTYPE') < 0)) {
+		if ((typeof data == 'string') && (data.indexOf('<!DOCTYPE') < 0)) {
 			if (apijs.dialog.has('upload'))
 				apijs.upload.onError(false, data);
 			else
@@ -178,6 +188,46 @@ var apijsOpenMage = new (function () {
 		xhr.send();
 	};
 
+	this.renameMedia = function (elem) {
+
+		elem = elem.parentNode.parentNode;
+		elem.click();
+		if (!elem.classList.contains('selected'))
+			elem.click();
+
+		var name = elem.querySelector('.filename').textContent.trim(),
+		    text = '[p][label for="apijsinput"]' + apijs.i18n.translate(258) + '[/label][/p]' +
+				'[input type="text" name="name" value="' + name + '" spellcheck="false" id="apijsinput"]';
+
+		apijs.dialog.dialogFormOptions(apijs.i18n.translate(257), text, 'action.php', apijsOpenMage.actionRenameMedia, elem.id, 'editname');
+	};
+
+	this.actionRenameMedia = function (action, args) {
+
+		// vérification de la nouvelle description
+		if (typeof action == 'boolean') {
+			return true;
+		}
+		// sauvegarde du nouveau nom
+		else if (typeof action == 'string') {
+
+			// args = id
+			// copie de MediabrowserInstance.deleteFiles(); ou presque
+			new Ajax.Request(MediabrowserInstance.renameFileUrl, {
+				parameters: { file: args, name: document.getElementById('apijsinput').value },
+				onSuccess: function (transport) {
+					try {
+						MediabrowserInstance.onAjaxSuccess(transport);
+						MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
+					}
+					catch (e) {
+						apijsOpenMage.error(e.message);
+					}
+				}.bind(MediabrowserInstance)
+			});
+		}
+	};
+
 	this.removeMedia = function (elem) {
 
 		elem = elem.parentNode.parentNode;
@@ -200,7 +250,7 @@ var apijsOpenMage = new (function () {
 					MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
 				}
 				catch (e) {
-					alert(e.message);
+					apijsOpenMage.error(e.message);
 				}
 			}.bind(MediabrowserInstance)
 		});
@@ -280,6 +330,7 @@ var apijsOpenMage = new (function () {
 			}
 		});
 
+		MediabrowserInstance.renameFileUrl   = MediabrowserInstance.deleteFilesUrl.replace(/[a-z_]+\/deleteFiles\//, 'apijs_wysiwyg/renameFile/');
 		MediabrowserInstance.deleteFilesUrl  = MediabrowserInstance.deleteFilesUrl.replace(/[a-z_]+\/deleteFiles\//, 'apijs_wysiwyg/deleteFiles/');
 		MediabrowserInstance.deleteFolderUrl = MediabrowserInstance.deleteFolderUrl.replace(/[a-z_]+\/deleteFolder\//, 'apijs_wysiwyg/deleteFolder/');
 	};
