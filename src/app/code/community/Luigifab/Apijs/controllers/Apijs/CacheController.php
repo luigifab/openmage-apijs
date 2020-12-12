@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/07/01/2020
- * Updated M/06/10/2020
+ * Updated J/03/12/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -22,6 +22,10 @@ require_once(Mage::getModuleDir('controllers', 'Mage_Adminhtml').'/System/Config
 
 class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigController {
 
+	protected function _isAllowed() {
+		return Mage::getSingleton('admin/session')->isAllowed('system/config/apijs');
+	}
+
 	public function getUsedModuleName() {
 		return 'Luigifab_Apijs';
 	}
@@ -34,36 +38,36 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 			if ($type == 'wysiwyg') {
 
 				// thumb
-				$directory = trim(Mage::helper('apijs')->getWysiwygImageDir(true, true));
-				$io = new Varien_Io_File();
-				if (mb_strlen($directory) > 5)
-					$io->rmdir($directory, true);
+				$dir = trim(Mage::helper('apijs')->getWysiwygImageDir(true, true));
+				$iof = new Varien_Io_File();
+				if (mb_strlen($dir) > 5)
+					$iof->rmdir($dir, true);
 
 				// cache
-				$directory = trim(Mage::helper('apijs')->getWysiwygImageDir(true));
-				$io = new Varien_Io_File();
-				if (mb_strlen($directory) > 5)
-					$io->rmdir($directory, true);
+				$dir = trim(Mage::helper('apijs')->getWysiwygImageDir(true));
+				$iof = new Varien_Io_File();
+				if (mb_strlen($dir) > 5)
+					$iof->rmdir($dir, true);
 
 				$this->_getSession()->addSuccess($this->__('The image cache was cleaned.'));
 			}
 			else if ($type == 'product') {
 
 				// cache
-				$directory = trim(Mage::helper('apijs')->getCatalogProductImageDir(true));
-				$io = new Varien_Io_File();
-				if (mb_strlen($directory) > 5)
-					$io->rmdir($directory, true);
+				$dir = trim(Mage::helper('apijs')->getCatalogProductImageDir(true));
+				$iof = new Varien_Io_File();
+				if (mb_strlen($dir) > 5)
+					$iof->rmdir($dir, true);
 
 				$this->_getSession()->addSuccess($this->__('The image cache was cleaned.'));
 			}
 			else if ($type == 'category') {
 
 				// cache
-				$directory = trim(Mage::helper('apijs')->getCatalogCategoryImageDir(true));
-				$io = new Varien_Io_File();
-				if (mb_strlen($directory) > 5)
-					$io->rmdir($directory, true);
+				$dir = trim(Mage::helper('apijs')->getCatalogCategoryImageDir(true));
+				$iof = new Varien_Io_File();
+				if (mb_strlen($dir) > 5)
+					$iof->rmdir($dir, true);
 
 				$this->_getSession()->addSuccess($this->__('The image cache was cleaned.'));
 			}

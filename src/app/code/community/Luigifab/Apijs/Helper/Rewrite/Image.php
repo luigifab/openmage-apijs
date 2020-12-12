@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated M/06/10/2020
+ * Updated M/01/12/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -97,7 +97,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 		$this->_svg = (!empty($path) && (mb_substr($path, -4) == '.svg'));
 		$this->setImageFile($path);
-		$this->setBaseFile($model, $path);
+		$this->trySetBaseFile($model, $path);
 
 		if ($this->_config['apijs/general/python']) {
 			$processor = Mage::getSingleton('apijs/python')->setFilename($model->getBaseFile())->setFixed($fixed);
@@ -119,11 +119,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		return empty($this->_svg) ? parent::getOriginalHeight() : 0;
 	}
 
-	public function setBaseFile($model, $path) {
+	private function trySetBaseFile($model, $path) {
 
 		try {
 			// essaye le fichier source
-			$model->setBaseFile($path);
+			$this->wrapSetBaseFile($model, $path);
 		}
 		catch (Exception $e) {
 			try {
@@ -147,6 +147,18 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		}
 	}
 
+	private function wrapSetBaseFile($model, $file) {
+
+		$filename = Mage::helper('apijs')->getCatalogProductImageDir().$file;
+
+		// pour avoir une url unique
+		// par exemple, en cas de suppression de l'image a.jpg, puis de l'ajout de l'image a.jpg, même nom mais contenu différent
+		$old = $model->getWatermarkFile();
+		$model->setWatermarkFile(is_file($filename) ? $old.filemtime($filename) : $old);
+		$model->setBaseFile($file);
+		$model->setWatermarkFile($old);
+	}
+
 	public function validateUploadFile($path) {
 		return (is_file($path) && in_array(mime_content_type($path), ['image/svg', 'image/svg+xml'])) ? true : parent::validateUploadFile($path);
 	}
@@ -166,7 +178,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		}
 
 		try {
-			$model->setBaseFile($this->getImageFile());
+			$this->wrapSetBaseFile($model, $this->getImageFile());
 
 			if ($model->getDestinationSubdir() == 'wysiwyg') {
 				// if ($model->isCached())

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated D/26/07/2020
+ * Updated S/05/12/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -20,7 +20,6 @@
 
 $product    = Mage::registry('current_product');
 $attributes = $product->getMediaAttributes();
-$maxWidth   = (int) Mage::getStoreConfig(Mage_Catalog_Helper_Image::XML_NODE_PRODUCT_MAX_DIMENSION);
 
 $images = $product->getMediaGallery('images');
 $images = empty($images) ? [] : $images;
@@ -30,10 +29,47 @@ $date = Mage::getSingleton('core/locale')->date();
 $base = Mage::getSingleton('catalog/product_media_config')->getBaseMediaUrl();
 $pid  = $product->getId();
 $sid  = $product->getStoreId();
+
+$sortByStore = Mage::getStoreConfigFlag('apijs/general/sort_by_store');
+if ($sortByStore)
+	$stores = Mage::getResourceModel('core/store_collection');
+
+$counts = [];
+foreach ($images as &$image) {
+
+	$image = is_object($image) ? $image : new Varien_Object($image);
+
+	if (empty($sid))
+		$image->setData('position', (int) $image->getData('position'));
+	else if ($image->getData('position') != $image->getData('position_default'))
+		$image->setData('position', (int) $image->getData('position'));
+	else
+		$image->setData('position', (int) $image->getData('position_default'));
+
+	$image->setData('apijs_group', $sortByStore ? (int) ($image->getData('position') / 100) * 100 : 0);
+
+	if (array_key_exists($image->getData('apijs_group'), $counts))
+		$counts[$image->getData('apijs_group')]++;
+	else
+		$counts[$image->getData('apijs_group')] = 1;
+}
+unset($image);
+
+$exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automatically exclude these images from other store views'), true).'\'';
 ?>
 
 <div class="grid" id="apijsGallery">
 	<table cellspacing="0" class="data border gallery">
+		<colgroup>
+			<col />
+			<col />
+			<?php foreach ($attributes as $attribute): ?>
+				<?php if ($attribute->getIsText() === true) continue; ?>
+				<col width="1" />
+			<?php endforeach ?>
+			<col width="1" />
+			<col width="110px" />
+		</colgroup>
 		<thead>
 			<tr class="headings">
 				<th><?php echo $this->__('Image'),'<br /><span>',$this->__('[GLOBAL]'),'</span>' ?></th>
@@ -44,10 +80,54 @@ $sid  = $product->getStoreId();
 						echo $attribute->getFrontend()->getLabel(),'<br /><span>',$this->getScopeLabel($attribute),'</span>';
 					?></th>
 				<?php endforeach ?>
-				<th class="attr" onclick="apijsOpenMage.toggleVisibility();">
-					<?php echo $this->__('Exclude'),'<br /><span>',$this->__('[STORE VIEW]'),'</span>' ?>
+				<th class="attr"><?php echo $this->__('Exclude'),'<br /><span>',$this->__('[STORE VIEW]'),'</span>' ?></th>
+				<th class="last"></th>
+			</tr>
+			<tr class="filter">
+				<th></th>
+				<th>
+					<?php if ($sortByStore): ?>
+						<label>
+							<select style="width:calc(100% - 1.5em);" class="filter" id="apijsFilter" onchange="apijsOpenMage.filter(this);">
+								<option value="all"><?php echo $this->__('View All') ?></option>
+								<option value="none"><?php echo $this->__('Collapse All') ?></option>
+								<?php $prev = -1 ?>
+								<?php foreach ($images as $image):
+									$grp = $image->getData('apijs_group');
+									if ($grp != $prev):
+								?>
+										<option value="<?php echo $grp ?>" <?php echo (($sid > 0) && ($grp == ($sid * 100))) ? 'selected="selected"' : '' ?>>
+											<?php echo ($grp > 0) ? (empty($store = $stores->getItemById($grp / 100)) ?
+												$grp : $grp.' / '.$store->getCode().' / '.$store->getName()) : '!?' ?>
+										</option>
+										<?php $prev = $grp ?>
+									<?php endif ?>
+								<?php endforeach ?>
+							</select>
+						</label>
+						<button type="button" class="slink filter" onclick="apijsOpenMage.filter('all');">X</button>
+					<?php endif ?>
 				</th>
-				<th class="attr last"></th>
+				<?php foreach ($attributes as $code => $attribute): ?>
+					<?php if ($attribute->getIsText() === true) continue; ?>
+					<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
+					<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
+					<?php if ($attribute->getIsCheckbox() === true): ?>
+						<th class="gallery_<?php echo $code ?>">
+							<button type="button" class="slink filter" onclick="apijsOpenMage.filter(this);" data-reverse="1" data-state="0" data-text="<?php echo $help->escapeEntities($this->__('Show'), true) ?>">
+								<?php echo $this->__('Hide') ?>
+							</button>
+						</th>
+					<?php else: ?>
+						<th></th>
+					<?php endif ?>
+				<?php endforeach ?>
+				<th class="gallery_disabled">
+					<button type="button" class="slink filter" onclick="apijsOpenMage.filter(this);" data-state="0" data-text="<?php echo $help->escapeEntities($this->__('Show'), true) ?>">
+						<?php echo $this->__('Hide') ?>
+					</button>
+				</th>
+				<th class="last"></th>
 			</tr>
 		</thead>
 		<tfoot>
@@ -56,9 +136,10 @@ $sid  = $product->getStoreId();
 					<button type="button" class="scalable save" onclick="apijsOpenMage.actionSave('<?php echo $this->getSaveUrl() ?>');">
 						<span><span><?php echo $this->__('Save images') ?></span></span>
 					</button>
-					<button type="button" class="scalable add" onclick="apijsOpenMage.sendFiles(this.textContent, '<?php echo $this->getAddUrl() ?>', <?php echo $help->getMaxSizes() ?>);">
+					<button type="button" class="scalable add" onclick="apijsOpenMage.sendFiles(this.textContent, '<?php echo $this->getAddUrl() ?>', <?php echo $help->getMaxSizes() ?>, <?php echo $exclude ?>);">
 						<span><span><?php echo $this->__('Add one or multiple files') ?></span></span>
 					</button>
+					<?php $maxWidth = (int) Mage::getStoreConfig(Mage_Catalog_Helper_Image::XML_NODE_PRODUCT_MAX_DIMENSION) ?>
 					<p><?php echo $this->__('The added or removed images are automatically saved.') ?>
 					<br /><?php echo $this->__('Maximum images width and height is <a %s>%s x %s pixels</a>.',
 						'href="'.$this->getUrl('*/system_config/edit', ['section' => 'catalog']).'"',
@@ -76,7 +157,15 @@ $sid  = $product->getStoreId();
 						<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
 						<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 						<?php if ($attribute->getIsCheckbox() !== true): ?>
-							<?php if (!empty($sid)):
+							<?php if (empty($sid)): ?>
+								<label>
+									<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+									<input type="radio" name="apijs[<?php echo $code ?>]" value="no_selection" <?php
+										echo (empty($product->getData($code)) || ($product->getData($code) == 'no_selection')) ?
+											'checked="checked"' : '';
+									?> class="check" />
+								</label>
+							<?php else:
 								$globalValue = $product->getResource()->getAttributeRawValue($pid, $code, 0);
 								$storeValue  = $product->getResource()->getAttributeRawValue($pid, $code, $sid);
 							?>
@@ -85,44 +174,51 @@ $sid  = $product->getStoreId();
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" value="no_selection" <?php
 											echo (empty($storeValue) || ($globalValue == 'no_selection')) ? 'checked="checked"' : '';
-										?> disabled="disabled" />
+										?> disabled="disabled" class="check" />
 									</label>
 								<?php else: ?>
 									<label style="visibility:hidden;">
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-										<input type="checkbox" />
+										<input type="checkbox" class="check" />
 									</label>
 								<?php endif ?>
 								<label>
 									<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 									<input type="radio" name="apijs[<?php echo $code ?>]" value="no_selection" <?php
-										echo ($storeValue == 'no_selection') ? 'checked="checked"' : '';
-									?> />
-								</label>
-							<?php else: ?>
-								<label>
-									<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-									<input type="radio" name="apijs[<?php echo $code ?>]" value="no_selection" <?php
-										echo (empty($product->getData($code)) || ($product->getData($code) == 'no_selection')) ?
-											'checked="checked"' : '';
-									?> />
+										echo (empty($storeValue) || ($globalValue == 'no_selection') || ($storeValue == 'no_selection')) ? 'checked="checked"' : '';
+									?> class="check" />
 								</label>
 							<?php endif ?>
 						<?php endif ?>
 					</td>
 				<?php endforeach ?>
 				<td></td>
-				<td class="last"></td>
+				<td class="last">
+					<?php if (count($images) > 1): ?>
+						<button type="button" class="slink remove" onclick="apijsOpenMage.removeAllAttachments('<?php echo $this->getRemoveUrl('all') ?>'); return false;"><?php echo $this->__('Remove all') ?></button>
+					<?php endif ?>
+				</td>
 			</tr>
-			<?php $i = 0; foreach ($images as $image):
-				$image = is_object($image) ? $image : new Varien_Object($image);
+			<?php $i = 0; $prev = -1; ?>
+			<?php foreach ($images as $image):
 				$iid   = $image->getData('value_id');
 				$path  = $image->getData('file');
 				$file  = $help->getCatalogProductImageDir().$path;
 				$label = $help->escapeEntities($image->getData('label'), true);
 				$name  = $help->escapeEntities(basename($file), true);
+				$grp   = $image->getData('apijs_group');
 			?>
-				<tr id="attachmentId<?php echo $iid ?>">
+				<?php if ($sortByStore && ($grp != $prev)): ?>
+					<tr class="separ grp<?php echo $grp ?>" onclick="apijsOpenMage.filter('<?php echo $grp ?>');">
+						<td colspan="<?php echo count($attributes) + 4 ?>">
+							<?php echo ($grp > 0) ? (empty($store = $stores->getItemById($grp / 100)) ?
+								$grp : $grp.' / '.$store->getCode().' / '.$store->getName()) : '!?' ?>
+							/ <?php echo (($cnt = $counts[$grp]) < 2) ? $this->__('%d image', $cnt) : $this->__('%d images', $cnt) ?>
+						</td>
+					</tr>
+					<?php $prev = $grp ?>
+				<?php endif ?>
+				<tr id="attachmentId<?php echo $iid ?>" <?php echo ($sortByStore && ($sid > 0) && ($grp != ($sid * 100))) ? 'style="display:none;"' : '' ?>>
 					<td class="img" title="<?php echo $help->escapeEntities($path, true) ?>">
 						<?php if (is_file($file)):
 							// <a> <img src srcset> <input>
@@ -153,7 +249,7 @@ $sid  = $product->getStoreId();
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][label]" value="$$" <?php
 											echo $this->isUseGlobal($image, 'label', 'checked');
-										?> class="def inl" onchange="apijsOpenMage.checkVal(this);" />
+										?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
 									</label>
 									<label>
 										<input type="text" name="apijs[<?php echo $iid ?>][label]" value="<?php
@@ -170,9 +266,7 @@ $sid  = $product->getStoreId();
 									<label>
 										<?php echo $this->__('Sort Order') ?> /
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php
-											echo $image->getData('position');
-										?>" class="input-text val" />
+										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php echo $image->getData('position') ?>" class="input-text position val" />
 									</label>
 								<?php else: ?>
 									<label>
@@ -180,15 +274,12 @@ $sid  = $product->getStoreId();
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][position]" value="$$" <?php
 											echo $this->isUseGlobal($image, 'position', 'checked');
-										?> class="def inl" onchange="apijsOpenMage.checkVal(this);" />
+										?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
 									</label>
 									<label>
-										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php
-											echo $help->escapeEntities(($image->getData('position') != $image->getData('position_default')) ?
-												$image->getData('position') : $image->getData('position_default'), true);
-										?>" <?php
+										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php echo $image->getData('position') ?>" <?php
 											echo $this->isUseGlobal($image, 'position', 'disabled');
-										?> class="input-text val" />
+										?> class="input-text position val" />
 									</label>
 								<?php endif ?>
 							</div>
@@ -203,11 +294,11 @@ $sid  = $product->getStoreId();
 											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 											<?php if ($attribute->getInputType() == 'number'): ?>
 												<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
-													echo $image->getData($code);
+													echo $help->escapeEntities($image->getData($code), true);
 												?>" class="input-text val" />
 											<?php else: ?>
 												<input type="text" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
-													echo $image->getData($code);
+													echo $help->escapeEntities($image->getData($code), true);
 												?>" class="input-text val" />
 											<?php endif ?>
 										</label>
@@ -217,7 +308,7 @@ $sid  = $product->getStoreId();
 											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 											<input type="checkbox" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="$$" <?php
 												echo $this->isUseGlobal($image, $code, 'checked');
-											?> class="def inl" onchange="apijsOpenMage.checkVal(this);" />
+											?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
 										</label>
 										<label>
 											<?php if ($attribute->getInputType() == 'number'): ?>
@@ -241,7 +332,7 @@ $sid  = $product->getStoreId();
 					</td>
 					<?php foreach ($attributes as $code => $attribute): ?>
 						<?php if ($attribute->getIsText() === true) continue; ?>
-						<td>
+						<td class="gallery_<?php echo $code ?>">
 							<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
 							<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 							<?php if ($attribute->getIsCheckbox() === true): ?>
@@ -250,14 +341,14 @@ $sid  = $product->getStoreId();
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="1" <?php
 											echo empty($image->getData($code)) ? '' : 'checked="checked"';
-										?> />
+										?> class="check" />
 									</label>
 								<?php else: ?>
 									<label>
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="$$" <?php
 											echo $this->isUseGlobal($image, $code, 'checked');
-										?> class="def" onchange="apijsOpenMage.checkVal(this);" />
+										?> class="check def" onchange="apijsOpenMage.checkVal(this);" />
 									</label>
 									<label>
 										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
@@ -265,11 +356,18 @@ $sid  = $product->getStoreId();
 											echo $image->getData($code) ? 'checked="checked"' : '';
 										?> <?php
 											echo $this->isUseGlobal($image, $code, 'disabled');
-										?> class="val" />
+										?> class="check val" />
 									</label>
 								<?php endif ?>
 							<?php else: ?>
-								<?php if (!empty($sid)):
+								<?php if (empty($sid)): ?>
+									<label>
+										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+										<input type="radio" name="apijs[<?php echo $code ?>]" value="<?php echo $path ?>" <?php
+											echo ($product->getData($code) == $path) ? 'checked="checked"' : '';
+										?> class="check" />
+									</label>
+								<?php else:
 									$globalValue = $product->getResource()->getAttributeRawValue($pid, $code, 0);
 									$storeValue  = $product->getResource()->getAttributeRawValue($pid, $code, $sid);
 								?>
@@ -278,45 +376,38 @@ $sid  = $product->getStoreId();
 											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 											<input type="checkbox" <?php
 												echo (empty($storeValue) || ($globalValue == $path)) ? 'checked="checked"' : '';
-											?> disabled="disabled" />
+											?> disabled="disabled" class="check" />
 										</label>
 									<?php else: ?>
 										<label style="visibility:hidden;">
 											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-											<input type="checkbox" />
+											<input type="checkbox" class="check" />
 										</label>
 									<?php endif ?>
 									<label>
 										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 										<input type="radio" name="apijs[<?php echo $code ?>]" value="<?php echo $path ?>" <?php
 											echo ($storeValue == $path) ? 'checked="checked"' : '';
-										?> />
-									</label>
-								<?php else: ?>
-									<label>
-										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-										<input type="radio" name="apijs[<?php echo $code ?>]" value="<?php echo $path ?>" <?php
-											echo ($product->getData($code) == $path) ? 'checked="checked"' : '';
-										?> />
+										?> class="check" />
 									</label>
 								<?php endif ?>
 							<?php endif ?>
 						</td>
 					<?php endforeach ?>
-					<td>
+					<td class="gallery_disabled">
 						<?php if (empty($sid)): ?>
 							<label>
 								<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 								<input type="checkbox" name="apijs[<?php echo $iid ?>][disabled]" value="1" <?php
 									echo $image->getData('disabled') ? 'checked="checked"' : '';
-								?> class="val exclude" />
+								?> class="check val" />
 							</label>
 						<?php else: ?>
 							<label>
 								<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 								<input type="checkbox" name="apijs[<?php echo $iid ?>][disabled]" value="$$" <?php
 									echo $this->isUseGlobal($image, 'disabled', 'checked');
-								?> class="def" onchange="apijsOpenMage.checkVal(this);" />
+								?> class="check def" onchange="apijsOpenMage.checkVal(this);" />
 							</label>
 							<label>
 								<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
@@ -324,7 +415,7 @@ $sid  = $product->getStoreId();
 									echo $image->getData('disabled') ? 'checked="checked"' : '';
 								?> <?php
 									echo $this->isUseGlobal($image, 'disabled', 'disabled');
-								?> class="val exclude" />
+								?> class="check val" />
 							</label>
 						<?php endif ?>
 					</td>
@@ -332,7 +423,7 @@ $sid  = $product->getStoreId();
 						<?php if (is_file($file)): ?>
 							<a href="<?php echo $base,$path ?>" type="<?php echo mime_content_type($file) ?>" download=""><?php echo $this->__('Download') ?></a>
 						<?php endif ?>
-						<br /><button type="button" class="slink" onclick="apijsOpenMage.removeAttachment('<?php echo $this->getRemoveUrl($iid) ?>'); return false;"><?php echo $this->__('Remove') ?></button>
+						<br /><button type="button" class="slink remove" onclick="apijsOpenMage.removeAttachment('<?php echo $this->getRemoveUrl($iid) ?>'); return false;"><?php echo $this->__('Remove') ?></button>
 
 						<div style="margin-top:1em;"><?php if (is_file($file)) {
 							if (mb_substr($file, -4) == '.svg') {
@@ -340,7 +431,7 @@ $sid  = $product->getStoreId();
 									'<br />',$date->setTimestamp(filemtime($file))->toString();
 							}
 							else {
-								$sizes = getimagesize($file);
+								$sizes = (array) getimagesize($file); // (yes)
 								echo $help->getNumberToHumanSize(filesize($file)),
 									'<br />',Zend_Locale_Format::toNumber($sizes[0]),' x ',Zend_Locale_Format::toNumber($sizes[1]),
 									'<br />',$date->setTimestamp(filemtime($file))->toString();

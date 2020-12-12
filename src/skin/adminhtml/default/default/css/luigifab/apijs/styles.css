@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/04/10/2020
+ * Updated J/03/12/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -57,29 +57,41 @@ td div.image.preview a { display:block; margin:4px 25px 3px; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& galerie photo &&& */
 #apijsGallery table.gallery { width:100%; }
+#apijsGallery table.gallery .remove { color:red; }
 #apijsGallery table.gallery td { text-align:center; vertical-align:top; white-space:nowrap; }
 
-#apijsGallery table.gallery thead th { padding:2px 5px; line-height:130%; text-align:center; vertical-align:middle; }
-#apijsGallery table.gallery thead th.attr { width:5em; }
-#apijsGallery table.gallery thead th.last { width:10em; }
+#apijsGallery table.gallery thead th { position:sticky; top:38px; padding:2px 5px; line-height:130%; text-align:center; vertical-align:middle; }
+#apijsGallery table.gallery thead tr.headings th { background:url("../../../images/sort_row_bg.gif") 0 50% repeat-x; }
+
+#apijsGallery table.gallery thead tr.filter th {
+	top:73px; padding:8px 5px 6px;
+	font-weight:400; background:url("../../../images/filter_row_bg.gif") repeat-x #E3EFF1;
+}
+
+#apijsGallery table.gallery thead input { display:inline; width:35px !important; }
 #apijsGallery table.gallery thead span { font-size:10px; font-weight:400; line-height:150%; }
 
-#apijsGallery table.gallery tfoot button { float:right; margin:2px 0 0 8px; cursor:pointer; }
+#apijsGallery table.gallery tfoot td { position:sticky; bottom:0; }
 #apijsGallery table.gallery tfoot p { margin:0.4em; line-height:130%; text-align:left; }
+#apijsGallery table.gallery tfoot button { float:right; margin:2px 0 0 8px; cursor:pointer; }
 
+#apijsGallery table.gallery tbody tr.separ {
+	scroll-margin-top:10em; scroll-snap-margin-top:10em;
+	user-select:none; -ms-user-select:none; -moz-user-select:none; -webkit-user-select:none;
+}
+
+#apijsGallery table.gallery tbody tr.separ td { background-color:#EEE !important; cursor:pointer; }
 #apijsGallery table.gallery tbody td { vertical-align:middle; }
-#apijsGallery table.gallery tbody td.img { width:200px; padding:3px; line-height:150px; color:gray; }
+#apijsGallery table.gallery tbody td.img { padding:3px; width:200px; line-height:150px; color:gray; }
 #apijsGallery table.gallery tbody td.last { white-space:inherit; }
 #apijsGallery table.gallery tbody td:not(.last) * { display:block; }
 
 #apijsGallery table.gallery tbody label { font-size:10px; cursor:pointer; }
 #apijsGallery table.gallery tbody input.inl { display:inline; }
 
-#apijsGallery table.gallery input:disabled { background-color:#EFEFEF; }
-#apijsGallery table.gallery input[type="checkbox"], #apijsGallery table.gallery input[type="radio"] { margin:0.3em auto; cursor:pointer; }
-#apijsGallery table.gallery input[type="number"], #apijsGallery table.gallery input[type="text"] {
-	margin-bottom:1em; width:100% !important; box-sizing:border-box; -moz-box-sizing:border-box;
-}
+#apijsGallery table.gallery tbody input:disabled { background-color:#EFEFEF; }
+#apijsGallery table.gallery tbody input.check { margin:0.3em auto; cursor:pointer; }
+#apijsGallery table.gallery tbody input.input-text { margin-bottom:1em; width:100% !important; box-sizing:border-box; -moz-box-sizing:border-box; }
 
 #apijsBox.upload h1 { letter-spacing:-0.05em; }
 

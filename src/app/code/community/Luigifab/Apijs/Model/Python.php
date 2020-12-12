@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated V/18/09/2020
+ * Updated S/07/11/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -29,7 +29,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	public function __construct($file = null, $adapter = null) {
 
-		exec('command -v python3 || command -v python || command -v python2', $cmd);
+		exec('command -v python3', $cmd);
 		$this->_python = trim(implode($cmd));
 
 		exec('nproc', $core);
@@ -53,7 +53,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 		$cmd = $this->_python;
 
-		if (empty($cmd)) { // pas de mb_strpos
+		if (empty($cmd)) {
 			$pyt = 'not found';
 			$pil = $pyt;
 			$sco = $pyt;

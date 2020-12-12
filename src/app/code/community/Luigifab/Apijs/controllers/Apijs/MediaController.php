@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated M/06/10/2020
+ * Updated S/05/12/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -32,7 +32,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		header('Cache-Control: no-cache, must-revalidate');
 		ini_set('output_buffering', 0);
 		ini_set('implicit_flush', 1);
-		ob_implicit_flush(true);
+		ob_implicit_flush();
 
 		try {
 			for ($i = 0; $i < ob_get_level(); $i++)
@@ -125,13 +125,16 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		$storeId   = (int) $this->getRequest()->getParam('store', 0);
 
 		$database = Mage::getSingleton('core/resource');
+		$read  = $database->getConnection('core_read');
 		$write = $database->getConnection('core_write');
 		$table = $database->getTableName('catalog_product_entity_media_gallery');
+		$elbat = $database->getTableName('catalog_product_entity_media_gallery_value');
 
 		$success = [];
 		$errors  = [];
 
 		try {
+			$help = Mage::helper('apijs');
 			if (empty($productId))
 				Mage::throwException('Invalid product id.');
 			if (empty($_FILES))
@@ -151,7 +154,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 					$uploader->addValidateCallback('catalog_product_image',
 						Mage::helper('catalog/image'), 'validateUploadFile');
 
-					$filepath = $uploader->save(Mage::helper('apijs')->getCatalogProductImageDir());
+					$filepath = $uploader->save($help->getCatalogProductImageDir());
 					Mage::dispatchEvent('catalog_product_gallery_upload_image_after', ['result' => $filepath, 'action' => $this]);
 					$filepath = array_pop($filepath);
 
@@ -159,13 +162,44 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 						'INSERT INTO '.$table.' (attribute_id, entity_id, value) VALUES (?, ?, ?)',
 						[$attribute, $productId, $filepath]
 					);
-					$write->query(
-						'INSERT INTO '.$database->getTableName('catalog_product_entity_media_gallery_value').'
-							(value_id, store_id, position, disabled) VALUES (?, 0, (
-								SELECT COUNT(entity_id) AS nb FROM '.$table.' WHERE entity_id = ?
-							), 0)',
-						[$write->lastInsertId(), $productId]
-					);
+
+					$valueId = $write->lastInsertId();
+					if (($storeId > 0) && Mage::getStoreConfigFlag('apijs/general/sort_by_store')) {
+						$nb = max($storeId * 100 + 1, (int) $read->fetchOne(
+							'SELECT MAX(position) FROM '.$table.' cpemg
+							 LEFT JOIN '.$elbat.' cpemgv
+								ON cpemg.value_id = cpemgv.value_id
+							 WHERE entity_id = ? AND CAST(position / 100 AS UNSIGNED) = ?',
+							[$productId, $storeId]
+						) + 1);
+						$write->query(
+							'INSERT INTO '.$elbat.'
+								(value_id, store_id, position, disabled) VALUES (?, 0, ?, ?)',
+							[$valueId, $nb, empty($this->getRequest()->getParam('exclude')) ? 0 : 1]
+						);
+					}
+					else {
+						$nb = max(1, (int) $read->fetchOne(
+							'SELECT MAX(position) FROM '.$table.' cpemg
+							 LEFT JOIN '.$elbat.' cpemgv
+								ON cpemg.value_id = cpemgv.value_id
+							 WHERE entity_id = ? AND store_id = 0 AND LENGTH(position) < 3',
+							[$productId]
+						) + 1, $read->fetchOne('SELECT COUNT(entity_id) AS nb FROM '.$table.' WHERE entity_id = ?', [$productId]));
+						$write->query(
+							'INSERT INTO '.$elbat.'
+								(value_id, store_id, position, disabled) VALUES (?, 0, ?, ?)',
+							[$valueId, $nb, empty($this->getRequest()->getParam('exclude')) ? 0 : 1]
+						);
+					}
+
+					if (($storeId > 0) && !empty($this->getRequest()->getParam('exclude'))) {
+						$write->query(
+							'INSERT INTO '.$elbat.'
+								(value_id, store_id, position, disabled) VALUES (?, ?, NULL, 0)',
+							[$valueId, $storeId]
+						);
+					}
 
 					$success[] = $filepath;
 				}
@@ -174,30 +208,30 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				}
 			}
 
-			// image par défaut
+			// image par défaut (global uniquement)
 			$product = Mage::getModel('catalog/product')->load($productId);
 
 			if (!empty($success) && !empty($product->getMediaGallery('images'))) {
 
 				$attributes = $product->getMediaAttributes();
 				foreach ($attributes as $code => $attribute) {
+					$value = $product->getData($code);
 					// si dans eav_attribute, attribute_model = xyz/source_xyz
 					// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
-					if (($attribute->getIsCheckbox() !== true) && empty($product->getData($code)))
+					if ((empty($value) || ($value == 'no_selection')) && ($attribute->getIsCheckbox() !== true))
 						$product->setData($code, $success[0]);
 				}
 
-				$product->save();
+				if ($product->hasDataChanges())
+					$product->save();
 			}
 
-			if (!empty($storeId))
-				$product->setStoreId($storeId)->load($product->getId());
-
+			// reload
+			$product->setStoreId($storeId)->load($product->getId());
 			// très important car les chemins et les urls sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
-
 			// html
-			$result = $this->formatResult($success, $errors, Mage::helper('apijs')->renderGalleryBlock($product));
+			$result = $this->formatResult($success, $errors, $help->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
 			$result = $e->getMessage();
@@ -234,12 +268,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 					$product->save();
 			}
 
-			if (!empty($storeId)) // reload
-				$product->setStoreId($storeId)->load($product->getId());
-
+			// reload
+			$product->setStoreId($storeId)->load($product->getId());
 			// très important car les chemins et les urls sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
-
 			// html
 			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
@@ -262,59 +294,74 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		$database = Mage::getSingleton('core/resource');
 		$read  = $database->getConnection('core_read');
 		$write = $database->getConnection('core_write');
+		$table = $database->getTableName('catalog_product_entity_media_gallery');
+		$elbat = $database->getTableName('catalog_product_entity_varchar');
+
+		if (empty($imageId) && ($this->getRequest()->getParam('image') == 'all'))
+			$imageId = true;
 
 		try {
+			$help = Mage::helper('apijs');
 			if (empty($productId) || empty($imageId))
-				Mage::throwException('Invalid product/image id.');
+				Mage::throwException('Invalid product/image ids ('.$productId.'/'.$imageId.')');
 
-			// recherche et supprime le nom du fichier
-			$table = $database->getTableName('catalog_product_entity_media_gallery');
-			$filepath = $read->fetchOne('SELECT value FROM '.$table.' WHERE value_id = '.$imageId);
-			$filename = basename($filepath);
+			// trouve les ids
+			$ids = [$imageId];
+			if ($imageId === true)
+				$ids = array_filter(explode(',', $read->fetchOne('SELECT GROUP_CONCAT(value_id) AS ids FROM '.$table.
+					' WHERE entity_id = '.$productId.' GROUP BY entity_id')));
 
-			if (empty($filepath) || empty($filename))
-				Mage::throwException('File does not exist.');
+			// supprime les images
+			$paths = [];
+			foreach ($ids as $id) {
 
-			$write->query('DELETE FROM '.$table.' WHERE value_id = ?', $imageId);
+				// recherche et supprime le nom du fichier
+				$filepath = $read->fetchOne('SELECT value FROM '.$table.' WHERE value_id = '.$id);
+				$filename = basename($filepath);
+				$paths[]  = $filepath;
 
-			// supprime lorsque l'image supprimée est l'image par défaut
-			$table = $database->getTableName('catalog_product_entity_varchar');
-			$write->query('DELETE FROM '.$table.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]);
+				if (empty($filepath) || empty($filename))
+					Mage::throwException('File does not exist (id: '.$id.').');
 
-			foreach (['image_label', 'small_image_label', 'thumbnail_label'] as $code) {
-				$attrId = Mage::getModel('eav/config')->getAttribute('catalog_product', $code)->getId();
-				$write->query('DELETE FROM '.$table.' WHERE entity_id = ? AND attribute_id = ?', [$productId, $attrId]);
+				$write->query('DELETE FROM '.$table.' WHERE value_id = ?', $id);
+				$write->query('DELETE FROM '.$elbat.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]); // si par défaut
+
+				// supprime enfin les fichiers
+				$help->removeFiles($help->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
 			}
 
-			// image par défaut
-			$product = Mage::getModel('catalog/product')->load($productId);
+			// image par défaut (global uniquement)
+			// et s'il n'y a plus d'image supprime la config des images sur toutes les vues
+			$product    = Mage::getModel('catalog/product')->load($productId);
+			$attributes = $product->getMediaAttributes();
 
 			if (!empty($product->getMediaGallery('images'))) {
 
-				$value = $product->getMediaGallery('images')[0]['file'];
-
-				$attributes = $product->getMediaAttributes();
+				$newvalue = $product->getMediaGallery('images')[0]['file'];
 				foreach ($attributes as $code => $attribute) {
+					$value = $product->getData($code);
 					// si dans eav_attribute, attribute_model = xyz/source_xyz
 					// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
-					if (($attribute->getIsCheckbox() !== true) && (empty($product->getData($code)) || ($product->getData($code) == $filepath)))
-						$product->setData($code, $value);
+					if ((empty($value) || ($value == 'no_selection') || in_array($value, $paths)) && ($attribute->getIsCheckbox() !== true))
+						$product->setData($code, $newvalue);
+				}
+
+				if ($product->hasDataChanges())
+					$product->save();
+			}
+			else {
+				foreach ($attributes as $attribute) {
+					$write->query('DELETE FROM '.str_replace('_varchar', '_'.$attribute->getData('backend_type'), $elbat).
+						' WHERE entity_id = ? AND attribute_id = ?', [$productId, $attribute->getId()]);
 				}
 			}
 
-			if ($product->hasDataChanges())
-				$product->save();
-			if (!empty($storeId)) // reload
-				$product->setStoreId($storeId)->load($product->getId());
-
-			// supprime enfin les fichiers
-			Mage::helper('apijs')->removeFiles(Mage::helper('apijs')->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
-
+			// reload
+			$product->setStoreId($storeId)->load($product->getId());
 			// très important car les chemins et les urls sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
-
 			// html
-			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
+			$result = $this->formatResult(null, null, $help->renderGalleryBlock($product));
 		}
 		catch (Exception $e) {
 			$result = $e->getMessage();

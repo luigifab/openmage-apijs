@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/10/09/2019
- * Updated M/06/10/2020
+ * Updated D/15/11/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -151,7 +151,7 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 		}
 		catch (Exception $e) {
 			$result = ['error' => true, 'message' => $e->getMessage()];
-			$this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+			$this->getResponse()->setBody(json_encode($result));
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/27/09/2020
+ * Updated S/05/12/2020
  *
  * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -19,7 +19,6 @@
 var apijsOpenMage = new (function () {
 
 	"use strict";
-	this.hide = false;
 
 	this.start = function () {
 
@@ -27,12 +26,19 @@ var apijsOpenMage = new (function () {
 		if (!d.frca) d.frca = {};
 		// https://docs.google.com/spreadsheets/d/1UUpKZ-YAAlcfvGHYwt6aUM9io390j0-fIL0vMRh1pW0/edit?usp=sharing
 		// auto start
+		d.cs[250] = "Smazat soubor";
+		d.cs[251] = "Opravdu chcete tento soubor smazat?[br]Pozor, tuto operaci nelze vrátit zpět.";
 		d.cs[252] = "Chyba";
+		d.cs[259] = "Vymazat všechny soubory";
+		d.cs[260] = "Opravdu chcete smazat všechny soubory?[br]Pozor, tuto operaci nelze vrátit zpět.";
+		d.cs[261] = "Potvrďte zaškrtnutím políčka:";
 		d.de[250] = "Eine Datei löschen";
 		d.de[251] = "Sind Sie sicher, dass Sie diese Datei löschen möchten?[br]Achtung, diese Aktion ist unrückgängig.";
 		d.de[252] = "Fehler";
 		d.de[253] = "Sie verfügen nicht über die notwendigen Rechte um diese Operation durchzuführen, bitte [a §]aktualisieren Sie die Seite[/a].";
 		d.de[254] = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
+		d.de[259] = "Alle Daten löschen";
+		d.de[261] = "Zur Bestätigung das Kontrollkästchen bestätigen:";
 		d.en[250] = "Remove file";
 		d.en[251] = "Are you sure you want to remove this file?[br]Be careful, you can't cancel this operation.";
 		d.en[252] = "Error";
@@ -42,6 +48,9 @@ var apijsOpenMage = new (function () {
 		d.en[256] = "Are you sure you want to clear the cache?[br]Be careful, you can't cancel this operation.";
 		d.en[257] = "Rename file";
 		d.en[258] = "Enter below the new name for the file.";
+		d.en[259] = "Remove all files";
+		d.en[260] = "Are you sure you want to remove all files?[br]Be careful, you can't cancel this operation.";
+		d.en[261] = "To confirm, check the checkbox:";
 		d.es[250] = "Borrar un archivo";
 		d.es[251] = "¿Está usted seguro(a) de que desea eliminar este archivo?[br]Atención, pues no podrá cancelar esta operación.";
 		d.es[253] = "No está autorizado-a para llevar a cabo esta operación, por favor [a §]actualice la página[/a].";
@@ -59,15 +68,26 @@ var apijsOpenMage = new (function () {
 		d.fr[256] = "Êtes-vous certain(e) de vouloir vider le cache ?[br]Attention, cette opération n'est pas annulable.";
 		d.fr[257] = "Renommer le fichier";
 		d.fr[258] = "Saisissez ci-dessous le nouveau nom pour ce fichier.";
-		d.it[250] = "Eliminare un file";
-		d.it[251] = "Sicuri di voler eliminare il file?[br]Attenzione, questa operazione non può essere annullata.";
+		d.fr[259] = "Supprimer tous les fichiers";
+		d.fr[260] = "Êtes-vous sûr(e) de vouloir supprimer tous les fichiers ?[br]Attention, cette opération n'est pas annulable.";
+		d.fr[261] = "Pour confirmer, cochez la case :";
+		d.it[250] = "Cancella i file";
+		d.it[251] = "Sei sicura di voler eliminare il file?[br]Attenzione, questa operazione non può essere annullata.";
 		d.it[252] = "Errore";
 		d.it[253] = "Non siete autorizzati a eseguire questa operazione, vi preghiamo di [a §]ricaricare la pagina[/a].";
 		d.it[254] = "Spiacenti, il file non esiste più, vi preghiamo di [a §]ricaricare la pagina[/a].";
+		d.it[259] = "Cancella tutti i file";
+		d.it[260] = "Sei sicura di voler cancellare tutti i file?[br]Attenzione, questa operazione non può essere annullata.";
+		d.it[261] = "Per confermare, seleziona la casella:";
 		d.ja[250] = "ファイルを削除";
 		d.ja[252] = "エラー";
 		d.nl[252] = "Fout";
+		d.pl[250] = "Usuń plik";
+		d.pl[251] = "Jesteś pewny, że chcesz usunąć ten plik?[br]Uwaga! Nie ma odwrotu od tej operacji.";
 		d.pl[252] = "Błąd";
+		d.pl[259] = "Usuń wszystkie pliki";
+		d.pl[260] = "Jesteś pewny, że chcesz usunąć ten plik?[br]Uwaga! Nie ma odwrotu od tej operacji.";
+		d.pl[261] = "Potwierdź twój wybór:";
 		d.pt[250] = "Suprimir um ficheiro";
 		d.pt[251] = "Tem certeza de que quer suprimir este ficheiro?[br]Cuidado, não pode cancelar esta operação.";
 		d.pt[252] = "Erro";
@@ -82,6 +102,15 @@ var apijsOpenMage = new (function () {
 		d.tr[252] = "Hata";
 		d.zh[252] = "错误信息";
 		// auto end
+
+		// sticky
+		var elem = document.getElementById('apijsGallery');
+		if (elem) {
+			while (!elem.classList.contains('hor-scroll') && elem.parentNode)
+				elem = elem.parentNode;
+			if (elem.classList.contains('hor-scroll'))
+				elem.setAttribute('style', 'overflow:visible;');
+		}
 	};
 
 	this.error = function (data) {
@@ -98,8 +127,15 @@ var apijsOpenMage = new (function () {
 		}
 	};
 
-	this.sendFiles = function (title, action, onemax, allmax) {
+	this.sendFiles = function (title, action, onemax, allmax, extra) {
+
 		apijs.upload.sendFiles(title, action, 'myimage', onemax, allmax, 'jpg,jpeg,gif,png,svg', apijsOpenMage.updateForm);
+
+		if (typeof extra == 'string') {
+			var elem = document.createElement('p');
+			elem.innerHTML = '<label><input type="checkbox" name="exclude" /> ' + extra + '</label>';
+			apijs.dialog.t2.appendChild(elem);
+		}
 	};
 
 	this.actionSave = function (action) {
@@ -130,9 +166,7 @@ var apijsOpenMage = new (function () {
 		xhr.send(apijs.serialize(document.getElementById('product_edit_form'), 'apijs'));
 	};
 
-	this.updateForm = function (data) {
-
-		var elem;
+	this.updateForm = function (data, elem) {
 
 		// success-{json[result, bbcode]}
 		if (data.indexOf('{') > -1) {
@@ -144,6 +178,9 @@ var apijsOpenMage = new (function () {
 		// produit ou widget cms
 		if (elem = document.getElementById('apijsGallery')) {
 
+			if (data.filter = document.getElementById('apijsFilter'))
+				data.filter = parseInt(data.filter.value, 10);
+
 			elem.parentNode.innerHTML = data.html;
 			elem.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function (elem) {
 				elem.checked = elem.hasAttribute('checked');
@@ -154,6 +191,12 @@ var apijsOpenMage = new (function () {
 			apijs.slideshow.init();
 			if (!apijs.dialog.has('error')) // ferme sauf en cas d'erreur
 				apijs.dialog.actionClose();
+
+			if (data.filter > 0) {
+				elem = document.getElementById('apijsFilter');
+				elem.value = data.filter;
+				elem.dispatchEvent(new Event('change'));
+			}
 		}
 		else {
 			MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
@@ -162,6 +205,10 @@ var apijsOpenMage = new (function () {
 
 	this.removeAttachment = function (action) {
 		apijs.dialog.dialogConfirmation(apijs.i18n.translate(250), apijs.i18n.translate(251), apijsOpenMage.actionRemoveAttachment, action);
+	};
+
+	this.removeAllAttachments = function (action) {
+		apijs.dialog.dialogFormOptions(apijs.i18n.translate(259), apijs.i18n.translate(260) + '[p][label]' + apijs.i18n.translate(261) + ' [input type="checkbox"][/label]', action, apijsOpenMage.actionRemoveAllAttachments);
 	};
 
 	this.actionRemoveAttachment = function (args) {
@@ -186,6 +233,14 @@ var apijsOpenMage = new (function () {
 		};
 
 		xhr.send();
+	};
+
+	this.actionRemoveAllAttachments = function (action) {
+
+		if (typeof action == 'boolean')
+			return apijs.html('input').checked;
+
+		apijsOpenMage.actionRemoveAttachment(action);
 	};
 
 	this.renameMedia = function (elem) {
@@ -324,7 +379,7 @@ var apijsOpenMage = new (function () {
 					this.origDrawBreadcrumbs(node);
 					if (!document.getElementById('breadcrumbs')) {
 						node = this.tree.getNodeById('root');
-						$('content_header').insert({ after: '<ul class="breadcrumbs" id="breadcrumbs"><li><a href="#" onclick="MediabrowserInstance.selectFolderById(\'' + node.id + '\');">' + node.text + '</a></li></ul>' });
+						document.getElementById('content_header').insert({ after: '<ul class="breadcrumbs" id="breadcrumbs"><li><a href="#" onclick="MediabrowserInstance.selectFolderById(\'' + node.id + '\');">' + node.text + '</a></li></ul>' });
 					}
 				};
 			}
@@ -335,19 +390,62 @@ var apijsOpenMage = new (function () {
 		MediabrowserInstance.deleteFolderUrl = MediabrowserInstance.deleteFolderUrl.replace(/[a-z_]+\/deleteFolder\//, 'apijs_wysiwyg/deleteFolder/');
 	};
 
-	this.toggleVisibility = function () {
+	this.filter = function (root) {
 
-		this.hide = !this.hide;
+		var word, text, show;
+		if (typeof root == 'string') {
+			show = root;
+			root = document.getElementById('apijsFilter');
+			if (((root.value == show) && (show != 'all')) || ((root.value == 'all') && (show == 'all')))
+				show = 'none';
+			root.value = show;
+		}
+		if (root.nodeName === 'BUTTON') {
+			text = root.getAttribute('data-text');
+			root.setAttribute('data-text', root.textContent);
+			root.textContent = text;
+			root.setAttribute('data-state', (root.getAttribute('data-state') == '0') ? '1' : '0');
+		}
 
-		document.getElementById('apijsGallery').querySelectorAll('input.exclude').forEach(function (elem) {
+		document.getElementById('apijsGallery').querySelectorAll('tbody tr[id]').forEach(function (line) {
 
-			var line = elem.parentNode.parentNode.parentNode;
-			if (elem.checked)
-				line.classList[this.hide ? 'add' : 'remove']('no-display');
-			else
-				line.classList.remove('no-display');
+			show = [];
 
-		}, this); // pour que ci-dessus this = this
+			// pour chaque colonne (car toutes les colonnes peuvent avoir un filtre)
+			// word = ce qu'on cherche dans la colonne courante
+			// text = ce qu'il y a dans la cellule de la colonne de la ligne courante
+			document.getElementById('apijsGallery').querySelectorAll('tr.filter th').forEach(function (col, idx) {
+
+				col = col.querySelector('.filter');
+				if (!col) {
+					show.push(true);
+				}
+				else if (col.nodeName === 'SELECT') {
+					word = Math.floor(parseInt(col.value, 10) / 100); // ce qu'on cherche
+					text = Math.floor(parseInt(line.querySelectorAll('td')[idx].querySelector('input.position').value, 10) / 100); //dans quoi
+					show.push((col.value == 'all') || (text == word));
+				}
+				else if (col.nodeName === 'BUTTON') {
+					word = col.getAttribute('data-state') == '1'; // ce qu'on cherche
+					text = line.querySelectorAll('td')[idx].querySelector('input.check:not(.def)').checked; // dans quoi on cherche
+					if (col.hasAttribute('data-reverse')) text = !text;
+					show.push(!word || (word && (word != text)));
+				}
+			});
+
+			// maintenant que chaque colonne de la ligne a été vérifiée
+			// si aucune colonne indique qu'il ne faut pas afficher la ligne, on affiche la ligne
+			line.setAttribute('style', (show.indexOf(false) > -1) ? 'display:none;' : '');
+			line.removeAttribute('title');
+		});
+
+		// s'assure que le séparateur est visible
+		if ((root.nodeName === 'SELECT') && !isNaN(root.value)) {
+			root = document.querySelector('tr.grp' + root.value);
+			var rect = root.getBoundingClientRect();
+			if ((rect.top < 0) && (rect.bottom <= window.innerHeight))
+				root.scrollIntoView();
+		}
 	};
 
 })();
