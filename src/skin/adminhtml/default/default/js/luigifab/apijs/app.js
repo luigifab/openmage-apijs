@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated S/05/12/2020
+ * Updated J/18/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -59,6 +59,7 @@ var apijsOpenMage = new (function () {
 		d.es[256] = "¿Está usted seguro(a) de querer vaciar la caché?[br]Cuidado, esta operación no puede ser cancelada.";
 		d.frca[251] = "Êtes-vous sûr(e) de vouloir supprimer ce fichier?[br]Attention, cette opération n'est pas annulable.";
 		d.frca[256] = "Êtes-vous certain(e) de vouloir vider le cache?[br]Attention, cette opération n'est pas annulable.";
+		d.frca[260] = "Êtes-vous sûr(e) de vouloir supprimer tous les fichiers?[br]Attention, cette opération n'est pas annulable.";
 		d.fr[250] = "Supprimer le fichier";
 		d.fr[251] = "Êtes-vous sûr(e) de vouloir supprimer ce fichier ?[br]Attention, cette opération n'est pas annulable.";
 		d.fr[252] = "Erreur";
@@ -100,6 +101,7 @@ var apijsOpenMage = new (function () {
 		d.ru[254] = "Извините, но файл не существует, пожалуйста [a §]обновите страницу[/a].";
 		d.sk[252] = "Chyba";
 		d.tr[252] = "Hata";
+		d.uk[252] = "Помилка";
 		d.zh[252] = "错误信息";
 		// auto end
 
@@ -312,15 +314,7 @@ var apijsOpenMage = new (function () {
 	};
 
 	this.clearCache = function (action) {
-
-		try {
-			apijs.dialog.dialogConfirmation(apijs.i18n.translate(255), apijs.i18n.translate(256), apijsOpenMage.actionClearCache, action);
-		}
-		catch (e) {
-			console.error(e);
-			if (confirm(Translator.translate('Are you sure?')))
-				self.location.href = action;
-		}
+		apijs.dialog.dialogConfirmation(apijs.i18n.translate(255), apijs.i18n.translate(256), apijsOpenMage.actionClearCache, action);
 	};
 
 	this.actionClearCache = function (args) {
@@ -440,8 +434,7 @@ var apijsOpenMage = new (function () {
 		});
 
 		// s'assure que le séparateur est visible
-		if ((root.nodeName === 'SELECT') && !isNaN(root.value)) {
-			root = document.querySelector('tr.grp' + root.value);
+		if ((root.nodeName === 'SELECT') && !isNaN(root.value) && (root = document.querySelector('tr.grp' + root.value))) {
 			var rect = root.getBoundingClientRect();
 			if ((rect.top < 0) && (rect.bottom <= window.innerHeight))
 				root.scrollIntoView();

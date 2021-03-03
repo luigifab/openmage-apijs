@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated S/07/11/2020
+ * Updated M/23/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,11 +20,11 @@
 class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	// singleton
+	protected $_python;
 	protected $_quality = 100;
 	protected $_files = [];
-	protected $_pids = [];
-	protected $_core = 1;
-	protected $_python;
+	protected $_pids  = [];
+	protected $_core  = 1;
 	protected $_svg;
 
 	public function __construct($file = null, $adapter = null) {
@@ -60,7 +60,8 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		}
 		else {
 			exec($cmd.' --version 2>&1', $pyt);
-			$pyt = str_replace('Python ', '', trim(implode($pyt)));
+			$pyt = trim(str_replace('Python', '', implode($pyt)));
+			$pyt = implode('.', array_slice(preg_split('#\D#', $pyt), 0, 3));
 
 			exec($cmd.' -c "from PIL import Image; print(Image.__version__)" 2>&1', $pil);
 			$pil = trim(implode($pil));
@@ -69,6 +70,8 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 				$pil = 'not available';
 			else if (mb_stripos($pil, '__version__') !== false)
 				$pil = 'available';
+			else
+				$pil = implode('.', array_slice(preg_split('#\D#', $pil), 0, 3));
 
 			exec($cmd.' -c "import scour; print(scour.__version__)" 2>&1', $sco);
 			$sco = trim(implode($sco));
@@ -77,6 +80,8 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 				$sco = 'not available';
 			else if (mb_stripos($sco, '__version__') !== false)
 				$sco = 'available';
+			else
+				$sco = implode('.', array_slice(preg_split('#\D#', $sco), 0, 3));
 		}
 
 		return sprintf('python %s / python-pil %s %s / python-scour %s %s / %d cpu', $pyt, $pil, $helpPil, $sco, $helpSco, $this->_core);
@@ -111,8 +116,12 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 				str_replace('Apijs/etc', 'Apijs/lib/image.py', Mage::getModuleDir('etc', 'Luigifab_Apijs')),
 				escapeshellarg($this->_fileName),
 				escapeshellarg($destination),
-				empty($this->_resizeWidth) ? 0 : $this->_resizeWidth,
-				empty($this->_resizeHeight) ? 0 : $this->_resizeHeight,
+				empty($this->_resizeFixed) ?
+					(empty($this->_resizeWidth) ? 0 : $this->_resizeWidth) :
+					(empty($this->_resizeWidth) ? (empty($this->_resizeHeight) ? 0 : $this->_resizeHeight) : $this->_resizeWidth),
+				empty($this->_resizeFixed) ?
+					(empty($this->_resizeHeight) ? 0 : $this->_resizeHeight) :
+					(empty($this->_resizeHeight) ? (empty($this->_resizeWidth) ? 0 : $this->_resizeWidth) : $this->_resizeHeight),
 				// uniquement pour JPEG (ignoré et toujouts à 9 pour PNG, inutile pour GIF)
 				$this->_quality,
 				empty($this->_resizeFixed) ? '' : 'fixed'
@@ -127,7 +136,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 			$this->reset();
 		}
-		catch (Exception $e) {
+		catch (Throwable $e) {
 			Mage::logException($e);
 			throw $e;
 		}
@@ -184,7 +193,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 		if (is_null($this->_svg)) {
 			$this->open();
-			$this->_svg = (mb_stripos($this->_fileName, '.svg') !== false) || in_array(mime_content_type($this->_fileName), ['image/svg', 'image/svg+xml']);
+			$this->_svg = (mb_substr($this->_fileName, -4) == '.svg') || in_array(mime_content_type($this->_fileName), ['image/svg', 'image/svg+xml']);
 		}
 
 		return $this->_svg;

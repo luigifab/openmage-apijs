@@ -1,9 +1,9 @@
 <?php
 /**
  * Created L/30/03/2020
- * Updated L/30/03/2020
+ * Updated J/18/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -33,7 +33,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Category extends Mage_Adminhtml_Blo
 			if ($this->getValue()) {
 				$url   = $this->_getUrl();
 				$url   = (mb_stripos($url, 'http') === 0) ? $url : Mage::getBaseUrl('media').$url;
-				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $url, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue());
+				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $url, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de this->helper ici
 			}
 
 			return $html.$this->_getDeleteCheckbox().'</div>';

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated J/18/06/2020
+ * Updated D/17/01/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -39,7 +39,7 @@
 				<type>skin_js</type>
 				<name>js/luigifab/apijs/apijs.min.js</name>
 			</action>
-			<action method="addItem">
+			<action method="addItem" ifconfig="apijs/general/backend">
 				<type>skin_js</type>
 				<name>js/luigifab/apijs/apijs-openmage.min.js</name>
 			</action>

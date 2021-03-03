@@ -1,10 +1,10 @@
 <?php
 /**
  * Created M/07/01/2020
- * Updated J/03/12/2020
+ * Updated V/12/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -72,7 +72,7 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 				$this->_getSession()->addSuccess($this->__('The image cache was cleaned.'));
 			}
 		}
-		catch (Exception $e) {
+		catch (Throwable $e) {
 			$this->_getSession()->addError($e->getMessage());
 		}
 

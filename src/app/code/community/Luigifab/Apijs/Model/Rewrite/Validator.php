@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated D/26/07/2020
+ * Updated M/02/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -32,7 +32,7 @@ class Luigifab_Apijs_Model_Rewrite_Validator extends Mage_Core_Model_File_Valida
 			$processor = Mage::getSingleton('apijs/python');
 			$processor->setFilename($path)->resize($processor->getOriginalWidth(), $processor->getOriginalHeight())->save($path);
 		}
-		catch (Exception $e) {
+		catch (Throwable $e) {
 			Mage::throwException('Invalid image: '.$e->getMessage());
 		}
 

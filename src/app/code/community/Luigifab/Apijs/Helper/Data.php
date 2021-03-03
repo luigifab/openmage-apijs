@@ -1,9 +1,9 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/20/09/2020
+ * Updated D/21/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -24,7 +24,8 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 	public function _(string $data, ...$values) {
-		return (mb_stripos($txt = $this->__(' '.$data, ...$values), ' ') === 0) ? $this->__($data, ...$values) : $txt;
+		$text = $this->__(' '.$data, ...$values);
+		return ($text[0] == ' ') ? $this->__($data, ...$values) : $text;
 	}
 
 	public function escapeEntities($data, bool $quotes = false) {
@@ -70,23 +71,25 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 
-	public function resizeImage($product, $type, $path, $width, $height, $fixed) {
+	public function resizeImage($product, $type, $path, int $width, int $height, bool $fixed) {
 
 		$resource = Mage::helper('catalog/image')->init($product, $type, $path, $fixed);
 
-		if ($fixed)
+		if (Mage::getStoreConfigFlag('apijs/general/python'))
+			$resource->resize($width, $height);
+		else if ($fixed)
 			$resource->resize($width, $height);
 		else if ($resource->getOriginalWidth() > $width)
 			$resource->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)->resize($width, null);
 		else if ($resource->getOriginalHeight() > $height)
 			$resource->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)->resize(null, $height);
 		else
-			$resource->resize($width, $height);
+			$resource->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)->resize($width, $height);
 
 		return (string) $resource;
 	}
 
-	public function getBaseImage($product, &$default, $images, $total, $id = 0) {
+	public function getBaseImage($product, &$default, array $images, int $total, int $id = 0) {
 
 		$mWidth  = (int) Mage::getStoreConfig('apijs/gallery/picture_width');
 		$mHeight = (int) Mage::getStoreConfig('apijs/gallery/picture_height');
@@ -151,7 +154,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		return $data;
 	}
 
-	public function getThumbnail($product, $default, $image, $id) {
+	public function getThumbnail($product, $default, object $image, int $id) {
 
 		$tWidth  = (int) Mage::getStoreConfig('apijs/gallery/thumbnail_width');
 		$tHeight = (int) Mage::getStoreConfig('apijs/gallery/thumbnail_height');
@@ -179,6 +182,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 		return $data;
 	}
+
 
 	public function removeFiles(string $dir, string $file) {
 
@@ -236,7 +240,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		return null;
 	}
 
-	public function renderGalleryBlock(Mage_Catalog_Model_Product $product) {
+	public function renderGalleryBlock(object $product) {
 
 		Mage::register('current_product', $product);
 

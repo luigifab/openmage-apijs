@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/05/09/2019
- * Updated L/13/07/2020
+ * Updated V/12/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -41,7 +41,7 @@ try {
 		}
 	}
 }
-catch (Exception $e) {
+catch (Throwable $e) {
 	$lock->unlock();
 	throw $e;
 }

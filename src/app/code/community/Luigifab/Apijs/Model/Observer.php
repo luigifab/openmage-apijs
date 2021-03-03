@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated D/20/09/2020
+ * Updated V/12/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify

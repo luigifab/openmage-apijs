@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated J/03/12/2020
+ * Updated S/20/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -22,7 +22,7 @@
 #apijsBox.photo.error, #apijsBox.video.error { background-image:url("../../../images/luigifab/apijs/tv.gif"); }
 
 #apijsBox button { font-family:sans-serif; font-weight:400; background-image:none; }
-#apijsBox button.cancel span, #apijsBox button.delete span { background:none; }
+#apijsBox button.cancel span, #apijsBox button.delete span { padding:0; background:none; }
 
 #apijsBox .left, #apijsBox .right, #apijsBox button :before { float:inherit !important; }
 
@@ -40,6 +40,8 @@
 	display:block; padding:0.3em; width:calc(100% - 4px - 0.6em);
 	border:1px solid #888; background-color:#EEE;
 }
+
+#apijsBox.upload h1 { letter-spacing:-0.05em; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& global &&& */
 button.slink {
@@ -60,11 +62,13 @@ td div.image.preview a { display:block; margin:4px 25px 3px; }
 #apijsGallery table.gallery .remove { color:red; }
 #apijsGallery table.gallery td { text-align:center; vertical-align:top; white-space:nowrap; }
 
-#apijsGallery table.gallery thead th { position:sticky; top:38px; padding:2px 5px; line-height:130%; text-align:center; vertical-align:middle; }
-#apijsGallery table.gallery thead tr.headings th { background:url("../../../images/sort_row_bg.gif") 0 50% repeat-x; }
+#apijsGallery table.gallery thead tr.headings th {
+	position:sticky; top:37px; padding:2px 5px; line-height:130%; text-align:center; vertical-align:middle;
+	background:url("../../../images/sort_row_bg.gif") 0 50% repeat-x;
+}
 
 #apijsGallery table.gallery thead tr.filter th {
-	top:73px; padding:8px 5px 6px;
+	position:sticky; top:72px; padding:8px 5px 6px; line-height:130%; text-align:center; vertical-align:middle;
 	font-weight:400; background:url("../../../images/filter_row_bg.gif") repeat-x #E3EFF1;
 }
 
@@ -92,8 +96,6 @@ td div.image.preview a { display:block; margin:4px 25px 3px; }
 #apijsGallery table.gallery tbody input:disabled { background-color:#EFEFEF; }
 #apijsGallery table.gallery tbody input.check { margin:0.3em auto; cursor:pointer; }
 #apijsGallery table.gallery tbody input.input-text { margin-bottom:1em; width:100% !important; box-sizing:border-box; -moz-box-sizing:border-box; }
-
-#apijsBox.upload h1 { letter-spacing:-0.05em; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&& apijs/wysiwyg/index &&& */
 body.adminhtml-apijs-wysiwyg-index .side-col { padding-top:39px; }

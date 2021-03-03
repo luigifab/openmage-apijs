@@ -1,10 +1,10 @@
 <?php
 /**
  * Created M/10/09/2019
- * Updated D/15/11/2020
+ * Updated M/02/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2020 | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -149,7 +149,7 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 				Mage::app()->getCacheInstance()->cleanType('block_html');
 			}
 		}
-		catch (Exception $e) {
+		catch (Throwable $e) {
 			$result = ['error' => true, 'message' => $e->getMessage()];
 			$this->getResponse()->setBody(json_encode($result));
 		}

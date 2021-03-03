@@ -1,9 +1,9 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated V/24/07/2020
+ * Updated D/14/02/2021
  *
- * Copyright 2008-2020 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -31,11 +31,11 @@ if (is_dir($wysiwygCacheDir)) {
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $wysiwygCacheSize;
 	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
-	if (mb_stripos($wysiwygCacheSize, 'G') !== false)
+	if (stripos($wysiwygCacheSize, 'G') !== false)
 		$wysiwygCacheSize = $this->__('%s GB', $size);
-	else if (mb_stripos($wysiwygCacheSize, 'M') !== false)
+	else if (stripos($wysiwygCacheSize, 'M') !== false)
 		$wysiwygCacheSize = $this->__('%s MB', $size);
-	else if (mb_stripos($wysiwygCacheSize, 'K') !== false)
+	else if (stripos($wysiwygCacheSize, 'K') !== false)
 		$wysiwygCacheSize = $this->__('%s kB', (int) $size);
 	$wysiwygCacheSize = preg_replace('#[.,]00[[:>:]]#', '', $wysiwygCacheSize);
 }
@@ -51,11 +51,11 @@ if (is_dir($wysiwygDir)) {
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $wysiwygSize;
 	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
-	if (mb_stripos($wysiwygSize, 'G') !== false)
+	if (stripos($wysiwygSize, 'G') !== false)
 		$wysiwygSize = $this->__('%s GB', $size);
-	else if (mb_stripos($wysiwygSize, 'M') !== false)
+	else if (stripos($wysiwygSize, 'M') !== false)
 		$wysiwygSize = $this->__('%s MB', $size);
-	else if (mb_stripos($wysiwygSize, 'K') !== false)
+	else if (stripos($wysiwygSize, 'K') !== false)
 		$wysiwygSize = $this->__('%s kB', (int) $size);
 	$wysiwygSize = preg_replace('#[.,]00[[:>:]]#', '', $wysiwygSize);
 }
@@ -75,11 +75,11 @@ if (is_dir($catalogCacheDir)) {
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $catalogCacheSize;
 	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
-	if (mb_stripos($catalogCacheSize, 'G') !== false)
+	if (stripos($catalogCacheSize, 'G') !== false)
 		$catalogCacheSize = $this->__('%s GB', $size);
-	else if (mb_stripos($catalogCacheSize, 'M') !== false)
+	else if (stripos($catalogCacheSize, 'M') !== false)
 		$catalogCacheSize = $this->__('%s MB', $size);
-	else if (mb_stripos($catalogCacheSize, 'K') !== false)
+	else if (stripos($catalogCacheSize, 'K') !== false)
 		$catalogCacheSize = $this->__('%s kB', (int) $size);
 	$catalogCacheSize = preg_replace('#[.,]00[[:>:]]#', '', $catalogCacheSize);
 }
@@ -95,11 +95,11 @@ if (is_dir($catalogDir)) {
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $catalogSize;
 	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
-	if (mb_stripos($catalogSize, 'G') !== false)
+	if (stripos($catalogSize, 'G') !== false)
 		$catalogSize = $this->__('%s GB', $size);
-	else if (mb_stripos($catalogSize, 'M') !== false)
+	else if (stripos($catalogSize, 'M') !== false)
 		$catalogSize = $this->__('%s MB', $size);
-	else if (mb_stripos($catalogSize, 'K') !== false)
+	else if (stripos($catalogSize, 'K') !== false)
 		$catalogSize = $this->__('%s kB', (int) $size);
 	$catalogSize = preg_replace('#[.,]00[[:>:]]#', '', $catalogSize);
 }
@@ -119,11 +119,11 @@ if (is_dir($categoryCacheDir)) {
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $categoryCacheSize;
 	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
-	if (mb_stripos($categoryCacheSize, 'G') !== false)
+	if (stripos($categoryCacheSize, 'G') !== false)
 		$categoryCacheSize = $this->__('%s GB', $size);
-	else if (mb_stripos($categoryCacheSize, 'M') !== false)
+	else if (stripos($categoryCacheSize, 'M') !== false)
 		$categoryCacheSize = $this->__('%s MB', $size);
-	else if (mb_stripos($categoryCacheSize, 'K') !== false)
+	else if (stripos($categoryCacheSize, 'K') !== false)
 		$categoryCacheSize = $this->__('%s kB', (int) $size);
 	$categoryCacheSize = preg_replace('#[.,]00[[:>:]]#', '', $categoryCacheSize);
 }
@@ -139,11 +139,11 @@ if (is_dir($categoryDir)) {
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $categorySize;
 	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
-	if (mb_stripos($categorySize, 'G') !== false)
+	if (stripos($categorySize, 'G') !== false)
 		$categorySize = $this->__('%s GB', $size);
-	else if (mb_stripos($categorySize, 'M') !== false)
+	else if (stripos($categorySize, 'M') !== false)
 		$categorySize = $this->__('%s MB', $size);
-	else if (mb_stripos($categorySize, 'K') !== false)
+	else if (stripos($categorySize, 'K') !== false)
 		$categorySize = $this->__('%s kB', (int) $size);
 	$categorySize = preg_replace('#[.,]00[[:>:]]#', '', $categorySize);
 }
@@ -173,25 +173,31 @@ $values = $help->getMaxSizes(true);
 	<p style="margin-top:1em;"><?php echo $this->__('Directories size:') ?></p>
 	<ul style="margin-bottom:-1em; line-height:110%;">
 		<li>
-			<?php echo $wysiwygDir ?> <strong><?php echo $wysiwygSize ?></strong> <?php echo $this->__('(without cache)') ?>
+			<?php echo $wysiwygDir ?> <strong><?php echo $wysiwygSize ?></strong> (<?php echo $this->__('without cache') ?>)
 		</li>
 		<li>
 			<?php echo $wysiwygCacheDir ?> <strong><?php echo $wysiwygCacheSize ?></strong>
-			(<button type="button" class="slink" onclick="apijsOpenMage.clearCache('<?php echo $this->getUrl('*/apijs_cache/clearCache', ['type' => 'wysiwyg']) ?>');"><?php echo $this->__('clear cache') ?></button>)
+			<?php if (Mage::getStoreConfigFlag('apijs/general/backend')): ?>
+				(<button type="button" class="slink" onclick="apijsOpenMage.clearCache('<?php echo $this->getUrl('*/apijs_cache/clearCache', ['type' => 'wysiwyg']) ?>');"><?php echo $this->__('clear cache') ?></button>)
+			<?php endif ?>
 		</li>
 		<li>
-			<?php echo $catalogDir ?> <strong><?php echo $catalogSize ?></strong> <?php echo $this->__('(without cache)') ?>
+			<?php echo $catalogDir ?> <strong><?php echo $catalogSize ?></strong> (<?php echo $this->__('without cache') ?>)
 		</li>
 		<li>
 			<?php echo $catalogCacheDir ?> <strong><?php echo $catalogCacheSize ?></strong>
-			(<button type="button" class="slink" onclick="apijsOpenMage.clearCache('<?php echo $this->getUrl('*/apijs_cache/clearCache', ['type' => 'product']) ?>');"><?php echo $this->__('clear cache') ?></button>)
+			<?php if (Mage::getStoreConfigFlag('apijs/general/backend')): ?>
+				(<button type="button" class="slink" onclick="apijsOpenMage.clearCache('<?php echo $this->getUrl('*/apijs_cache/clearCache', ['type' => 'product']) ?>');"><?php echo $this->__('clear cache') ?></button>)
+			<?php endif ?>
 		</li>
 		<li>
-			<?php echo $categoryDir ?> <strong><?php echo $categorySize ?></strong> <?php echo $this->__('(without cache)') ?>
+			<?php echo $categoryDir ?> <strong><?php echo $categorySize ?></strong> (<?php echo $this->__('without cache') ?>)
 		</li>
 		<li>
 			<?php echo $categoryCacheDir ?> <strong><?php echo $categoryCacheSize ?></strong>
-			(<button type="button" class="slink" onclick="apijsOpenMage.clearCache('<?php echo $this->getUrl('*/apijs_cache/clearCache', ['type' => 'category']) ?>');"><?php echo $this->__('clear cache') ?></button>)
+			<?php if (Mage::getStoreConfigFlag('apijs/general/backend')): ?>
+				(<button type="button" class="slink" onclick="apijsOpenMage.clearCache('<?php echo $this->getUrl('*/apijs_cache/clearCache', ['type' => 'category']) ?>');"><?php echo $this->__('clear cache') ?></button>)
+			<?php endif ?>
 		</li>
 	</ul>
 
