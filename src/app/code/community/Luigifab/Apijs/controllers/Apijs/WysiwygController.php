@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/10/09/2019
- * Updated M/02/02/2021
+ * Updated V/18/06/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -50,11 +50,12 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 	public function deleteFolderAction() {
 
 		$files = $this->getStorage()->getFilesCollection($dir = $this->getStorage()->getSession()->getCurrentPath());
-		$path  = 'wysiwyg/'.str_replace([Mage::helper('apijs')->getWysiwygImageDir(), Mage::getBaseDir('media').'/', '//'], ['', '', '/'], $dir);
+		$help  = Mage::helper('apijs');
+		$path  = 'wysiwyg/'.str_replace([$help->getWysiwygImageDir(), Mage::getBaseDir('media').'/', '//'], ['', '', '/'], $dir);
 
 		foreach ($files as $file) {
 			$oldfile = trim($path, '/').'/'.$file->getName();
-			Mage::helper('apijs')->removeFiles(Mage::helper('apijs')->getWysiwygImageDir(true), $oldfile);
+			$help->removeFiles($help->getWysiwygImageDir(true), $oldfile);
 		}
 
 		parent::deleteFolderAction();
@@ -62,7 +63,7 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 		if (is_dir($dir))
 			unlink($dir);
 
-		// très important car les chemins et les urls sont aussi mis en cache
+		// très important car les chemins et les URLs sont aussi mis en cache
 		Mage::app()->getCacheInstance()->cleanType('block_html');
 	}
 
@@ -73,15 +74,16 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 		if (!empty($files = $this->getRequest()->getParam('files'))) {
 
 			$files = Mage::helper('core')->jsonDecode($files);
-			$path  = 'wysiwyg/'.str_replace([Mage::helper('apijs')->getWysiwygImageDir(), Mage::getBaseDir('media').'/', '//'], ['', '', '/'], $this->getStorage()->getSession()->getCurrentPath());
+			$help  = Mage::helper('apijs');
+			$path  = 'wysiwyg/'.str_replace([$help->getWysiwygImageDir(), Mage::getBaseDir('media').'/', '//'], ['', '', '/'], $this->getStorage()->getSession()->getCurrentPath());
 
 			foreach ($files as $file) {
 				$oldfile = trim($path, '/').'/'.Mage::helper('cms/wysiwyg_images')->idDecode($file);
-				Mage::helper('apijs')->removeFiles(Mage::helper('apijs')->getWysiwygImageDir(true), $oldfile);
+				$help->removeFiles($help->getWysiwygImageDir(true), $oldfile);
 			}
 		}
 
-		// très important car les chemins et les urls sont aussi mis en cache
+		// très important car les chemins et les URLs sont aussi mis en cache
 		Mage::app()->getCacheInstance()->cleanType('block_html');
 	}
 
@@ -142,15 +144,16 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 
 				// images en cache
 				$path = 'wysiwyg/'.str_replace([$help->getWysiwygImageDir(), Mage::getBaseDir('media').'/', '//'], ['', '', '/'], $this->getStorage()->getSession()->getCurrentPath());
+
 				$oldfile = trim($path, '/').'/'.Mage::helper('cms/wysiwyg_images')->idDecode($file);
 				$help->removeFiles($help->getWysiwygImageDir(true), $oldfile);
 
-				// très important car les chemins et les urls sont aussi mis en cache
+				// très important car les chemins et les URLs sont aussi mis en cache
 				Mage::app()->getCacheInstance()->cleanType('block_html');
 			}
 		}
-		catch (Throwable $e) {
-			$result = ['error' => true, 'message' => $e->getMessage()];
+		catch (Throwable $t) {
+			$result = ['error' => true, 'message' => $t->getMessage()];
 			$this->getResponse()->setBody(json_encode($result));
 		}
 	}

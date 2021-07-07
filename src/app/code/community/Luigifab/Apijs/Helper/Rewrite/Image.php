@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated V/19/02/2021
+ * Updated V/18/06/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -33,8 +33,14 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		//$this->_debugStart = microtime(true);
 		//Mage::log('Open file '.$path.'...');
 
+		if (empty($this->_helper)) {
+			$this->_helper   = Mage::helper('apijs');
+			$this->_modelImg = Mage::getModel('catalog/product_image');
+			$this->_cleanUrl = mb_strpos(Mage::getBaseUrl('media'), Mage::getBaseUrl('web')) === 0;
+		}
+
 		// sans le dossier, cela ne génère pas les miniatures wysiwyg ou category
-		$dir = Mage::helper('apijs')->getCatalogProductImageDir(true);
+		$dir = $this->_helper->getCatalogProductImageDir(true);
 		if (!is_dir($dir))
 			@mkdir($dir, 0755, true);
 
@@ -51,13 +57,15 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 			$path = '../category/'.$path;
 		}
 
-		$model = Mage::getModel('catalog/product_image');
+		$model = clone $this->_modelImg;
 		$model->setDestinationSubdir($attribute);
 		$attribute = $model->getDestinationSubdir();
 		$this->_setModel($model);
 
 		// cache de la config et des urls générées
 		if (empty($this->_cacheConfig) || empty($this->_cacheUrls)) {
+
+			$this->_processor = Mage::getSingleton('apijs/python');
 
 			$this->_cacheConfig = Mage::app()->useCache('config') ? @json_decode(Mage::app()->loadCache('apijs_config'), true) : null;
 			if (empty($this->_cacheConfig) || !is_array($this->_cacheConfig)) {
@@ -68,7 +76,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 				];
 			}
 
-			$this->_cacheUrls = Mage::app()->useCache('config') ? @json_decode(Mage::app()->loadCache('apijs_urls'), true) : null;
+			$this->_cacheUrls = Mage::app()->useCache('block_html') ? @json_decode(Mage::app()->loadCache('apijs_urls'), true) : null;
 			if (empty($this->_cacheUrls) || !is_array($this->_cacheUrls)) {
 				$this->_cacheUrls = [
 					'date' => date('Y-m-d H:i:s \U\T\C')
@@ -138,11 +146,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 		//$go  = microtime(true);
 		$model = $this->_getModel();
-		$file  = Mage::helper('apijs')->getCatalogProductImageDir().trim($this->_imageFile, '/');
+		$file  = $this->_helper->getCatalogProductImageDir().trim($this->_imageFile, '/');
 
 		if ($this->_cacheConfig['apijs/general/python']) {
-			$processor = Mage::getSingleton('apijs/python')->setFilename($file)->setFixed($this->_fixed);
-			$model->setImageProcessor($processor);
+			$this->_processor->setFilename($file)->setFixed($this->_fixed);
+			$model->setImageProcessor($this->_processor);
 		}
 
 		try {
@@ -158,11 +166,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 			else {
 				$model->setBaseFile('/no_selection');
 				$this->_imageFile = $model->getBaseFile();
-				if (is_object($processor))
-					$processor->setFilename($this->_imageFile);
+				if (is_object($this->_processor))
+					$this->_processor->setFilename($this->_imageFile);
 			}
 		}
-		catch (Throwable $e) {
+		catch (Throwable $t) {
 			$area = Mage::getDesign()->getArea();
 			if ($area == 'adminhtml')
 				Mage::getDesign()->setArea('frontend');
@@ -171,8 +179,8 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 			$model->setDestinationSubdir('image');
 			$model->setBaseFile('/no_selection');
 			$this->_imageFile = $model->getBaseFile();
-			if (is_object($processor))
-				$processor->setFilename($this->_imageFile);
+			if (is_object($this->_processor))
+				$this->_processor->setFilename($this->_imageFile);
 			// si ça crash encore
 			// c'est éventuellement la faute à un lien symbolique, quelque part dans media, au lieu d'être complètement sur media
 			if ($area == 'adminhtml')
@@ -181,6 +189,10 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 		//Mage::log(' setBaseFile '.number_format(microtime(true) - $go, 4));
 		return $this;
+	}
+
+	public function cleanUrl($url) {
+		return $this->_cleanUrl ? mb_substr($url, strpos($url, '/', 9)) : $url;
 	}
 
 	public function __toString() {
@@ -210,7 +222,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 				// .../media/wysiwyg/cache/1200x/040ec09b1e35df139433887a97daa66f/wysiwyg/abc/xyz.jpg
 				$dir = Mage_Cms_Model_Wysiwyg_Config::IMAGE_DIRECTORY;
 				$filename = $model->getNewFile();
-				$filename = str_replace(['../', '//'], ['', '/'], Mage::helper('apijs')->getWysiwygImageDir(true).
+				$filename = str_replace(['../', '//'], ['', '/'], $this->_helper->getWysiwygImageDir(true).
 					mb_substr($filename, mb_stripos($filename, '/'.$dir.'/') + mb_strlen('/'.$dir.'/')));
 
 				if (array_key_exists($filename, $this->_cacheUrls)) {
@@ -236,8 +248,8 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 					// return $model->getUrl();
 					// .../media/catalog/product/cache/[0/]wysiwyg/1200x/040ec09b1e35df139433887a97daa66f/../../wysiwyg/abc/xyz.jpg
 					// .../media/wysiwyg/cache/1200x/040ec09b1e35df139433887a97daa66f/wysiwyg/abc/xyz.jpg
-					$url = $model->getUrl();
-					$url = str_replace('../', '', preg_replace('#catalog/product/cache/(?:[0-9]+/)?'.$dir.'/#', $dir.'/cache/', $url));
+					$url = $this->cleanUrl($model->getUrl());
+					$url = str_replace('../', '', preg_replace('#catalog/product/cache/(?:\d+/)?'.$dir.'/#', $dir.'/cache/', $url));
 
 					// cache
 					$this->_cacheUrls[$filename] = $url;
@@ -275,7 +287,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 					// return $model->getUrl();
 					// .../media/catalog/product/cache/[0/]category/1200x/040ec09b1e35df139433887a97daa66f/../category/xyz.jpg
 					// .../media/catalog/category/cache/[0/]1200x/040ec09b1e35df139433887a97daa66f/xyz.jpg
-					$url = $model->getUrl();
+					$url = $this->cleanUrl($model->getUrl());
 					$url = str_replace(['../', '/category/', '/catalog/product/'], ['', '/', '/catalog/category/'], $url);
 
 					// cache
@@ -312,7 +324,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 					// return $model->getUrl();
 					// .../media/catalog/product/cache/[0/]category/1200x/040ec09b1e35df139433887a97daa66f/x/y/xyz.jpg
-					$url = $model->getUrl();
+					$url = $this->cleanUrl($model->getUrl());
 					if ($this->_cacheConfig['apijs/general/remove_store_id'])
 						$url = preg_replace('#/cache/\d+/#', '/cache/', $url);
 
@@ -321,7 +333,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 				}
 			}
 		}
-		catch (Throwable $e) {
+		catch (Throwable $t) {
 			$url = Mage::getDesign()->getSkinUrl($this->getPlaceholder());
 		}
 

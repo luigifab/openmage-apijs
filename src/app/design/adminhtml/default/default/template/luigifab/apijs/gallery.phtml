@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/12/02/2021
+ * Updated V/19/03/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -21,9 +21,6 @@
 $product    = Mage::registry('current_product');
 $attributes = $product->getMediaAttributes();
 
-$images = $product->getMediaGallery('images');
-$images = empty($images) ? [] : $images;
-
 $help = $this->helper('apijs');
 $date = Mage::getSingleton('core/locale')->date();
 $base = Mage::getSingleton('catalog/product_media_config')->getBaseMediaUrl();
@@ -34,27 +31,7 @@ $sortByStore = Mage::getStoreConfigFlag('apijs/general/sort_by_store');
 if ($sortByStore)
 	$stores = Mage::getResourceModel('core/store_collection');
 
-$counts = [];
-foreach ($images as &$image) {
-
-	$image = is_object($image) ? $image : new Varien_Object($image);
-
-	if (empty($sid))
-		$image->setData('position', (int) $image->getData('position'));
-	else if ($image->getData('position') != $image->getData('position_default'))
-		$image->setData('position', (int) $image->getData('position'));
-	else
-		$image->setData('position', (int) $image->getData('position_default'));
-
-	$image->setData('apijs_group', $sortByStore ? (int) ($image->getData('position') / 100) * 100 : 0);
-
-	if (array_key_exists($image->getData('apijs_group'), $counts))
-		$counts[$image->getData('apijs_group')]++;
-	else
-		$counts[$image->getData('apijs_group')] = 1;
-}
-unset($image);
-
+[$images, $counts, $defaults] = $this->getImages($sortByStore);
 $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automatically exclude these images from other store views'), true).'\'';
 ?>
 
@@ -232,6 +209,17 @@ $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automat
 							?>
 						</td>
 					</tr>
+					<tr class="separ inf" onclick="apijsOpenMage.filter('<?php echo $grp ?>');">
+						<td colspan="2"></td>
+						<?php foreach ($attributes as $attribute): ?>
+							<?php if (($attribute->getIsText() !== true) && ($attribute->getIsCheckbox() !== true)): ?>
+								<td><em><?php echo empty($defaults[$attribute->getId()][$grp / 100]) ? '<b>!!</b>' : $this->__('Yes') ?></em></td>
+							<?php else: ?>
+								<td></td>
+							<?php endif ?>
+						<?php endforeach ?>
+						<td colspan="2"></td>
+					</tr>
 					<?php $prev = $grp ?>
 				<?php endif ?>
 				<tr id="attachmentId<?php echo $iid ?>" <?php echo ($sortByStore && ($sid > 0) && ($grp != ($sid * 100))) ? 'style="display:none;"' : '' ?>>
@@ -262,7 +250,7 @@ $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automat
 								<?php else: ?>
 									<label>
 										<?php echo $this->__('Label') ?> /
-										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][label]" value="$$" <?php
 											echo $this->isUseGlobal($image, 'label', 'checked');
 										?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
@@ -287,7 +275,7 @@ $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automat
 								<?php else: ?>
 									<label>
 										<?php echo $this->__('Sort Order') ?> /
-										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][position]" value="$$" <?php
 											echo $this->isUseGlobal($image, 'position', 'checked');
 										?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
@@ -321,7 +309,7 @@ $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automat
 									<?php else: ?>
 										<label>
 											<?php echo $attribute->getData('frontend_label') ?> /
-											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+											<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 											<input type="checkbox" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="$$" <?php
 												echo $this->isUseGlobal($image, $code, 'checked');
 											?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
@@ -348,8 +336,8 @@ $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automat
 					</td>
 					<?php foreach ($attributes as $code => $attribute): ?>
 						<?php if ($attribute->getIsText() === true) continue; ?>
-						<td class="gallery_<?php echo $code ?>">
-							<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
+						<td class="gallery_<?php echo $code ?> <?php echo (empty($sid) && ($grp > 99) && !empty($defaults[$attribute->getId()][$grp / 100]) && ($defaults[$attribute->getId()][$grp / 100] == $path)) ? ' mark' : '' ?>">
+ 							<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
 							<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 							<?php if ($attribute->getIsCheckbox() === true): ?>
 								<?php if (empty($sid)): ?>

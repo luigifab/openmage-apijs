@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated V/12/02/2021
+ * Updated V/28/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -19,17 +19,48 @@
 
 class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 
-	// EVENT catalog_product_delete_commit_after (adminhtml)
+	// EVENT catalog_category_delete_commit_after (global)
+	public function removeCategoryImages(Varien_Event_Observer $observer) {
+
+		$category = $observer->getData('category');
+		if (is_object($category) && !empty($category->getId())) {
+
+			$entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Category::ENTITY)->getId();
+			$attributes = Mage::getResourceModel('eav/entity_attribute_collection')
+				->addFieldToFilter('frontend_input', 'image')
+				->addFieldToFilter('entity_type_id', $entityType)
+				->getItems();
+
+			foreach ($attributes as $attribute) {
+				$file = $category->getData($attribute->getData('attribute_code'));
+				if (!empty($file))
+					$this->removeFiles($this->getCatalogCategoryImageDir(), $file); // pas uniquement dans le cache
+			}
+		}
+	}
+
+	// EVENT catalog_product_delete_commit_after (global)
 	public function removeProductImages(Varien_Event_Observer $observer) {
 
 		$product = $observer->getData('product');
 		if (is_object($product) && !empty($product->getId())) {
 
+			$entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getId();
+			$attributes = Mage::getResourceModel('eav/entity_attribute_collection')
+				->addFieldToFilter('frontend_input', 'image')
+				->addFieldToFilter('entity_type_id', $entityType)
+				->getItems();
+
+			foreach ($attributes as $attribute) {
+				$file = basename($product->getData($attribute->getData('attribute_code')));
+				if (!empty($file))
+					$this->removeFiles($this->getCatalogProductImageDir(), $file); // pas uniquement dans le cache
+			}
+
 			foreach ($product->getMediaGallery('images') as $image) {
 				$file = basename($image['file']);
-				// pas uniquement dans le cache
 				if (!empty($file))
-					$this->removeFiles(Mage::helper('apijs')->getCatalogProductImageDir(), $file);
+					$this->removeFiles($this->getCatalogProductImageDir(), $file); // pas uniquement dans le cache
 			}
 		}
 	}
@@ -117,42 +148,6 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 
 				$post['product']['media_gallery'] = $gallery;
 				$observer->getData('controller_action')->getRequest()->setPost($post);
-			}
-		}
-	}
-
-	// EVENT catalog_category_delete_commit_after (adminhtml)
-	// EVENT controller_action_predispatch_adminhtml_catalog_category_save (adminhtml)
-	public function removeCategoryImages(Varien_Event_Observer $observer) {
-
-		$category = $observer->getData('category');
-		if (is_object($category) && !empty($category->getId())) {
-
-			$entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Category::ENTITY)->getId();
-			$attributes = Mage::getResourceModel('eav/entity_attribute_collection')
-				->addFieldToFilter('frontend_input', 'image')
-				->addFieldToFilter('entity_type_id', $entityType)
-				->getItems();
-
-			foreach ($attributes as $attribute) {
-				$file = $category->getData($attribute->getData('attribute_code'));
-				// pas uniquement dans le cache
-				if (!empty($file))
-					$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $file);
-			}
-		}
-
-		$post = is_object($observer->getData('controller_action')) ? $observer->getData('controller_action')->getRequest()->getPost() : null;
-		if (!empty($post) && is_array($post)) {
-
-			foreach ($post as $key => $value) {
-				if (is_array($value)) {
-					foreach ($value as $subkey => $subvalue) {
-						// pas uniquement dans le cache
-						if (is_array($subvalue) && !empty($subvalue['delete']) && !empty($subvalue['value']))
-							$this->removeFiles(Mage::helper('apijs')->getCatalogCategoryImageDir(), $subvalue['value']);
-					}
-				}
 			}
 		}
 	}

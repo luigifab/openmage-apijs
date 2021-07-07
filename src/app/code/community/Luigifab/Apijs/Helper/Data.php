@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/21/02/2021
+ * Updated V/28/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -58,7 +58,11 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 
 	public function getCatalogProductImageDir(bool $cache = false) {
-		return rtrim(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath(), '/').($cache ? '/cache/' : '/');
+
+		if (empty($this->_baseMediaPath))
+			$this->_baseMediaPath = rtrim(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath(), '/');
+
+		return $this->_baseMediaPath.($cache ? '/cache/' : '/');
 	}
 
 	public function getCatalogCategoryImageDir(bool $cache = false) {
@@ -66,8 +70,11 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 	public function getWysiwygImageDir(bool $cache = false, bool $old = false) {
-		$dir = $old ? Mage_Cms_Model_Wysiwyg_Images_Storage::THUMBS_DIRECTORY_NAME : 'cache';
-		return rtrim(Mage::helper('cms/wysiwyg_images')->getStorageRoot(), '/').($cache ? '/'.$dir.'/' : '/');
+
+		if (empty($this->_baseWysiwygPath))
+			$this->_baseWysiwygPath = rtrim(Mage::helper('cms/wysiwyg_images')->getStorageRoot(), '/');
+
+		return $this->_baseWysiwygPath.($cache ? '/'.($old ? Mage_Cms_Model_Wysiwyg_Images_Storage::THUMBS_DIRECTORY_NAME : 'cache').'/' : '/');
 	}
 
 
@@ -184,21 +191,6 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 
-	public function removeFiles(string $dir, string $file) {
-
-		// recherche tous les fichiers avec la commande find
-		// si le nom du fichier contient des caractères simples
-		if (Mage::getStoreConfigFlag('apijs/general/remove_cache') && (preg_match('#[\w\-]+\.\w+$#', $file) === 1)) {
-
-			Mage::log(sprintf('Remove all %s images with exec(find) in %s', $file, $dir), Zend_Log::INFO, 'apijs.log');
-
-			if (mb_stripos($file, '/') === false)
-				exec('find '.escapeshellarg($dir).' -name '.escapeshellarg($file).' | xargs rm');
-			else
-				exec('find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.$file).' | xargs rm');
-		}
-	}
-
 	public function getMaxSizes(bool $dump = false) {
 
 		// config admise en Mo, "one file, all files"
@@ -231,7 +223,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 		foreach ($egroups as $group) {
 			$attributes = $product->getAttributes($group->getId(), true);
-			foreach ($attributes as $key => $attribute) {
+			foreach ($attributes as $attribute) {
 				if (in_array($attribute->getData('attribute_code'), ['media_gallery', 'gallery']))
 					return 'group_'.$group->getId();
 			}
@@ -248,5 +240,46 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		$block->setElement($block);
 
 		return $block->toHtml();
+	}
+
+
+	private function searchAndRemoveFiles(string $dir, string $file) {
+
+		if (mb_stripos($file, '/') === false)
+			$cmd = 'find '.escapeshellarg($dir).' -name '.escapeshellarg($file).' | xargs rm';
+		else
+			$cmd = 'find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.trim($file, '/')).' | xargs rm';
+
+		Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
+		exec($cmd);
+	}
+
+	public function removeFiles(string $dir, string $file, bool $now = false) {
+
+		// recherche et supprime tous les fichiers avec la commande find
+		// si le nom du fichier contient des caractères simples
+		if (Mage::getStoreConfigFlag('apijs/general/remove_cache') && (preg_match('#[\w\-]+\.\w+$#', $file) === 1)) {
+
+			if (empty($this->_filesToRemove))
+				$this->_filesToRemove = [];
+
+			if (is_dir($dir)) {
+				if ($now)
+					$this->searchAndRemoveFiles($dir, $file);
+				else
+					$this->_filesToRemove[] = [$dir => $file];
+			}
+		}
+	}
+
+	public function __destruct() {
+
+		if (!empty($this->_filesToRemove)) {
+			foreach ($this->_filesToRemove as $data) {
+				foreach ($data as $dir => $file) {
+					$this->searchAndRemoveFiles($dir, $file);
+				}
+			}
+		}
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/14/02/2021
+ * Updated D/30/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -204,6 +204,7 @@ $values = $help->getMaxSizes(true);
 	<?php foreach ($values as $key => $value): ?>
 		<br /><strong><?php echo $key ?></strong> = <?php echo $help->getNumberToHumanSize($value * 1024 * 1024) // de Mo à octets ?>
 	<?php endforeach ?>
+	<br /><strong>php max_file_uploads</strong> = <?php echo ini_get('max_file_uploads') ?>
 	<br /><strong>exec</strong> <?php echo Mage::getSingleton('apijs/python')->getProgramVersions(
 		'(jpg jpeg gif png, <a href="https://pillow.readthedocs.io/en/latest/">docs</a>)',
 		'(svg, <a href="https://github.com/scour-project/scour/wiki/Documentation">docs</a>)') ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/07/01/2020
- * Updated V/12/02/2021
+ * Updated V/18/06/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -72,11 +72,11 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 				$this->_getSession()->addSuccess($this->__('The image cache was cleaned.'));
 			}
 		}
-		catch (Throwable $e) {
-			$this->_getSession()->addError($e->getMessage());
+		catch (Throwable $t) {
+			$this->_getSession()->addError($t->getMessage());
 		}
 
-		// très important car les chemins et les urls sont aussi mis en cache
+		// très important car les chemins et les URLs sont aussi mis en cache
 		Mage::app()->getCacheInstance()->cleanType('block_html');
 
 		$this->_redirect('*/system_config/edit', ['section' => 'apijs']);

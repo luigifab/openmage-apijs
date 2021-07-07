@@ -1,7 +1,8 @@
 {
     "type": "magento-module",
     "name": "luigifab/openmage-apijs",
-    "description": "Beautiful javascript popup and slideshow for OpenMage.",
+    "description": "JavaScript pop-ups and slideshow for OpenMage.",
+    "keywords": ["openmage", "openmage-module"],
     "homepage": "https://github.com/luigifab/openmage-apijs",
     "license": "GPL-2.0-or-later",
     "authors": [

@@ -4,7 +4,7 @@
  * https://github.com/donatj/PhpUserAgent
  *
  * Copyright 2019-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.3.0-fork1)
+ * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.4.0-fork1)
  *
  * Parses a user agent string into its important parts
  * Licensed under the MIT License
@@ -49,7 +49,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 
 
 		preg_match_all( // ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			'/(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?P<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix',
+			'/(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|Edge|Edg|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi\/MiuiBrowser|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (\d|Vita)+) (?:\)?;?) (?:(?:[:\/ ])(?P<version>[0-9A-Z.]+)|\/(?:[A-Z]*))/ix',
 			$userAgent, $result);
 
 
@@ -79,8 +79,8 @@ class Luigifab_Apijs_Model_Useragentparser {
 		$key = 0;
 		$val = '';
 
-		if ($this->findT($lowerBrowser, ['OPR' => 'Opera', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'], $key, $browser)) {
-			$version = $result['version'][$key];
+		if ($this->findT($lowerBrowser, ['OPR' => 'Opera', 'Facebot' => 'iMessageBot', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'], $key, $browser)) {
+			$version = is_numeric(substr($result['version'][$key], 0, 1)) ? $result['version'][$key] : null;
 		}
 		else if ($this->find($lowerBrowser, 'Playstation Vita', $key, $platform)) {
 			$platform = 'PlayStation Vita';

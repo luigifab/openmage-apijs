@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated L/06/07/2020
+ * Updated V/19/03/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -32,7 +32,62 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 			$this->setTemplate('luigifab/apijs/gallery.phtml'); // catalog/product/helper/gallery.phtml
 	}
 
-	public function getScopeLabel($attribute) {
+	public function getImages(bool $sortByStore) {
+
+		$product    = Mage::registry('current_product');
+		$storeId    = $product->getStoreId();
+		$attributes = $product->getMediaAttributes();
+
+		$values = $product->getMediaGallery('images');
+		$values = empty($values) ? [] : $values;
+
+		$images = [];
+		$counts = [];
+		foreach ($values as $image) {
+
+			$image = is_object($image) ? $image : new Varien_Object($image);
+			$images[$image->getData('file')] = $image;
+
+			if (empty($storeId))
+				$image->setData('position', (int) $image->getData('position'));
+			else if ($image->getData('position') != $image->getData('position_default'))
+				$image->setData('position', (int) $image->getData('position'));
+			else
+				$image->setData('position', (int) $image->getData('position_default'));
+
+			$image->setData('apijs_group', $sortByStore ? (int) ($image->getData('position') / 100) * 100 : 0);
+
+			if (array_key_exists($image->getData('apijs_group'), $counts))
+				$counts[$image->getData('apijs_group')]++;
+			else
+				$counts[$image->getData('apijs_group')] = 1;
+		}
+
+		$ids = [];
+		foreach ($attributes as $attribute) {
+			if (($attribute->getIsText() !== true) && ($attribute->getIsCheckbox() !== true))
+				$ids[] = $attribute->getId();
+		}
+
+		$database = Mage::getSingleton('core/resource');
+		$read     = $database->getConnection('core_read');
+		$table    = $database->getTableName('catalog_product_entity_varchar');
+		$values   = $read->fetchAll('SELECT store_id, attribute_id, value FROM '.$table.' WHERE entity_id = '.$product->getId().' AND attribute_id IN ('.implode(',', $ids).')');
+
+		$defaults = [];
+		foreach ($values as $value) {
+
+			if (!empty($images[$value['value']])) {
+				$image = $images[$value['value']];
+				if (floor($image->getData('position') / 100) == $value['store_id'])
+					$defaults[$value['attribute_id']][$value['store_id']] = $value['value'];
+			}
+		}
+
+		return [$images, $counts, $defaults];
+	}
+
+	public function getScopeLabel(object $attribute) {
 
 		if ($attribute->isScopeGlobal())
 			return $this->__('[GLOBAL]');
@@ -42,7 +97,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 			return $this->__('[STORE VIEW]');
 	}
 
-	public function isUseGlobal($image, $field, $value) {
+	public function isUseGlobal(object $image, string $field, string $value) {
 		return empty($image->getData($field.'_global')) ? '' : $value.'="'.$value.'"';
 	}
 

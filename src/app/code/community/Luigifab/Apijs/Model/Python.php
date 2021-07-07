@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated M/23/02/2021
+ * Updated V/02/07/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -37,16 +37,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	}
 
 	public function __destruct() {
-
-		while (!empty($this->_pids)) {
-			foreach ($this->_pids as $key => $pid) {
-				if (!file_exists('/proc/'.$pid))
-					unset($this->_pids[$key]);
-				else
-					clearstatcache('/proc/'.$pid);
-			}
-			sleep(0.1);
-		}
+		$this->waitThreads();
 	}
 
 	public function getProgramVersions($helpPil, $helpSco) {
@@ -129,26 +120,39 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 			// ne génère pas deux fois la même image
 			if (!in_array($destination, $this->_files)) {
+				Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
 				$this->_files[] = $destination;
 				$this->_pids[]  = exec($cmd);
-				Mage::log($cmd, Zend_Log::INFO, 'apijs.log');
 			}
 
 			$this->reset();
 		}
-		catch (Throwable $e) {
-			Mage::logException($e);
-			throw $e;
+		catch (Throwable $t) {
+			Mage::logException($t);
+			throw $t;
 		}
 
 		return $this;
+	}
+
+	public function waitThreads() {
+
+		while (!empty($this->_pids)) {
+			foreach ($this->_pids as $key => $pid) {
+				if (!file_exists('/proc/'.$pid))
+					unset($this->_pids[$key]);
+				else
+					clearstatcache('/proc/'.$pid);
+			}
+			sleep(0.1);
+		}
 	}
 
 	public function display() {
 
 	}
 
-	// simple getter
+	// getter
 
 	public function getOriginalWidth() {
 
@@ -199,7 +203,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		return $this->_svg;
 	}
 
-	// simple setter
+	// setter
 
 	public function rotate($angle) {
 		$this->_rotateAngle = $angle;
@@ -310,7 +314,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		$this->_watermarkPositionY = null;
 		$this->_watermarkOpacity = null;
 		$this->_watermarkRepeat = null;
-		$this->_quality = null;
+		$this->_quality = 100;
 		$this->_keepAspectRatio = null;
 		$this->_keepFrame = null;
 		$this->_keepTransparency = null;

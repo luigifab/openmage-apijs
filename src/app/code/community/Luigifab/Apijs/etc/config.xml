@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated S/12/12/2020
+ * Updated D/30/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>6.6.0</version>
+			<version>6.7.0</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -33,7 +33,8 @@
 					<cache_additional>Luigifab_Apijs_Block_Adminhtml_Rewrite_Additional</cache_additional>
 					<cms_wysiwyg_images_tree>Luigifab_Apijs_Block_Adminhtml_Rewrite_Tree</cms_wysiwyg_images_tree>
 					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Config</system_config_form_field_image>
-					<catalog_category_helper_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Category</catalog_category_helper_image>
+					<catalog_product_helper_form_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Productimg</catalog_product_helper_form_image>
+					<catalog_category_helper_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Categoryimg</catalog_category_helper_image>
 					<catalog_product_helper_form_gallery_content>Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery</catalog_product_helper_form_gallery_content>
 				</rewrite>
 			</adminhtml>
@@ -55,11 +56,13 @@
 			<catalog>
 				<rewrite>
 					<product_attribute_backend_media>Luigifab_Apijs_Model_Rewrite_Media</product_attribute_backend_media>
+					<category_attribute_backend_image>Luigifab_Apijs_Model_Rewrite_Categoryimg</category_attribute_backend_image>
 				</rewrite>
 			</catalog>
 			<catalog_resource>
 				<rewrite>
 					<product_attribute_backend_media>Luigifab_Apijs_Model_Rewrite_Mediares</product_attribute_backend_media>
+					<product_attribute_backend_image>Luigifab_Apijs_Model_Rewrite_Productimg</product_attribute_backend_image>
 				</rewrite>
 			</catalog_resource>
 			<core>
@@ -79,6 +82,32 @@
 				</connection>
 			</apijs_setup>
 		</resources>
+		<events>
+			<controller_front_send_response_before>
+				<observers>
+					<apijs>
+						<class>apijs/python</class>
+						<method>waitThreads</method>
+					</apijs>
+				</observers>
+			</controller_front_send_response_before>
+			<catalog_category_delete_commit_after>
+				<observers>
+					<apijs>
+						<class>apijs/observer</class>
+						<method>removeCategoryImages</method>
+					</apijs>
+				</observers>
+			</catalog_category_delete_commit_after>
+			<catalog_product_delete_commit_after>
+				<observers>
+					<apijs>
+						<class>apijs/observer</class>
+						<method>removeProductImages</method>
+					</apijs>
+				</observers>
+			</catalog_product_delete_commit_after>
+		</events>
 	</global>
 	<frontend>
 		<layout>
@@ -111,22 +140,6 @@
 	</admin>
 	<adminhtml>
 		<events>
-			<catalog_product_delete_commit_after>
-				<observers>
-					<apijs>
-						<class>apijs/observer</class>
-						<method>removeProductImages</method>
-					</apijs>
-				</observers>
-			</catalog_product_delete_commit_after>
-			<catalog_category_delete_commit_after>
-				<observers>
-					<apijs>
-						<class>apijs/observer</class>
-						<method>removeCategoryImages</method>
-					</apijs>
-				</observers>
-			</catalog_category_delete_commit_after>
 			<controller_action_predispatch_adminhtml_apijs_media_save>
 				<observers>
 					<apijs>
@@ -143,14 +156,6 @@
 					</apijs>
 				</observers>
 			</controller_action_predispatch_adminhtml_catalog_product_save>
-			<controller_action_predispatch_adminhtml_catalog_category_save>
-				<observers>
-					<apijs>
-						<class>apijs/observer</class>
-						<method>removeCategoryImages</method>
-					</apijs>
-				</observers>
-			</controller_action_predispatch_adminhtml_catalog_category_save>
 		</events>
 		<layout>
 			<updates>

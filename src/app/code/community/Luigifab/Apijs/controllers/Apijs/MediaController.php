@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated M/02/02/2021
+ * Updated V/18/06/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -38,7 +38,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			for ($i = 0; $i < ob_get_level(); $i++)
 				ob_end_clean();
 		}
-		catch (Throwable $e) { }
+		catch (Throwable $t) { }
 
 		echo ' ';
 	}
@@ -99,16 +99,16 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 					$success[] = $filepath;
 				}
-				catch (Throwable $e) {
-					$errors[] = $e->getMessage();
+				catch (Throwable $t) {
+					$errors[] = $t->getMessage();
 				}
 			}
 
 			// retour
 			$result = $this->formatResult($success, $errors, 'ok');
 		}
-		catch (Throwable $e) {
-			$result = $e->getMessage();
+		catch (Throwable $t) {
+			$result = $t->getMessage();
 		}
 
 		sleep(1);
@@ -203,8 +203,8 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 					$success[] = $filepath;
 				}
-				catch (Throwable $e) {
-					$errors[] = $e->getMessage();
+				catch (Throwable $t) {
+					$errors[] = $t->getMessage();
 				}
 			}
 
@@ -228,13 +228,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 			// reload
 			$product->setStoreId($storeId)->load($product->getId());
-			// très important car les chemins et les urls sont aussi mis en cache
+			// très important car les chemins et les URLs sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			// html
 			$result = $this->formatResult($success, $errors, $help->renderGalleryBlock($product));
 		}
-		catch (Throwable $e) {
-			$result = $e->getMessage();
+		catch (Throwable $t) {
+			$result = $t->getMessage();
 		}
 
 		sleep(1);
@@ -270,13 +270,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 			// reload
 			$product->setStoreId($storeId)->load($product->getId());
-			// très important car les chemins et les urls sont aussi mis en cache
+			// très important car les chemins et les URLs sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			// html
 			$result = $this->formatResult(null, null, Mage::helper('apijs')->renderGalleryBlock($product));
 		}
-		catch (Throwable $e) {
-			$result = $e->getMessage();
+		catch (Throwable $t) {
+			$result = $t->getMessage();
 		}
 
 		$this->getResponse()->setBody($result);
@@ -358,13 +358,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 			// reload
 			$product->setStoreId($storeId)->load($product->getId());
-			// très important car les chemins et les urls sont aussi mis en cache
+			// très important car les chemins et les URLs sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			// html
 			$result = $this->formatResult(null, null, $help->renderGalleryBlock($product));
 		}
-		catch (Throwable $e) {
-			$result = $e->getMessage();
+		catch (Throwable $t) {
+			$result = $t->getMessage();
 		}
 
 		$this->getResponse()->setBody($result);

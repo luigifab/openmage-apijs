@@ -1,7 +1,7 @@
 <?php
 /**
- * Created L/26/10/2015
- * Updated V/28/05/2021
+ * Created L/30/03/2020
+ * Updated D/30/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -17,7 +17,7 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Apijs_Block_Adminhtml_Rewrite_Config extends Mage_Adminhtml_Block_System_Config_Form_Field_Image {
+class Luigifab_Apijs_Block_Adminhtml_Rewrite_Categoryimg extends Mage_Adminhtml_Block_Catalog_Category_Helper_Image {
 
 	protected function _construct() {
 		$this->setModuleName('Mage_Adminhtml');

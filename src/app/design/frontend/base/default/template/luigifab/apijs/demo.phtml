@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/01/12/2011
- * Updated S/01/02/2020
+ * Updated L/24/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -20,8 +20,7 @@
 
 <?php if (Mage::getStoreConfigFlag('apijs/general/frontend')): ?>
 	<div style="margin:1em 0; padding:0.8em; border:1px solid #C4C6C8; background-color:#FAF7EE;">
-		<?php echo sprintf('<p class="box">%s %s '.
-			'<span class="right"><a href="https://www.%s">%3$s</a> | <a href="https://www.%4$s">%4$s</a> | ⚠ IPv6</span></p>',
+		<?php echo sprintf('<p class="box">%s %s <span class="right"><a href="https://www.%s">%3$s</a> | <a href="https://www.%4$s">%4$s</a> | ⚠ IPv6</span></p>',
 			'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'luigifab.fr/openmage/apijs', 'luigifab.fr/apijs') ?>
 
 		<button type="button" class="button" onclick="apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>');"><span><?php echo $this->__('Example %d', 1) ?></span></button>

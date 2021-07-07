@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated S/20/02/2021
+ * Updated V/19/03/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -84,7 +84,11 @@ td div.image.preview a { display:block; margin:4px 25px 3px; }
 	user-select:none; -ms-user-select:none; -moz-user-select:none; -webkit-user-select:none;
 }
 
+
 #apijsGallery table.gallery tbody tr.separ td { background-color:#EEE !important; cursor:pointer; }
+#apijsGallery table.gallery tbody tr.separ.inf td { background-color:#F7F7F7 !important; cursor:pointer; text-transform:lowercase; }
+#apijsGallery table.gallery tbody td.mark { background-color:#DEFFDE !important; }
+
 #apijsGallery table.gallery tbody td { vertical-align:middle; }
 #apijsGallery table.gallery tbody td.img { padding:3px; width:200px; line-height:150px; color:gray; }
 #apijsGallery table.gallery tbody td.last { white-space:inherit; }

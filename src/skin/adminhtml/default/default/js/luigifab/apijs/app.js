@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated J/18/02/2021
+ * Updated S/29/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -104,15 +104,6 @@ var apijsOpenMage = new (function () {
 		d.uk[252] = "Помилка";
 		d.zh[252] = "错误信息";
 		// auto end
-
-		// sticky
-		var elem = document.getElementById('apijsGallery');
-		if (elem) {
-			while (!elem.classList.contains('hor-scroll') && elem.parentNode)
-				elem = elem.parentNode;
-			if (elem.classList.contains('hor-scroll'))
-				elem.setAttribute('style', 'overflow:visible;');
-		}
 	};
 
 	this.error = function (data) {
@@ -338,7 +329,7 @@ var apijsOpenMage = new (function () {
 
 	this.overloadMediabrowser = function () {
 
-		var objs = [];
+		var elem, objs = [];
 		if (typeof Mediabrowser == 'function')
 			objs.push(Mediabrowser);
 		if (typeof MediabrowserInstance == 'object')
@@ -352,8 +343,13 @@ var apijsOpenMage = new (function () {
 				obj.hideElement = function (name) {
 					this.origHideElement(name);
 					if (name === 'loading-mask') {
+						document.getElementById('loading-mask').classList.add('no-display');
 						document.getElementById('contents').classList.remove('no-display');
 						document.getElementById('contents-loader').classList.add('no-display');
+						if (elem = document.querySelector('.main-col-inner .form-buttons'))
+							elem.removeAttribute('style');
+						if (elem = document.querySelector('.content-header-floating .form-buttons'))
+							elem.removeAttribute('style');
 						if (!apijs.dialog.has('error')) // ferme sauf en cas d'erreur
 							apijs.dialog.actionClose();
 					}
@@ -363,8 +359,13 @@ var apijsOpenMage = new (function () {
 				obj.showElement = function (name) {
 					this.origShowElement(name);
 					if (name === 'loading-mask') {
+						document.getElementById('loading-mask').classList.add('no-display');
 						document.getElementById('contents').classList.add('no-display');
 						document.getElementById('contents-loader').classList.remove('no-display');
+						if (elem = document.querySelector('.main-col-inner .form-buttons'))
+							elem.style.visibility = 'hidden';
+						if (elem = document.querySelector('.content-header-floating .form-buttons'))
+							elem.style.visibility = 'hidden';
 					}
 				};
 

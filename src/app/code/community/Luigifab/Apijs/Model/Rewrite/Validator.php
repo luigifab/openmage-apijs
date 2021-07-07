@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated M/02/02/2021
+ * Updated V/18/06/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -32,8 +32,8 @@ class Luigifab_Apijs_Model_Rewrite_Validator extends Mage_Core_Model_File_Valida
 			$processor = Mage::getSingleton('apijs/python');
 			$processor->setFilename($path)->resize($processor->getOriginalWidth(), $processor->getOriginalHeight())->save($path);
 		}
-		catch (Throwable $e) {
-			Mage::throwException('Invalid image: '.$e->getMessage());
+		catch (Throwable $t) {
+			Mage::throwException('Invalid image: '.$t->getMessage());
 		}
 
 		return true;

@@ -1,7 +1,7 @@
 <?php
 /**
- * Created L/30/03/2020
- * Updated J/18/02/2021
+ * Created J/27/05/2021
+ * Updated D/30/05/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -17,7 +17,7 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Apijs_Block_Adminhtml_Rewrite_Category extends Mage_Adminhtml_Block_Catalog_Category_Helper_Image {
+class Luigifab_Apijs_Block_Adminhtml_Rewrite_Productimg extends Mage_Adminhtml_Block_Catalog_Product_Helper_Form_Image {
 
 	protected function _construct() {
 		$this->setModuleName('Mage_Adminhtml');
@@ -31,9 +31,9 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Category extends Mage_Adminhtml_Blo
 			$html = '<div class="image preview">'.Varien_Data_Form_Element_Abstract::getElementHtml();
 
 			if ($this->getValue()) {
-				$url   = $this->_getUrl();
-				$url   = (mb_stripos($url, 'http') === 0) ? $url : Mage::getBaseUrl('media').$url;
-				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $url, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de this->helper ici
+				$link  = $this->_getUrl();
+				$link  = (mb_stripos($link, 'http') === 0) ? $link : Mage::getBaseUrl('media').$link;
+				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $link, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de this->helper ici
 			}
 
 			return $html.$this->_getDeleteCheckbox().'</div>';
