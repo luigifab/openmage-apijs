@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated D/31/05/2020
+ * Updated V/30/07/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -41,7 +41,13 @@
 			</action>
 		</reference>
 		<reference name="after_body_start">
-			<block type="apijs/browser" template="luigifab/apijs/browser.phtml" name="apijs_browser" before="-" />
+			<block type="apijs/browser" template="luigifab/apijs/browser.phtml" name="apijs_browser" before="-">
+				<action method="setEsiOptions">
+					<params>
+						<access>private</access>
+					</params>
+				</action>
+			</block>
 		</reference>
 	</default>
 

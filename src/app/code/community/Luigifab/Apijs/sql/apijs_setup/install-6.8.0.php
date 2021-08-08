@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/05/09/2019
- * Updated V/18/06/2021
+ * Updated J/22/07/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -31,8 +31,7 @@ ignore_user_abort(true);
 set_time_limit(0);
 
 try {
-	$read   = $this->getConnection();
-	$fields = $read->fetchAll('SHOW COLUMNS FROM '.$this->getTable('catalog_product_entity_media_gallery_value'));
+	$fields = $this->getConnection()->fetchAll('SHOW COLUMNS FROM '.$this->getTable('catalog_product_entity_media_gallery_value'));
 
 	foreach ($fields as $field) {
 		if ((empty($field['Null']) || ($field['Null'] != 'YES')) && (mb_stripos($field['Field'], '_id') === false)) {

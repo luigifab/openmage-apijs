@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated S/29/05/2021
+ * Updated D/18/07/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -391,7 +391,7 @@ var apijsOpenMage = new (function () {
 		if (typeof root == 'string') {
 			show = root;
 			root = document.getElementById('apijsFilter');
-			if (((root.value == show) && (show != 'all')) || ((root.value == 'all') && (show == 'all')))
+			if (((root.value === show) && (show !== 'all')) || ((root.value === 'all') && (show === 'all')))
 				show = 'none';
 			root.value = show;
 		}
@@ -418,13 +418,13 @@ var apijsOpenMage = new (function () {
 				else if (col.nodeName === 'SELECT') {
 					word = Math.floor(parseInt(col.value, 10) / 100); // ce qu'on cherche
 					text = Math.floor(parseInt(line.querySelectorAll('td')[idx].querySelector('input.position').value, 10) / 100); //dans quoi
-					show.push((col.value == 'all') || (text == word));
+					show.push((col.value === 'all') || (text == word));
 				}
 				else if (col.nodeName === 'BUTTON') {
 					word = col.getAttribute('data-state') == '1'; // ce qu'on cherche
 					text = line.querySelectorAll('td')[idx].querySelector('input.check:not(.def)').checked; // dans quoi on cherche
 					if (col.hasAttribute('data-reverse')) text = !text;
-					show.push(!word || (word && (word != text)));
+					show.push(!word || (word && (word !== text)));
 				}
 			});
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated V/18/06/2021
+ * Updated V/30/07/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -31,7 +31,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		//if (!isset($this->_debugRenew)) $this->_debugRenew = 0;
 		//$this->_debugCount += 1;
 		//$this->_debugStart = microtime(true);
-		//Mage::log('Open file '.$path.'...');
+		//Mage::log('Open file '.$path.'...', Zend_Log::DEBUG);
 
 		if (empty($this->_helper)) {
 			$this->_helper   = Mage::helper('apijs');
@@ -187,11 +187,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 				Mage::getDesign()->setArea($area);
 		}
 
-		//Mage::log(' setBaseFile '.number_format(microtime(true) - $go, 4));
+		//Mage::log(' setBaseFile '.number_format(microtime(true) - $go, 4), Zend_Log::DEBUG);
 		return $this;
 	}
 
-	public function cleanUrl($url) {
+	public function cleanUrl(string $url) {
 		return $this->_cleanUrl ? mb_substr($url, strpos($url, '/', 9)) : $url;
 	}
 
@@ -226,11 +226,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 					mb_substr($filename, mb_stripos($filename, '/'.$dir.'/') + mb_strlen('/'.$dir.'/')));
 
 				if (array_key_exists($filename, $this->_cacheUrls)) {
-					//Mage::log(' CACHE HIT '.$filename); $this->_debugCache++;
+					//Mage::log(' CACHE HIT '.$filename, Zend_Log::DEBUG); $this->_debugCache++;
 					$url = $this->_cacheUrls[$filename];
 				}
 				else {
-					//Mage::log(' generate '.$filename); $this->_debugRenew++;
+					//Mage::log(' generate '.$filename, Zend_Log::DEBUG); $this->_debugRenew++;
 					if (!is_file($filename)) {
 
 						if (!empty($this->_scheduleRotate))
@@ -265,11 +265,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 				$filename = str_replace(['../', '//', '/category/', '/catalog/product/'], ['', '/', '/', '/catalog/category/'], $filename);
 
 				if (array_key_exists($filename, $this->_cacheUrls)) {
-					//Mage::log(' CACHE HIT '.$filename); $this->_debugCache++;
+					//Mage::log(' CACHE HIT '.$filename, Zend_Log::DEBUG); $this->_debugCache++;
 					$url = $this->_cacheUrls[$filename];
 				}
 				else {
-					//Mage::log(' generate '.$filename); $this->_debugRenew++;
+					//Mage::log(' generate '.$filename, Zend_Log::DEBUG); $this->_debugRenew++;
 					if (!is_file($filename)) {
 
 						if (!empty($this->_scheduleRotate))
@@ -303,11 +303,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 					$filename = preg_replace('#/cache/\d+/#', '/cache/', $filename);
 
 				if (array_key_exists($filename, $this->_cacheUrls)) {
-					//Mage::log(' CACHE HIT '.$filename); $this->_debugCache++;
+					//Mage::log(' CACHE HIT '.$filename, Zend_Log::DEBUG); $this->_debugCache++;
 					$url = $this->_cacheUrls[$filename];
 				}
 				else {
-					//Mage::log(' generate '.$filename); $this->_debugRenew++;
+					//Mage::log(' generate '.$filename, Zend_Log::DEBUG); $this->_debugRenew++;
 					if (!is_file($filename)) {
 
 						if (!empty($this->_scheduleRotate))
@@ -337,8 +337,8 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 			$url = Mage::getDesign()->getSkinUrl($this->getPlaceholder());
 		}
 
-		//Mage::log(' toString '.number_format(microtime(true) - $go, 4));
-		//Mage::log(' closing file after '.number_format(microtime(true) - $this->_debugStart, 4).' / since first init '.number_format(microtime(true) - $this->_debugBegin, 4).' / total '.$this->_debugCount.' = cache '.$this->_debugCache.' + generate '.$this->_debugRenew);
+		//Mage::log(' toString '.number_format(microtime(true) - $go, 4), Zend_Log::DEBUG);
+		//Mage::log(' closing file after '.number_format(microtime(true) - $this->_debugStart, 4).' / since first init '.number_format(microtime(true) - $this->_debugBegin, 4).' / total '.$this->_debugCount.' = cache '.$this->_debugCache.' + generate '.$this->_debugRenew, Zend_Log::DEBUG);
 
 		return $url;
 	}

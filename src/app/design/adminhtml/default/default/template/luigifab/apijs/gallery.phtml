@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/19/03/2021
+ * Updated J/29/07/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -378,9 +378,7 @@ $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automat
 									<?php if ($globalValue == $path): ?>
 										<label>
 											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-											<input type="checkbox" <?php
-												echo (empty($storeValue) || ($globalValue == $path)) ? 'checked="checked"' : '';
-											?> disabled="disabled" class="check" />
+											<input type="checkbox" checked="checked" disabled="disabled" class="check" />
 										</label>
 									<?php else: ?>
 										<label style="visibility:hidden;">

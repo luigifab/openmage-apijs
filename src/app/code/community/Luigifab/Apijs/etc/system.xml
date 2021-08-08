@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created D/20/11/2011
- * Updated W/03/03/2021
+ * Updated S/03/07/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -46,7 +46,6 @@
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
 					<show_in_store>1</show_in_store>
-					<expanded>1</expanded>
 					<fields>
 						<demo>
 							<frontend_model>apijs/adminhtml_demo</frontend_model>
@@ -141,7 +140,6 @@
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
 					<show_in_store>1</show_in_store>
-					<expanded>1</expanded>
 					<fields>
 						<enabled translate="label">
 							<label>Enable</label>
