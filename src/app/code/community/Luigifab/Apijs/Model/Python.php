@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated V/02/07/2021
+ * Updated M/28/09/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -227,7 +227,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	public function watermark($image, $positionX = 0, $positionY = 0, $opacity = 30, $repeat = false) {
 		if (!is_file($image))
 			Mage::throwException('Required file '.$image.' does not exists.');
-		$this->_watermarkImage = $watermarkImage;
+		$this->_watermarkImage     = $image;
 		$this->_watermarkPositionX = $positionX;
 		$this->_watermarkPositionY = $positionY;
 		$this->_watermarkOpacity   = $opacity;

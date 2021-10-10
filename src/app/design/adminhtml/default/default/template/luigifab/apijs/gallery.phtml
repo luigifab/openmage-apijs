@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/29/07/2021
+ * Updated M/28/09/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -119,7 +119,7 @@ $exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automat
 					<button type="button" class="scalable add" onclick="apijsOpenMage.sendFiles(this.textContent, '<?php echo $this->getAddUrl() ?>', <?php echo $help->getMaxSizes() ?>, <?php echo $exclude ?>);">
 						<span><span><?php echo $this->__('Add one or multiple files') ?></span></span>
 					</button>
-					<?php $maxWidth = (int) Mage::getStoreConfig(Mage_Catalog_Helper_Image::XML_NODE_PRODUCT_MAX_DIMENSION) ?>
+					<?php $maxWidth = (int) Mage::getStoreConfig('catalog/product_image/max_dimension') ?>
 					<p><?php echo $this->__('The added or removed images are automatically saved.') ?>
 					<br /><?php echo $this->__('Maximum images width and height is <a %s>%s x %s pixels</a>.',
 						'href="'.$this->getUrl('*/system_config/edit', ['section' => 'catalog']).'"',

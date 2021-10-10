@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated V/30/07/2021
+ * Updated M/28/09/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -36,7 +36,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		if (empty($this->_helper)) {
 			$this->_helper   = Mage::helper('apijs');
 			$this->_modelImg = Mage::getModel('catalog/product_image');
-			$this->_cleanUrl = mb_strpos(Mage::getBaseUrl('media'), Mage::getBaseUrl('web')) === 0;
+			$this->_cleanUrl = (PHP_SAPI != 'cli') && (mb_strpos(Mage::getBaseUrl('media'), Mage::getBaseUrl('web')) === 0);
 		}
 
 		// sans le dossier, cela ne génère pas les miniatures wysiwyg ou category
@@ -346,9 +346,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 	public function __destruct() {
 
 		if (!empty($this->_cacheConfig) && Mage::app()->useCache('config'))
-			Mage::app()->saveCache(json_encode($this->_cacheConfig), 'apijs_config', [Mage_Core_Model_Config::CACHE_TAG]);
+			Mage::app()->saveCache(json_encode($this->_cacheConfig), 'apijs_config',
+				[Mage_Core_Model_Config::CACHE_TAG]);
 
 		if (!empty($this->_cacheUrls) && Mage::app()->useCache('block_html'))
-			Mage::app()->saveCache(json_encode($this->_cacheUrls), 'apijs_urls', [Mage_Core_Model_Config::CACHE_TAG, Mage_Core_Block_Abstract::CACHE_GROUP]);
+			Mage::app()->saveCache(json_encode($this->_cacheUrls), 'apijs_urls',
+				[Mage_Core_Model_Config::CACHE_TAG, Mage_Core_Block_Abstract::CACHE_GROUP]);
 	}
 }

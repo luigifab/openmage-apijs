@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated D/18/07/2021
+ * Updated D/05/09/2021
  *
  * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -20,7 +20,7 @@ var apijsOpenMage = new (function () {
 
 	"use strict";
 
-	this.start = function () {
+	this.init = function () {
 
 		var d = apijs.i18n.data;
 		if (!d.frca) d.frca = {};
@@ -445,4 +445,4 @@ var apijsOpenMage = new (function () {
 })();
 
 if (typeof self.addEventListener == 'function')
-	self.addEventListener('apijsload', apijsOpenMage.start.bind(apijsOpenMage));
+	self.addEventListener('apijsload', apijsOpenMage.init.bind(apijsOpenMage));
