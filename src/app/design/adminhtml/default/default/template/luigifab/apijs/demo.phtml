@@ -1,9 +1,9 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated D/30/05/2021
+ * Updated J/04/11/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -30,7 +30,7 @@ if (is_dir($wysiwygCacheDir)) {
 
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $wysiwygCacheSize;
-	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
+	$size = $help->getNumber($size, ['precision' => 2]);
 	if (stripos($wysiwygCacheSize, 'G') !== false)
 		$wysiwygCacheSize = $this->__('%s GB', $size);
 	else if (stripos($wysiwygCacheSize, 'M') !== false)
@@ -50,7 +50,7 @@ if (is_dir($wysiwygDir)) {
 
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $wysiwygSize;
-	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
+	$size = $help->getNumber($size, ['precision' => 2]);
 	if (stripos($wysiwygSize, 'G') !== false)
 		$wysiwygSize = $this->__('%s GB', $size);
 	else if (stripos($wysiwygSize, 'M') !== false)
@@ -74,7 +74,7 @@ if (is_dir($catalogCacheDir)) {
 
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $catalogCacheSize;
-	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
+	$size = $help->getNumber($size, ['precision' => 2]);
 	if (stripos($catalogCacheSize, 'G') !== false)
 		$catalogCacheSize = $this->__('%s GB', $size);
 	else if (stripos($catalogCacheSize, 'M') !== false)
@@ -94,7 +94,7 @@ if (is_dir($catalogDir)) {
 
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $catalogSize;
-	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
+	$size = $help->getNumber($size, ['precision' => 2]);
 	if (stripos($catalogSize, 'G') !== false)
 		$catalogSize = $this->__('%s GB', $size);
 	else if (stripos($catalogSize, 'M') !== false)
@@ -118,7 +118,7 @@ if (is_dir($categoryCacheDir)) {
 
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $categoryCacheSize;
-	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
+	$size = $help->getNumber($size, ['precision' => 2]);
 	if (stripos($categoryCacheSize, 'G') !== false)
 		$categoryCacheSize = $this->__('%s GB', $size);
 	else if (stripos($categoryCacheSize, 'M') !== false)
@@ -138,7 +138,7 @@ if (is_dir($categoryDir)) {
 
 	// 1G - 500M - 5M - 1.2M - 225K
 	$size = (float) $categorySize;
-	$size = Zend_Locale_Format::toNumber($size, ['precision' => 2]);
+	$size = $help->getNumber($size, ['precision' => 2]);
 	if (stripos($categorySize, 'G') !== false)
 		$categorySize = $this->__('%s GB', $size);
 	else if (stripos($categorySize, 'M') !== false)

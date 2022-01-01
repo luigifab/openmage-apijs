@@ -1,9 +1,9 @@
 <?php
 /**
  * Created V/23/05/2014
- * Updated L/24/05/2021
+ * Updated J/30/09/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -32,20 +32,20 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 			'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'luigifab.fr/openmage/apijs', 'luigifab.fr/apijs');
 	}
 
-	private function checkRewrites() {
+	protected function checkRewrites() {
 
 		$rewrites = [
 			['block' => 'adminhtml/cache_additional'],
 			['block' => 'adminhtml/catalog_category_helper_image'],
 			['block' => 'adminhtml/catalog_product_helper_form_gallery_content'],
 			['block' => 'adminhtml/catalog_product_helper_form_image'],
-			['block' => 'adminhtml/cms_wysiwyg_images_tree'],
 			['block' => 'adminhtml/system_config_form_field_image'],
 			['helper' => 'catalog/image'],
 			['model' => 'catalog/category_attribute_backend_image'],
 			['model' => 'catalog/product_attribute_backend_media'],
 			['model' => 'catalog_resource/product_attribute_backend_image'],
 			['model' => 'catalog_resource/product_attribute_backend_media'],
+			['model' => 'cms/wysiwyg_images_storage'],
 			['model' => 'core/file_validator_image']
 		];
 

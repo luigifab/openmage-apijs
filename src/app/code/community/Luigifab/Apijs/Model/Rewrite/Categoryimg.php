@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/27/05/2021
- * Updated V/28/05/2021
+ * Updated M/26/10/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -27,12 +27,21 @@ class Luigifab_Apijs_Model_Rewrite_Categoryimg extends Mage_Catalog_Model_Catego
 
 		if (is_array($value)) {
 
-			$help = Mage::helper('apijs');
+			$database = Mage::getSingleton('core/resource');
+			$reader   = $database->getConnection('core_read');
+			$table    = $database->getTableName('catalog_category_entity_varchar');
 
-			if (!empty($value['delete']))
-				$help->removeFiles($help->getCatalogCategoryImageDir(), $value['value']); // pas uniquement dans le cache
-			else if (!empty($value['value']) && !empty($_FILES[$name]['size']))
-				$help->removeFiles($help->getCatalogCategoryImageDir(), $value['value'], true); // pas uniquement dans le cache
+			if (!empty($value['value'])) {
+				$file  = $value['value'];
+				$count = $reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]);
+				if ($count == 1) {
+					$help = Mage::helper('apijs');
+					if (!empty($value['delete']))
+						$help->removeFiles($help->getCatalogCategoryImageDir(), basename($file)); // pas uniquement dans le cache
+					else if (!empty($_FILES[$name]['size']))
+						$help->removeFiles($help->getCatalogCategoryImageDir(), basename($file), true); // pas uniquement dans le cache
+				}
+			}
 		}
 
 		return parent::beforeSave($object);

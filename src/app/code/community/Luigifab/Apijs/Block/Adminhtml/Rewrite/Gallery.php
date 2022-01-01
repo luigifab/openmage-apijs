@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/19/03/2021
+ * Updated V/29/10/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -35,14 +35,19 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 	public function getImages(bool $sortByStore) {
 
 		$product    = Mage::registry('current_product');
+		$productId  = $product->getId();
 		$storeId    = $product->getStoreId();
 		$attributes = $product->getMediaAttributes();
 
+		$defaultValues = [];
+		$globalValues  = [];
+		$storeValues   = [];
+
 		$values = $product->getMediaGallery('images');
 		$values = empty($values) ? [] : $values;
-
 		$images = [];
 		$counts = [];
+
 		foreach ($values as $image) {
 
 			$image = is_object($image) ? $image : new Varien_Object($image);
@@ -64,37 +69,38 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 		}
 
 		$ids = [];
-		foreach ($attributes as $attribute) {
-			if (($attribute->getIsText() !== true) && ($attribute->getIsCheckbox() !== true))
+		foreach ($attributes as $code => $attribute) {
+			if (($attribute->getIsText() !== true) && ($attribute->getIsCheckbox() !== true)) {
 				$ids[] = $attribute->getId();
-		}
-
-		$database = Mage::getSingleton('core/resource');
-		$read     = $database->getConnection('core_read');
-		$table    = $database->getTableName('catalog_product_entity_varchar');
-		$values   = $read->fetchAll('SELECT store_id, attribute_id, value FROM '.$table.' WHERE entity_id = '.$product->getId().' AND attribute_id IN ('.implode(',', $ids).')');
-
-		$defaults = [];
-		foreach ($values as $value) {
-
-			if (!empty($images[$value['value']])) {
-				$image = $images[$value['value']];
-				if (floor($image->getData('position') / 100) == $value['store_id'])
-					$defaults[$value['attribute_id']][$value['store_id']] = $value['value'];
+				$globalValues[$code] = $product->getResource()->getAttributeRawValue($productId, $code, 0);
+				$storeValues[$code]  = $product->getResource()->getAttributeRawValue($productId, $code, $storeId);
 			}
 		}
 
-		return [$images, $counts, $defaults];
+		$database = Mage::getSingleton('core/resource');
+		$reader   = $database->getConnection('core_read');
+		$table    = $database->getTableName('catalog_product_entity_varchar');
+		$values   = $reader->fetchAll('SELECT store_id, attribute_id, value FROM '.$table.' WHERE entity_id = '.$productId.' AND attribute_id IN ('.implode(',', $ids).')');
+
+		foreach ($values as $value) {
+			if (!empty($images[$value['value']])) {
+				$image = $images[$value['value']];
+				if (floor($image->getData('position') / 100) == $value['store_id'])
+					$defaultValues[$value['attribute_id']][$value['store_id']] = $value['value'];
+			}
+		}
+
+		return ['images' => $images, 'counts' => $counts, 'defaultValues' => $defaultValues, 'storeValues' => $storeValues, 'globalValues' => $globalValues];
 	}
 
 	public function getScopeLabel(object $attribute) {
 
 		if ($attribute->isScopeGlobal())
 			return $this->__('[GLOBAL]');
-		else if ($attribute->isScopeWebsite())
+		if ($attribute->isScopeWebsite())
 			return $this->__('[WEBSITE]');
-		else
-			return $this->__('[STORE VIEW]');
+
+		return $this->__('[STORE VIEW]');
 	}
 
 	public function isUseGlobal(object $image, string $field, string $value) {

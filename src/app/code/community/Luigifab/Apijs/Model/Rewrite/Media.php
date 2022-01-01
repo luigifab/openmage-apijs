@@ -1,10 +1,10 @@
 <?php
 /**
  * Created J/29/08/2019
- * Updated V/12/02/2021
+ * Updated M/26/10/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -77,12 +77,12 @@ class Luigifab_Apijs_Model_Rewrite_Media extends Mage_Catalog_Model_Product_Attr
 		foreach ($images as $image)
 			$picturesInOtherStores[$image['filepath']] = true;
 
-		$toDelete = [];
+		$remove = [];
 		foreach ($value['images'] as $image) {
 
 			if (!empty($image['removed'])) {
 				if (isset($image['value_id']) && !isset($picturesInOtherStores[$image['file']]))
-					$toDelete[] = $image['value_id'];
+					$remove[] = $image['value_id'];
 				continue;
 			}
 
@@ -109,6 +109,6 @@ class Luigifab_Apijs_Model_Rewrite_Media extends Mage_Catalog_Model_Product_Attr
 			$this->_getResource()->insertGalleryValueInStore($data);
 		}
 
-		$this->_getResource()->deleteGallery($toDelete);
+		$this->_getResource()->deleteGallery($remove);
 	}
 }

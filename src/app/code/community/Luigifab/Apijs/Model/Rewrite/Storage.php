@@ -1,7 +1,7 @@
 <?php
 /**
- * Created D/20/11/2011
- * Updated M/28/02/2017
+ * Created S/09/10/2021
+ * Updated S/09/10/2021
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -17,11 +17,22 @@
  * GNU General Public License (GPL) for more details.
  */
 
-class Luigifab_Apijs_Block_Adminhtml_Demo extends Mage_Adminhtml_Block_Abstract implements Varien_Data_Form_Element_Renderer_Interface {
+class Luigifab_Apijs_Model_Rewrite_Storage extends Mage_Cms_Model_Wysiwyg_Images_Storage {
 
-	protected $_template = 'luigifab/apijs/demo.phtml';
+	public function getDirsCollection($path) {
 
-	public function render(Varien_Data_Form_Element_Abstract $element) {
-		return '<tr><td colspan="4">'.$this->toHtml().'</td></tr>';
+		$dirs  = parent::getDirsCollection($path);
+		$cache = trim(Mage::helper('apijs')->getWysiwygImageDir(true), '/');
+
+		foreach ($dirs as $key => $dir) {
+			if ($cache == trim($dir->getFilename(), '/'))
+				$dirs->removeItemByKey($key);
+		}
+
+		return $dirs;
+	}
+
+	public function getAllowedExtensions($type = null) {
+		return (empty($type) && Mage::getStoreConfigFlag('apijs/general/backend')) ? [] : parent::getAllowedExtensions($type);
 	}
 }

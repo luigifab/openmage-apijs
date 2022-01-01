@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated V/18/06/2021
+ * Updated J/04/11/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -21,7 +21,7 @@ class Luigifab_Apijs_Model_Rewrite_Validator extends Mage_Core_Model_File_Valida
 
 	public function validate($path) {
 
-		if (is_file($path) && in_array(mime_content_type($path), ['image/svg', 'image/svg+xml']))
+		if (is_file($path) && in_array(mime_content_type($path), ['image/svg', 'image/svg+xml', 'application/pdf']))
 			return true;
 
 		if (!Mage::getStoreConfigFlag('apijs/general/python'))

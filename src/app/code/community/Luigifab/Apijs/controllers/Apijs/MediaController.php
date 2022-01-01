@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/18/06/2021
+ * Updated J/04/11/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -22,7 +22,7 @@ require_once(Mage::getModuleDir('controllers', 'Mage_Adminhtml').'/Catalog/Produ
 
 class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_ProductController {
 
-	private function disableAllBuffer() {
+	protected function disableAllBuffer() {
 
 		// désactivation des tampons
 		// cela permet d'afficher 100% dans la barre de progression
@@ -43,7 +43,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		echo ' ';
 	}
 
-	private function formatResult($success, $errors, $data) {
+	protected function formatResult($success, $errors, $data) {
 
 		$result = ['html' => $data];
 
@@ -75,6 +75,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 		$this->disableAllBuffer();
 
+		$storage = Mage::getSingleton('cms/wysiwyg_images_storage');
 		$success = [];
 		$errors  = [];
 
@@ -82,19 +83,22 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			if (empty($_FILES))
 				Mage::throwException('No files uploaded.');
 
+			$exts = $storage->getAllowedExtensions('image');
+			$exts[] = 'pdf';
+
 			// sauvegarde du ou des fichiers
 			$keys = array_keys($_FILES);
 			foreach ($keys as $key) {
 
 				try {
 					$uploader = new Varien_File_Uploader($key);
-					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png','svg']);
+					$uploader->setAllowedExtensions($exts);
 					$uploader->setAllowRenameFiles(true);
 					$uploader->setFilesDispersion(false);
 					$uploader->addValidateCallback(Mage_Core_Model_File_Validator_Image::NAME,
 						Mage::getModel('core/file_validator_image'), 'validate');
 
-					$filepath = $uploader->save(Mage::getSingleton('cms/wysiwyg_images_storage')->getSession()->getCurrentPath());
+					$filepath = $uploader->save($storage->getSession()->getCurrentPath());
 					$filepath = array_pop($filepath);
 
 					$success[] = $filepath;
@@ -124,12 +128,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		$productId = (int) $this->getRequest()->getParam('product', 0);
 		$storeId   = (int) $this->getRequest()->getParam('store', 0);
 
-		$database = Mage::getSingleton('core/resource');
-		$read  = $database->getConnection('core_read');
-		$write = $database->getConnection('core_write');
-		$table = $database->getTableName('catalog_product_entity_media_gallery');
-		$elbat = $database->getTableName('catalog_product_entity_media_gallery_value');
+		$database  = Mage::getSingleton('core/resource');
+		$reader    = $database->getConnection('core_read');
+		$writer    = $database->getConnection('core_write');
+		$cpemg     = $database->getTableName('catalog_product_entity_media_gallery');
+		$cpemv     = $database->getTableName('catalog_product_entity_media_gallery_value');
 
+		$storage = Mage::getSingleton('cms/wysiwyg_images_storage');
 		$success = [];
 		$errors  = [];
 
@@ -146,7 +151,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 				try {
 					$uploader = new Varien_File_Uploader($key);
-					$uploader->setAllowedExtensions(['jpg','jpeg','gif','png','svg']);
+					$uploader->setAllowedExtensions($storage->getAllowedExtensions('image'));
 					$uploader->setAllowRenameFiles(true);
 					$uploader->setFilesDispersion(true);
 					$uploader->addValidateCallback(Mage_Core_Model_File_Validator_Image::NAME,
@@ -158,44 +163,44 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 					Mage::dispatchEvent('catalog_product_gallery_upload_image_after', ['result' => $filepath, 'action' => $this]);
 					$filepath = array_pop($filepath);
 
-					$write->query(
-						'INSERT INTO '.$table.' (attribute_id, entity_id, value) VALUES (?, ?, ?)',
+					$writer->query(
+						'INSERT INTO '.$cpemg.' (attribute_id, entity_id, value) VALUES (?, ?, ?)',
 						[$attribute, $productId, $filepath]
 					);
 
-					$valueId = $write->lastInsertId();
+					$valueId = $writer->lastInsertId();
 					if (($storeId > 0) && Mage::getStoreConfigFlag('apijs/general/sort_by_store')) {
-						$nb = max($storeId * 100 + 1, (int) $read->fetchOne(
-							'SELECT MAX(position) FROM '.$table.' cpemg
-							 LEFT JOIN '.$elbat.' cpemgv
-								ON cpemg.value_id = cpemgv.value_id
+						$nb = max($storeId * 100 + 1, (int) $reader->fetchOne(
+							'SELECT MAX(position) FROM '.$cpemg.' cpemg
+							 LEFT JOIN '.$cpemv.' cpemv
+								ON cpemg.value_id = cpemv.value_id
 							 WHERE entity_id = ? AND CAST(position / 100 AS UNSIGNED) = ?',
 							[$productId, $storeId]
 						) + 1);
-						$write->query(
-							'INSERT INTO '.$elbat.'
+						$writer->query(
+							'INSERT INTO '.$cpemv.'
 								(value_id, store_id, position, disabled) VALUES (?, 0, ?, ?)',
 							[$valueId, $nb, empty($this->getRequest()->getParam('exclude')) ? 0 : 1]
 						);
 					}
 					else {
-						$nb = max(1, (int) $read->fetchOne(
-							'SELECT MAX(position) FROM '.$table.' cpemg
-							 LEFT JOIN '.$elbat.' cpemgv
-								ON cpemg.value_id = cpemgv.value_id
+						$nb = max(1, (int) $reader->fetchOne(
+							'SELECT MAX(position) FROM '.$cpemg.' cpemg
+							 LEFT JOIN '.$cpemv.' cpemv
+								ON cpemg.value_id = cpemv.value_id
 							 WHERE entity_id = ? AND store_id = 0 AND LENGTH(position) < 3',
 							[$productId]
-						) + 1, $read->fetchOne('SELECT COUNT(entity_id) AS nb FROM '.$table.' WHERE entity_id = ?', [$productId]));
-						$write->query(
-							'INSERT INTO '.$elbat.'
+						) + 1, $reader->fetchOne('SELECT COUNT(entity_id) AS nb FROM '.$cpemg.' WHERE entity_id = ?', [$productId]));
+						$writer->query(
+							'INSERT INTO '.$cpemv.'
 								(value_id, store_id, position, disabled) VALUES (?, 0, ?, ?)',
 							[$valueId, $nb, empty($this->getRequest()->getParam('exclude')) ? 0 : 1]
 						);
 					}
 
 					if (($storeId > 0) && !empty($this->getRequest()->getParam('exclude'))) {
-						$write->query(
-							'INSERT INTO '.$elbat.'
+						$writer->query(
+							'INSERT INTO '.$cpemv.'
 								(value_id, store_id, position, disabled) VALUES (?, ?, NULL, 0)',
 							[$valueId, $storeId]
 						);
@@ -292,10 +297,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		$storeId   = (int) $this->getRequest()->getParam('store', 0);
 
 		$database = Mage::getSingleton('core/resource');
-		$read  = $database->getConnection('core_read');
-		$write = $database->getConnection('core_write');
-		$table = $database->getTableName('catalog_product_entity_media_gallery');
-		$elbat = $database->getTableName('catalog_product_entity_varchar');
+		$reader   = $database->getConnection('core_read');
+		$writer   = $database->getConnection('core_write');
+		$cpemg    = $database->getTableName('catalog_product_entity_media_gallery');
+		$cpev     = $database->getTableName('catalog_product_entity_varchar');
 
 		if (empty($imageId) && ($this->getRequest()->getParam('image') == 'all'))
 			$imageId = true;
@@ -308,26 +313,26 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			// trouve les ids
 			$ids = [$imageId];
 			if ($imageId === true)
-				$ids = array_filter(explode(',', $read->fetchOne('SELECT GROUP_CONCAT(value_id) AS ids FROM '.$table.
-					' WHERE entity_id = '.$productId.' GROUP BY entity_id')));
+				$ids = array_filter(explode(',', $reader->fetchOne('SELECT GROUP_CONCAT(value_id) AS ids FROM '.$cpemg.' WHERE entity_id = ? GROUP BY entity_id', [$productId])));
 
 			// supprime les images
 			$paths = [];
 			foreach ($ids as $id) {
 
 				// recherche et supprime le nom du fichier
-				$filepath = $read->fetchOne('SELECT value FROM '.$table.' WHERE value_id = '.$id);
+				$filepath = $reader->fetchOne('SELECT value FROM '.$cpemg.' WHERE value_id = '.$id);
 				$filename = basename($filepath);
 				$paths[]  = $filepath;
 
 				if (empty($filepath) || empty($filename))
 					Mage::throwException('File does not exist (id: '.$id.').');
 
-				$write->query('DELETE FROM '.$table.' WHERE value_id = ?', $id);
-				$write->query('DELETE FROM '.$elbat.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]); // si par défaut
+				$writer->query('DELETE FROM '.$cpemg.' WHERE value_id = ?', $id);
+				$writer->query('DELETE FROM '.$cpev.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]); // si par défaut
 
-				// supprime enfin les fichiers
-				$help->removeFiles($help->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
+				// supprime enfin les fichiers s'ils ne sont pas utilisés dans d'autres produits
+				if ($reader->fetchOne('SELECT count(*) FROM '.$cpev.' WHERE value = ?', [$filepath]) == 0)
+					$help->removeFiles($help->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
 			}
 
 			// image par défaut (global uniquement)
@@ -351,7 +356,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			}
 			else {
 				foreach ($attributes as $attribute) {
-					$write->query('DELETE FROM '.str_replace('_varchar', '_'.$attribute->getData('backend_type'), $elbat).
+					$writer->query('DELETE FROM '.str_replace('_varchar', '_'.$attribute->getData('backend_type'), $cpev).
 						' WHERE entity_id = ? AND attribute_id = ?', [$productId, $attribute->getId()]);
 				}
 			}

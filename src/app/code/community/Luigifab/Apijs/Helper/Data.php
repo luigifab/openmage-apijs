@@ -1,9 +1,9 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated V/28/05/2021
+ * Updated J/25/11/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -29,7 +29,42 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 	public function escapeEntities($data, bool $quotes = false) {
-		return htmlspecialchars($data, $quotes ? ENT_SUBSTITUTE | ENT_COMPAT : ENT_SUBSTITUTE | ENT_NOQUOTES);
+		return empty($data) ? $data : htmlspecialchars($data, $quotes ? ENT_SUBSTITUTE | ENT_COMPAT : ENT_SUBSTITUTE | ENT_NOQUOTES);
+	}
+
+	public function formatDate($date = null, $format = Zend_Date::DATETIME_LONG, $showTime = false) {
+		$object = Mage::getSingleton('core/locale');
+		return str_replace($object->date($date)->toString(Zend_Date::TIMEZONE), '', $object->date($date)->toString($format));
+	}
+
+	public function getHumanEmailAddress(string $email) {
+		return $this->escapeEntities(str_replace(['<', '>', ',', '"'], ['(', ')', ', ', ''], $email));
+	}
+
+	public function getHumanDuration($start, $end = null) {
+
+		if (is_numeric($start) || (!in_array($start, ['', '0000-00-00 00:00:00', null]) && !in_array($end, ['', '0000-00-00 00:00:00', null]))) {
+
+			$data    = is_numeric($start) ? $start : strtotime($end) - strtotime($start);
+			$minutes = (int) ($data / 60);
+			$seconds = $data % 60;
+
+			if ($data > 599)
+				$data = '<strong>'.(($seconds > 9) ? $minutes.':'.$seconds : $minutes.':0'.$seconds).'</strong>';
+			else if ($data > 59)
+				$data = '<strong>'.(($seconds > 9) ? '0'.$minutes.':'.$seconds : '0'.$minutes.':0'.$seconds).'</strong>';
+			else if ($data > 1)
+				$data = ($seconds > 9) ? '00:'.$data : '00:0'.$data;
+			else
+				$data = '⩽&nbsp;1';
+		}
+
+		return empty($data) ? '' : $data;
+	}
+
+	public function getNumber($value, array $options = []) {
+		$options['locale'] = Mage::getSingleton('core/translate')->getLocale();
+		return Zend_Locale_Format::toNumber($value, $options);
 	}
 
 	public function getNumberToHumanSize(int $number) {
@@ -39,21 +74,46 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		}
 		else if (($number / 1024) < 1024) {
 			$data = $number / 1024;
-			$data = Zend_Locale_Format::toNumber($data, ['precision' => 2]);
+			$data = $this->getNumber($data, ['precision' => 2]);
 			$data = $this->__('%s kB', preg_replace('#[.,]00[[:>:]]#', '', $data));
 		}
 		else if (($number / 1024 / 1024) < 1024) {
 			$data = $number / 1024 / 1024;
-			$data = Zend_Locale_Format::toNumber($data, ['precision' => 2]);
+			$data = $this->getNumber($data, ['precision' => 2]);
 			$data = $this->__('%s MB', preg_replace('#[.,]00[[:>:]]#', '', $data));
 		}
 		else {
 			$data = $number / 1024 / 1024 / 1024;
-			$data = Zend_Locale_Format::toNumber($data, ['precision' => 2]);
+			$data = $this->getNumber($data, ['precision' => 2]);
 			$data = $this->__('%s GB', preg_replace('#[.,]00[[:>:]]#', '', $data));
 		}
 
 		return $data;
+	}
+
+	public function getUsername() {
+
+		$file = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		$file = array_pop($file);
+		$file = array_key_exists('file', $file) ? basename($file['file']) : '';
+
+		// backend
+		if ((PHP_SAPI != 'cli') && Mage::app()->getStore()->isAdmin() && Mage::getSingleton('admin/session')->isLoggedIn())
+			$user = sprintf('admin %s', Mage::getSingleton('admin/session')->getData('user')->getData('username'));
+		// cron
+		else if (is_object($cron = Mage::registry('current_cron')))
+			$user = sprintf('cron %d - %s', $cron->getId(), $cron->getData('job_code'));
+		// xyz.php
+		else if ($file != 'index.php')
+			$user = $file;
+		// full action name
+		else if (is_object($action = Mage::app()->getFrontController()->getAction()))
+			$user = $action->getFullActionName();
+		// frontend
+		else
+			$user = sprintf('frontend %d', Mage::app()->getStore()->getData('code'));
+
+		return $user;
 	}
 
 
@@ -243,7 +303,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 
-	private function searchAndRemoveFiles(string $dir, string $file) {
+	protected function searchAndRemoveFiles(string $dir, string $file) {
 
 		if (mb_stripos($file, '/') === false)
 			$cmd = 'find '.escapeshellarg($dir).' -name '.escapeshellarg($file).' | xargs rm';
@@ -256,9 +316,13 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 	public function removeFiles(string $dir, string $file, bool $now = false) {
 
+		$dir = realpath($dir);
+
 		// recherche et supprime tous les fichiers avec la commande find
-		// si le nom du fichier contient des caractères simples
-		if (Mage::getStoreConfigFlag('apijs/general/remove_cache') && (preg_match('#[\w\-]+\.\w+$#', $file) === 1)) {
+		// si le nom du fichier contient des caractères simples et qu'on est bien dans le dossier media
+		if (!empty($dir) && Mage::getStoreConfigFlag('apijs/general/remove_cache') &&
+		    (preg_match('#[\w\-]+\.\w+$#', $file) === 1) &&
+		    (mb_stripos($dir, realpath(Mage::getBaseDir('media'))) === 0)) {
 
 			if (empty($this->_filesToRemove))
 				$this->_filesToRemove = [];
@@ -276,9 +340,8 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 		if (!empty($this->_filesToRemove)) {
 			foreach ($this->_filesToRemove as $data) {
-				foreach ($data as $dir => $file) {
+				foreach ($data as $dir => $file)
 					$this->searchAndRemoveFiles($dir, $file);
-				}
 			}
 		}
 	}

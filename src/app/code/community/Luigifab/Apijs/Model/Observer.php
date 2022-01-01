@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated V/28/05/2021
+ * Updated M/26/10/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -25,6 +25,10 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 		$category = $observer->getData('category');
 		if (is_object($category) && !empty($category->getId())) {
 
+			$database = Mage::getSingleton('core/resource');
+			$reader   = $database->getConnection('core_read');
+			$table    = $database->getTableName('catalog_category_entity_varchar');
+
 			$entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Category::ENTITY)->getId();
 			$attributes = Mage::getResourceModel('eav/entity_attribute_collection')
 				->addFieldToFilter('frontend_input', 'image')
@@ -33,7 +37,7 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 
 			foreach ($attributes as $attribute) {
 				$file = $category->getData($attribute->getData('attribute_code'));
-				if (!empty($file))
+				if (!empty($file) && ($reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]) == 0))
 					$this->removeFiles($this->getCatalogCategoryImageDir(), $file); // pas uniquement dans le cache
 			}
 		}
@@ -45,6 +49,10 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 		$product = $observer->getData('product');
 		if (is_object($product) && !empty($product->getId())) {
 
+			$database = Mage::getSingleton('core/resource');
+			$reader   = $database->getConnection('core_read');
+			$table    = $database->getTableName('catalog_product_entity_varchar');
+
 			$entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getId();
 			$attributes = Mage::getResourceModel('eav/entity_attribute_collection')
 				->addFieldToFilter('frontend_input', 'image')
@@ -52,15 +60,15 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 				->getItems();
 
 			foreach ($attributes as $attribute) {
-				$file = basename($product->getData($attribute->getData('attribute_code')));
-				if (!empty($file))
-					$this->removeFiles($this->getCatalogProductImageDir(), $file); // pas uniquement dans le cache
+				$file = $product->getData($attribute->getData('attribute_code'));
+				if (!empty($file) && ($reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]) == 0))
+					$this->removeFiles($this->getCatalogProductImageDir(), basename($file)); // pas uniquement dans le cache
 			}
 
 			foreach ($product->getMediaGallery('images') as $image) {
-				$file = basename($image['file']);
-				if (!empty($file))
-					$this->removeFiles($this->getCatalogProductImageDir(), $file); // pas uniquement dans le cache
+				$file = $image['file'];
+				if (!empty($file) && ($reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]) == 0))
+					$this->removeFiles($this->getCatalogProductImageDir(), basename($file)); // pas uniquement dans le cache
 			}
 		}
 	}

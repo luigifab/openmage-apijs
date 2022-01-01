@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/08/09/2019
- * Updated L/24/05/2021
+ * Updated J/04/11/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2021 | Fabrice Creuzot <fabrice~cellublue~com>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,6 +20,8 @@
 
 $images = $this->getFiles()->toArray();
 $images = array_reverse(empty($images['items']) ? [] : $images['items']);
+
+$storage = Mage::registry('storage');
 
 $help = $this->helper('apijs');
 $date = Mage::getSingleton('core/locale')->date();
@@ -44,11 +46,17 @@ $prev = null;
 						// <a> <img src srcset> <input>
 						// l'image du lien = une image redimensionnée en cache
 						// l'image de l'image = une miniature en cache
+						if ($storage->isImage($file)):
 					?>
-					<a href="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" class="img" id="slideshow.0.<?php echo $i++ ?>">
-						<img src="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 200, 150, true) ?>" srcset="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $name ?>" />
-						<input type="hidden" value="<?php echo $name ?>|false|" />
-					</a>
+						<a href="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" class="img" id="slideshow.0.<?php echo $i++ ?>">
+							<img src="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 200, 150, true) ?>" srcset="<?php echo $help->resizeImage(null, 'wysiwyg', $file, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $name ?>" />
+							<input type="hidden" value="<?php echo $name ?>|false|" />
+						</a>
+					<?php else: ?>
+						<span class="img">
+							<?php echo mb_substr($file, mb_strrpos($file, '.') + 1) ?>
+						</span>
+					<?php endif ?>
 					<p class="desc filename" title="<?php echo $help->escapeEntities($image->getData('name'), true) ?>">
 						<?php echo $image->getData('name') ?>
 					</p>
@@ -58,8 +66,8 @@ $prev = null;
 					<p class="desc sizes">
 						<?php echo $help->getNumberToHumanSize(filesize($file)) ?>
 						<?php if (!empty($image->getData('width'))): ?>
-							/ <?php echo Zend_Locale_Format::toNumber($image->getData('width')) ?> x
-							  <?php echo Zend_Locale_Format::toNumber($image->getData('height')) ?>
+							/ <?php echo $help->getNumber($image->getData('width')) ?> x
+							  <?php echo $help->getNumber($image->getData('height')) ?>
 						<?php endif ?>
 						<br /><?php echo $date->setTimestamp(filemtime($file))->toString() ?>
 					</p>

@@ -1,9 +1,9 @@
 <?php
 /**
  * Created L/30/03/2020
- * Updated D/30/05/2021
+ * Updated J/23/12/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -32,8 +32,8 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Categoryimg extends Mage_Adminhtml_
 
 			if ($this->getValue()) {
 				$link  = $this->_getUrl();
-				$link  = (mb_stripos($link, 'http') === 0) ? $link : Mage::getBaseUrl('media').$link;
-				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $link, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de this->helper ici
+				$link  = str_replace('category//', 'category/', (mb_stripos($link, 'http') === 0) ? $link : Mage::getBaseUrl('media').$link);
+				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $link, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de $this->helper ici
 			}
 
 			return $html.$this->_getDeleteCheckbox().'</div>';

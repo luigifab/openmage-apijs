@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated D/05/09/2021
+ * Updated V/24/12/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -39,6 +39,7 @@ var apijsOpenMage = new (function () {
 		d.de[254] = "Es tut uns leid, diese Datei existiert nicht mehr, bitte [a §]aktualisieren Sie die Seite[/a].";
 		d.de[259] = "Alle Daten löschen";
 		d.de[261] = "Zur Bestätigung das Kontrollkästchen bestätigen:";
+		d.el[252] = "Σφάλμα";
 		d.en[250] = "Remove file";
 		d.en[251] = "Are you sure you want to remove this file?[br]Be careful, you can't cancel this operation.";
 		d.en[252] = "Error";
@@ -72,6 +73,7 @@ var apijsOpenMage = new (function () {
 		d.fr[259] = "Supprimer tous les fichiers";
 		d.fr[260] = "Êtes-vous sûr(e) de vouloir supprimer tous les fichiers ?[br]Attention, cette opération n'est pas annulable.";
 		d.fr[261] = "Pour confirmer, cochez la case :";
+		d.hu[252] = "Hiba";
 		d.it[250] = "Cancella i file";
 		d.it[251] = "Sei sicura di voler eliminare il file?[br]Attenzione, questa operazione non può essere annullata.";
 		d.it[252] = "Errore";
@@ -94,6 +96,7 @@ var apijsOpenMage = new (function () {
 		d.pt[252] = "Erro";
 		d.pt[253] = "Não é autorizado(a) para efetuar esta operação, por favor [a §]atualize a página[/a].";
 		d.pt[254] = "Lamento, o ficheiro já não existe, por favor [a §]atualize a página[/a].";
+		d.ro[252] = "Eroare";
 		d.ru[250] = "Удалить файл";
 		d.ru[251] = "Вы уверены, что хотите удалить этот файл?[br]Осторожно, вы не сможете отменить эту операцию.";
 		d.ru[252] = "Ошибка";
@@ -120,9 +123,9 @@ var apijsOpenMage = new (function () {
 		}
 	};
 
-	this.sendFiles = function (title, action, onemax, allmax, extra) {
+	this.sendFiles = function (title, action, onemax, allmax, exts, extra) {
 
-		apijs.upload.sendFiles(title, action, 'myimage', onemax, allmax, 'jpg,jpeg,gif,png,svg', apijsOpenMage.updateForm);
+		apijs.upload.sendFiles(title, action, 'myimage', onemax, allmax, exts, apijsOpenMage.updateForm);
 
 		if (typeof extra == 'string') {
 			var elem = document.createElement('p');
@@ -135,7 +138,6 @@ var apijsOpenMage = new (function () {
 
 		document.getElementById('apijsGallery').setAttribute('style', 'opacity:0.4; cursor:progress;');
 
-		// traitement ajax
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', action + '?isAjax=true', true);
 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -248,6 +250,7 @@ var apijsOpenMage = new (function () {
 				'[input type="text" name="name" value="' + name + '" spellcheck="false" id="apijsinput"]';
 
 		apijs.dialog.dialogFormOptions(apijs.i18n.translate(257), text, 'action.php', apijsOpenMage.actionRenameMedia, elem.id, 'editname');
+		apijs.dialog.t1.querySelector('input').select();
 	};
 
 	this.actionRenameMedia = function (action, args) {
@@ -261,18 +264,26 @@ var apijsOpenMage = new (function () {
 
 			// args = id
 			// copie de MediabrowserInstance.deleteFiles(); ou presque
-			new Ajax.Request(MediabrowserInstance.renameFileUrl, {
-				parameters: { file: args, name: document.getElementById('apijsinput').value },
-				onSuccess: function (transport) {
-					try {
-						MediabrowserInstance.onAjaxSuccess(transport);
-						MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', MediabrowserInstance.renameFileUrl + '?isAjax=true', true);
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState === 4) {
+					if ([0, 200].has(xhr.status)) {
+						try {
+							MediabrowserInstance.onAjaxSuccess(xhr);
+							MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
+						}
+						catch (e) {
+							apijsOpenMage.error(e.message);
+						}
 					}
-					catch (e) {
-						apijsOpenMage.error(e.message);
-					}
-				}.bind(MediabrowserInstance)
-			});
+				}
+			};
+
+			xhr.send('form_key=' + FORM_KEY + '&file=' + encodeURIComponent(args) + '&name=' + encodeURIComponent(document.getElementById('apijsinput').value));
 		}
 	};
 
@@ -290,18 +301,26 @@ var apijsOpenMage = new (function () {
 
 		// args = id
 		// copie de MediabrowserInstance.deleteFiles(); ou presque
-		new Ajax.Request(MediabrowserInstance.deleteFilesUrl, {
-			parameters: { files: Object.toJSON([args]) },
-			onSuccess: function (transport) {
-				try {
-					MediabrowserInstance.onAjaxSuccess(transport);
-					MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', MediabrowserInstance.deleteFilesUrl + '?isAjax=true', true);
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+		xhr.onreadystatechange = function () {
+
+			if (xhr.readyState === 4) {
+				if ([0, 200].has(xhr.status)) {
+					try {
+						MediabrowserInstance.onAjaxSuccess(xhr);
+						MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
+					}
+					catch (e) {
+						apijsOpenMage.error(e.message);
+					}
 				}
-				catch (e) {
-					apijsOpenMage.error(e.message);
-				}
-			}.bind(MediabrowserInstance)
-		});
+			}
+		};
+
+		xhr.send('form_key=' + FORM_KEY + '&file=' + encodeURIComponent(args));
 	};
 
 	this.clearCache = function (action) {

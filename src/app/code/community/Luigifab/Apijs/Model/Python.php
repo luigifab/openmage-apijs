@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated M/28/09/2021
+ * Updated J/25/11/2021
  *
- * Copyright 2008-2021 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -99,7 +99,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 					else
 						clearstatcache('/proc/'.$pid);
 				}
-				sleep(0.1);
+				usleep(100000); // 0.1 s
 			}
 
 			$cmd = sprintf('%s %s %s %s %d %d %d %s >/dev/null 2>&1 & echo $!',
@@ -144,7 +144,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 				else
 					clearstatcache('/proc/'.$pid);
 			}
-			sleep(0.1);
+			usleep(100000); // 0.1 s
 		}
 	}
 
@@ -161,10 +161,10 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 		if (empty($this->_imagesize)) {
 			$this->open();
-			$this->_imagesize = getimagesize($this->_fileName);
+			$this->_imagesize = (array) getimagesize($this->_fileName); // (yes)
 		}
 
-		return $this->_imagesize[0];
+		return $this->_imagesize[0] ?? 0;
 	}
 
 	public function getOriginalHeight() {
@@ -174,10 +174,10 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 		if (empty($this->_imagesize)) {
 			$this->open();
-			$this->_imagesize = getimagesize($this->_fileName);
+			$this->_imagesize = (array) getimagesize($this->_fileName); // (yes)
 		}
 
-		return $this->_imagesize[1];
+		return $this->_imagesize[1] ?? 0;
 	}
 
 	public function getMimeType() {
@@ -187,10 +187,10 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 		if (empty($this->_imagesize)) {
 			$this->open();
-			$this->_imagesize = getimagesize($this->_fileName);
+			$this->_imagesize = (array) getimagesize($this->_fileName); // (yes)
 		}
 
-		return $this->_imagesize[2];
+		return $this->_imagesize[2] ?? null;
 	}
 
 	public function isSvg() {
