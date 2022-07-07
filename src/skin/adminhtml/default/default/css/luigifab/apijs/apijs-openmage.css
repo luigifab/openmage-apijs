@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated S/16/10/2021
+ * Updated J/26/05/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -58,6 +58,10 @@ td div.image.preview input { font-size:12px; border:0; background:white; }
 td div.image.preview a { display:block; margin:4px 25px 3px; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& galerie photo &&& */
+body.fabload * { cursor:progress !important; }
+body.fabload div.content-header p.form-buttons, body.fabload div.content-header-floating p.form-buttons,
+body.fabload #apijsGallery { pointer-events:none; opacity:0.5; }
+
 #apijsGallery table.gallery { width:100%; }
 #apijsGallery table.gallery .remove { color:red; }
 #apijsGallery table.gallery td { text-align:center; vertical-align:top; white-space:nowrap; }
@@ -77,11 +81,11 @@ td div.image.preview a { display:block; margin:4px 25px 3px; }
 
 #apijsGallery table.gallery tfoot td { position:sticky; bottom:0; }
 #apijsGallery table.gallery tfoot p { margin:0.4em; line-height:130%; text-align:left; }
-#apijsGallery table.gallery tfoot button { float:right; margin:2px 0 0 8px; cursor:pointer; }
+#apijsGallery table.gallery tfoot button { position:relative; float:right; margin:2px 0 0 8px; z-index:1; cursor:pointer; }
 
 #apijsGallery table.gallery tbody tr.separ {
 	scroll-margin-top:10em; scroll-snap-margin-top:10em;
-	user-select:none; -ms-user-select:none; -moz-user-select:none; -webkit-user-select:none;
+	user-select:none; -moz-user-select:none; -ms-user-select:none; -webkit-user-select:none;
 }
 
 #apijsGallery table.gallery tbody tr.separ td { background-color:#EEE !important; cursor:pointer; }
@@ -102,28 +106,26 @@ td div.image.preview a { display:block; margin:4px 25px 3px; }
 #apijsGallery table.gallery tbody input.input-text { margin-bottom:1em; width:100% !important; box-sizing:border-box; -moz-box-sizing:border-box; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&& apijs/wysiwyg/index &&& */
-body.adminhtml-apijs-wysiwyg-index .side-col { padding-top:39px; }
+body.adminhtml-apijs-wysiwyg-index .side-col { padding-top:39px; padding-bottom:0; max-height:75vh; overflow:auto; }
 body.adminhtml-apijs-wysiwyg-index .main-col .content-header { padding:0 0 0.25em; }
 body.adminhtml-apijs-wysiwyg-index .main-col #contents { height:inherit; overflow:visible; }
-
 body.adminhtml-apijs-wysiwyg-index #loading-mask, body.adminhtml-apijs-wysiwyg-index #button_insert_files { display:none; }
-body.adminhtml-apijs-wysiwyg-index #button_delete_files { display:none; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& browser window &&& */
 body #browser_window .magento_content { overflow:hidden; }
-body #browser_window .side-col { margin-top:48px; }
-body #browser_window .main-col { padding:0; }
+body #browser_window .side-col { margin-top:48px; padding-bottom:0; }
+body #browser_window .main-col { margin-left:240px; padding:0; }
 body #browser_window .main-col .content-header { margin-left:-220px; overflow:hidden; white-space:nowrap; }
-body #browser_window .main-col #contents { height:500px; }
-
-body #browser_window #button_delete_files { display:none; }
+body #browser_window .side-col #tree, body #browser_window .main-col #contents { height:500px; overscroll-behavior:none; }
 
 /* &&&&&&&&&&&&& apijs/wysiwyg/index & browser window &&& */
 body.adminhtml-apijs-wysiwyg-index .main-col .content-header .icon-head, body #browser_window .main-col .content-header .icon-head {
-	background-image:url("../../../images/application_view_tile.gif");
+	min-height:19px; padding-left:22px;
+	background:url("../../../images/application_view_tile.gif") no-repeat left center;
 }
 
-body.adminhtml-apijs-wysiwyg-index .main-col .album, body #browser_window .main-col .album { text-align:left; }
+body.adminhtml-apijs-wysiwyg-index .main-col h4, body #browser_window .main-col h4 { padding:0 3px; }
+body.adminhtml-apijs-wysiwyg-index .main-col .album, body #browser_window .main-col .album { padding:0; text-align:left; }
 body.adminhtml-apijs-wysiwyg-index .main-col .desc, body #browser_window .main-col .desc { margin:0.3em 0 0.1em; text-align:left; }
 
 body.adminhtml-apijs-wysiwyg-index .main-col .filecnt, body #browser_window .main-col .filecnt {
@@ -142,3 +144,5 @@ body.adminhtml-apijs-wysiwyg-index .main-col .filecnt .img, body #browser_window
 body.adminhtml-apijs-wysiwyg-index .main-col .filecnt .filename, body #browser_window .main-col .filecnt .filename {
 	overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
 }
+
+body.adminhtml-apijs-wysiwyg-index #button_delete_files, body #browser_window #button_delete_files { display:none; }

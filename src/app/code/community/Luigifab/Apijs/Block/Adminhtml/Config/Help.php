@@ -1,7 +1,7 @@
 <?php
 /**
  * Created V/23/05/2014
- * Updated J/30/09/2021
+ * Updated V/20/05/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -23,12 +23,12 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 
 		$msg = $this->checkRewrites();
 		if ($msg !== true)
-			return sprintf('<p class="box">%s %s <span class="right"><a href="https://www.%s">%3$s</a> | ⚠ IPv6</span></p><p class="box" style="margin-top:-5px; color:white; background-color:#E60000;"><strong>%s</strong><br />%s</p>',
+			return sprintf('<p class="box">%s %s <span class="right">Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://www.%s">%3$s</a> | ⚠ IPv6</span></p><p class="box" style="margin-top:-5px; color:white; background-color:#E60000;"><strong>%s</strong><br />%s</p>',
 				'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'luigifab.fr/openmage/apijs',
 				$this->__('INCOMPLETE MODULE INSTALLATION'),
 				$this->__('There is conflict (<em>%s</em>).', $msg));
 
-		return sprintf('<p class="box">%s %s <span class="right"><a href="https://www.%s">%3$s</a> | <a href="https://www.%4$s">%4$s</a> | ⚠ IPv6</span></p>',
+		return sprintf('<p class="box">%s %s <span class="right">Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://www.%s">%3$s</a> | <a href="https://www.%4$s">%4$s</a> | ⚠ IPv6</span></p>',
 			'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'luigifab.fr/openmage/apijs', 'luigifab.fr/apijs');
 	}
 
@@ -46,7 +46,7 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 			['model' => 'catalog_resource/product_attribute_backend_image'],
 			['model' => 'catalog_resource/product_attribute_backend_media'],
 			['model' => 'cms/wysiwyg_images_storage'],
-			['model' => 'core/file_validator_image']
+			['model' => 'core/file_validator_image'],
 		];
 
 		foreach ($rewrites as $rewrite) {

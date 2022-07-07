@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/04/11/2021
+ * Updated J/24/03/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -132,7 +132,9 @@ if (!empty($this->getRequest()->getParam('debug')))
 		</tfoot>
 		<tbody class="album" id="slideshow.0">
 			<tr>
-				<td class="img"><?php echo $this->__('No image') ?></td>
+				<td class="img">
+					<div style="width:200px;"><?php echo $this->__('No image') ?></div>
+				</td>
 				<td></td>
 				<?php foreach ($attributes as $code => $attribute): ?>
 					<?php if ($attribute->getIsText() === true) continue; ?>

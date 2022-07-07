@@ -33,6 +33,7 @@ Rewrite
 - global    | model    | cms/wysiwyg_images_storage                            | apijs/rewrite_storage
 - global    | model    | core/file_validator_image                             | apijs/rewrite_validator
 Event
+- adminhtml | admin_system_config_changed_section_apijs                    | apijs/observer::clearCache
 - adminhtml | controller_action_predispatch_adminhtml_apijs_media_save     | apijs/observer::updatePostForGallery
 - adminhtml | controller_action_predispatch_adminhtml_catalog_product_save | apijs/observer::updatePostForGallery
 - global    | catalog_category_delete_commit_after                         | apijs/observer::removeCategoryImages
@@ -91,7 +92,7 @@ Files and directories
 Depends (with php exec)
 - python-pil
 - python-scour
-- also used: command -v, python3, nproc, find, xargs, du -hs, cut -f1
+- also used: command -v, python3, nproc, find, xargs, du -hs, cut -f1, ps aux | grep
 Notes
 - For the app, read: https://www.luigifab.fr/apijs
 - For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs
@@ -122,15 +123,15 @@ Translations in pt-PT (português/Portugal) by:
 Translations in ru-RU (русский/Россия) by:
 - Eugene Parfenov (igro) <admin~mytona~com>
 Translations in tr-TR (türkçe/Türkiye) by:
-- Adnan Topcu <adnan~topcu~name>
+- Adnan Topcu <adnan~topcu~name> 2022
 
 If you like, take some of your time to improve the translations, go to https://bit.ly/2HyCCEc
 
 
 File: /app/code/community/Luigifab/Apijs/Model/Useragentparser.php
-Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.5.0-fork1)
-Copyright: 2013-2021 Jesse G. Donat <donatj~gmail~com>
-Copyright: 2019-2021 Fabrice Creuzot (luigifab) <code~luigifab~fr>
+Source: https://github.com/donatj/PhpUserAgent + https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.6.1-fork1)
+Copyright: 2013-2022 Jesse G. Donat <donatj~gmail~com>
+Copyright: 2019-2022 Fabrice Creuzot (luigifab) <code~luigifab~fr>
 License: MIT (https://opensource.org/licenses/mit)
 
 Files: /skin/*/default/default/fonts/luigifab/apijs/fontello.woff /skin/*/default/default/fonts/luigifab/apijs/fontello.woff2

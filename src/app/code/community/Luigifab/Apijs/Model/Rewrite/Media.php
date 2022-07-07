@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/29/08/2019
- * Updated M/26/10/2021
+ * Updated J/21/04/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -52,7 +52,7 @@ class Luigifab_Apijs_Model_Rewrite_Media extends Mage_Catalog_Model_Product_Attr
 
 	public function afterSave($object) {
 
-		if ($object->getIsDuplicate() == true) {
+		if ($object->getIsDuplicate()) {
 			$this->duplicate($object);
 			return;
 		}
@@ -91,7 +91,7 @@ class Luigifab_Apijs_Model_Rewrite_Media extends Mage_Catalog_Model_Product_Attr
 				$image['value_id'] = $this->_getResource()->insertGallery([
 					'entity_id'    => $object->getId(),
 					'attribute_id' => $this->getAttribute()->getId(),
-					'value'        => $image['file']
+					'value'        => $image['file'],
 				]);
 			}
 

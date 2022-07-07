@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated J/25/11/2021
+ * Updated L/06/06/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -37,8 +37,8 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		return str_replace($object->date($date)->toString(Zend_Date::TIMEZONE), '', $object->date($date)->toString($format));
 	}
 
-	public function getHumanEmailAddress(string $email) {
-		return $this->escapeEntities(str_replace(['<', '>', ',', '"'], ['(', ')', ', ', ''], $email));
+	public function getHumanEmailAddress($email) {
+		return empty($email) ? '' : $this->escapeEntities(str_replace(['<', '>', ',', '"'], ['(', ')', ', ', ''], $email));
 	}
 
 	public function getHumanDuration($start, $end = null) {
@@ -138,9 +138,9 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 
-	public function resizeImage($product, $type, $path, int $width, int $height, bool $fixed) {
+	public function resizeImage($product, $type, $path, int $width, int $height, bool $fixed, bool $webp = false) {
 
-		$resource = Mage::helper('catalog/image')->init($product, $type, $path, $fixed);
+		$resource = Mage::helper('catalog/image')->init($product, $type, $path, $fixed, $webp);
 
 		if (Mage::getStoreConfigFlag('apijs/general/python'))
 			$resource->resize($width, $height);
@@ -312,6 +312,22 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 		Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
 		exec($cmd);
+
+		// supprime aussi les éventuels fichiers webp, uniquement dans le dossier cache
+		$webp = str_ireplace(['.jpg', '.jpeg', '.png', '.gif'], '.webp', $file);
+		if ($file != $webp) {
+
+			if (mb_stripos($dir, '/cache') === false)
+				$dir .= '/cache';
+
+			if (mb_stripos($webp, '/') === false)
+				$cmd = 'find '.escapeshellarg($dir).' -name '.escapeshellarg($webp).' | xargs rm';
+			else
+				$cmd = 'find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.trim($webp, '/')).' | xargs rm';
+
+			Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
+			exec($cmd);
+		}
 	}
 
 	public function removeFiles(string $dir, string $file, bool $now = false) {

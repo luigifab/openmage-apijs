@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/04/11/2021
+ * Updated J/17/03/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -87,11 +87,18 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			$exts[] = 'pdf';
 
 			// sauvegarde du ou des fichiers
-			$keys = array_keys($_FILES);
+			$keys = array_keys($_FILES['myimage']['name']);
 			foreach ($keys as $key) {
 
 				try {
-					$uploader = new Varien_File_Uploader($key);
+					$uploader = new Varien_File_Uploader([
+						'name'     => $_FILES['myimage']['name'][$key],
+						'type'     => $_FILES['myimage']['type'][$key],
+						'tmp_name' => $_FILES['myimage']['tmp_name'][$key],
+						'error'    => $_FILES['myimage']['error'][$key],
+						'size'     => $_FILES['myimage']['size'][$key],
+					]);
+
 					$uploader->setAllowedExtensions($exts);
 					$uploader->setAllowRenameFiles(true);
 					$uploader->setFilesDispersion(false);
@@ -146,11 +153,18 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				Mage::throwException('No files uploaded.');
 
 			// sauvegarde du ou des fichiers
-			$keys = array_keys($_FILES);
+			$keys = array_keys($_FILES['myimage']['name']);
 			foreach ($keys as $key) {
 
 				try {
-					$uploader = new Varien_File_Uploader($key);
+					$uploader = new Varien_File_Uploader([
+						'name'     => $_FILES['myimage']['name'][$key],
+						'type'     => $_FILES['myimage']['type'][$key],
+						'tmp_name' => $_FILES['myimage']['tmp_name'][$key],
+						'error'    => $_FILES['myimage']['error'][$key],
+						'size'     => $_FILES['myimage']['size'][$key],
+					]);
+
 					$uploader->setAllowedExtensions($storage->getAllowedExtensions('image'));
 					$uploader->setAllowRenameFiles(true);
 					$uploader->setFilesDispersion(true);
@@ -266,8 +280,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			if (!empty($gallery)) {
 
 				$product->setData('media_gallery', $gallery);
-				foreach ($gallery['values'] as $code => $value)
-					$product->setData($code, $value);
+				if (!empty($gallery['values']) && is_array($gallery['values'])) {
+					foreach ($gallery['values'] as $code => $value)
+						$product->setData($code, $value);
+				}
 
 				if ($product->hasDataChanges())
 					$product->save();
@@ -331,7 +347,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				$writer->query('DELETE FROM '.$cpev.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]); // si par défaut
 
 				// supprime enfin les fichiers s'ils ne sont pas utilisés dans d'autres produits
-				if ($reader->fetchOne('SELECT count(*) FROM '.$cpev.' WHERE value = ?', [$filepath]) == 0)
+				if ($reader->fetchOne('SELECT count(*) FROM '.$cpemg.' WHERE value = ?', [$filepath]) == 0)
 					$help->removeFiles($help->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
 			}
 

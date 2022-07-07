@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/29/08/2019
- * Updated V/12/02/2021
+ * Updated S/19/02/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>

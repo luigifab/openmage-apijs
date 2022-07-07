@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated V/24/12/2021
+ * Updated J/26/05/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -104,6 +104,7 @@ var apijsOpenMage = new (function () {
 		d.ru[254] = "Извините, но файл не существует, пожалуйста [a §]обновите страницу[/a].";
 		d.sk[252] = "Chyba";
 		d.tr[252] = "Hata";
+		d.tr[255] = "Önbelleği temizle";
 		d.uk[252] = "Помилка";
 		d.zh[252] = "错误信息";
 		// auto end
@@ -136,7 +137,7 @@ var apijsOpenMage = new (function () {
 
 	this.actionSave = function (action) {
 
-		document.getElementById('apijsGallery').setAttribute('style', 'opacity:0.4; cursor:progress;');
+		document.querySelector('body').classList.add('fabload');
 
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', action + '?isAjax=true', true);
@@ -154,7 +155,7 @@ var apijsOpenMage = new (function () {
 				else {
 					apijsOpenMage.error(xhr.status);
 				}
-				document.getElementById('apijsGallery').removeAttribute('style');
+				document.querySelector('body').classList.remove('fabload');
 			}
 		};
 

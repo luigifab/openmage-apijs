@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/10/09/2019
- * Updated M/26/10/2021
+ * Updated V/24/06/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -141,12 +141,12 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 
 				// vérifie que l'extension du fichier ne change pas trop
 				if (mb_strtolower(pathinfo($newfile, PATHINFO_EXTENSION)) != mb_strtolower(pathinfo($oldfile, PATHINFO_EXTENSION))) {
-					$html = preg_replace('#\.([0-9a-zA-Z.]+)#', '.[b]$1[/b]', basename($oldfile).' ~ '.basename($newfile));
+					$html = preg_replace('#\.([a-zA-Z\d.]+)#', '.[b]$1[/b]', basename($oldfile).' ~ '.basename($newfile));
 					Mage::throwException($help->__('The file extension can not be changed.').'[br][em]'.$html.'[/em]');
 				}
 
 				// s'il faut déplacer le fichier dans un autre dossier
-				if (mb_strpos($name, '/') !== false) {
+				if (str_contains($name, '/')) {
 
 					// supprime le dossier parent lorsque l'enfant est .. tant qu'il y en a
 					while (mb_stripos($newfile, '/../') !== false)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created D/20/11/2011
- * Updated V/05/11/2021
+ * Updated D/26/06/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -74,7 +74,7 @@
 						</frontend>
 						<python translate="label comment">
 							<label>Use python-pil and python-scour as image processor</label>
-							<comment>Used even if the apijs is disabled.</comment>
+							<comment><![CDATA[Used even if the apijs is disabled. If yes, image generation will be multi-threaded. <strong>Warning,</strong> if you have added svg and webp images, if you want to disable this feature, you must first remove them.]]></comment>
 							<frontend_type>select</frontend_type>
 							<source_model>adminhtml/system_config_source_yesno</source_model>
 							<sort_order>4</sort_order>
@@ -112,6 +112,16 @@
 							<show_in_website>0</show_in_website>
 							<show_in_store>0</show_in_store>
 						</remove_store_id>
+						<use_link translate="label comment">
+							<label>Use links instead of full paths</label>
+							<comment><![CDATA[For example <b>media/cpci</b> for <b>media/catalog/product/cache/image</b> (used even if the apijs is disabled). Links are automatically created.]]></comment>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>8</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>0</show_in_website>
+							<show_in_store>0</show_in_store>
+						</use_link>
 						<options translate="label">
 							<label>Options</label>
 							<frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -177,7 +187,6 @@
 						</picture>
 						<picture_width translate="label">
 							<label>Width</label>
-							<frontend_type>text</frontend_type>
 							<validate>required-entry validate-greater-than-zero</validate>
 							<sort_order>11</sort_order>
 							<show_in_default>1</show_in_default>
@@ -186,7 +195,6 @@
 						</picture_width>
 						<picture_height translate="label">
 							<label>Height</label>
-							<frontend_type>text</frontend_type>
 							<validate>required-entry validate-greater-than-zero</validate>
 							<sort_order>12</sort_order>
 							<show_in_default>1</show_in_default>
@@ -203,7 +211,6 @@
 						</thumbnail>
 						<thumbnail_width translate="label">
 							<label>Width</label>
-							<frontend_type>text</frontend_type>
 							<validate>required-entry validate-greater-than-zero</validate>
 							<sort_order>21</sort_order>
 							<show_in_default>1</show_in_default>
@@ -212,7 +219,6 @@
 						</thumbnail_width>
 						<thumbnail_height translate="label">
 							<label>Height</label>
-							<frontend_type>text</frontend_type>
 							<validate>required-entry validate-greater-than-zero</validate>
 							<sort_order>22</sort_order>
 							<show_in_default>1</show_in_default>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated J/25/11/2021
+ * Updated J/30/06/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -22,6 +22,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	// singleton
 	protected $_python;
 	protected $_quality = 100;
+	protected $_imageSize = [];
 	protected $_files = [];
 	protected $_pids  = [];
 	protected $_core  = 1;
@@ -86,23 +87,35 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		return $this;
 	}
 
-	public function save($destination = null, $newFilename = null) {
+	public function save($destination = null, $newFilename = null, $immediate = false) {
 
 		$this->open();
 
 		try {
-			$core = max(1, $this->_core - 1); // pour laisser 1 coeur de libre
+			$core = max(1, $this->_core - 2);
 			while (count($this->_pids) >= $core) {
 				foreach ($this->_pids as $key => $pid) {
-					if (!file_exists('/proc/'.$pid))
-						unset($this->_pids[$key]);
-					else
+					if (file_exists('/proc/'.$pid))
 						clearstatcache('/proc/'.$pid);
+					else
+						unset($this->_pids[$key]);
 				}
 				usleep(100000); // 0.1 s
 			}
 
-			$cmd = sprintf('%s %s %s %s %d %d %d %s >/dev/null 2>&1 & echo $!',
+			exec('ps aux | grep Apijs/lib/image.py', $runs);
+			$core = ceil($core * 1.5);
+			while ((count($runs) - 1) >= $core) {
+				usleep(90000); // 0.09 s
+				$runs = [];
+				exec('ps aux | grep Apijs/lib/image.py', $runs);
+			}
+
+			$dir = Mage::getBaseDir('log');
+			if (!is_dir($dir))
+				@mkdir($dir, 0755);
+
+			$cmd = sprintf('%s %s %s %s %d %d %d %s >> %s 2>&1'.($immediate ? '' : ' & echo $!'),
 				$this->_python,
 				str_replace('Apijs/etc', 'Apijs/lib/image.py', Mage::getModuleDir('etc', 'Luigifab_Apijs')),
 				escapeshellarg($this->_fileName),
@@ -113,16 +126,23 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 				empty($this->_resizeFixed) ?
 					(empty($this->_resizeHeight) ? 0 : $this->_resizeHeight) :
 					(empty($this->_resizeHeight) ? (empty($this->_resizeWidth) ? 0 : $this->_resizeWidth) : $this->_resizeHeight),
-				// uniquement pour JPEG (ignoré et toujouts à 9 pour PNG, inutile pour GIF)
+				// uniquement pour JPEG (ignoré et toujours à 9 pour PNG, inutile pour GIF)
 				$this->_quality,
-				empty($this->_resizeFixed) ? '' : 'fixed'
+				empty($this->_resizeFixed) ? '' : 'fixed',
+				$dir.'/apijs.log'
 			);
 
 			// ne génère pas deux fois la même image
 			if (!in_array($destination, $this->_files)) {
+
+				//Mage::log(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), Zend_Log::DEBUG, 'apijs.log');
 				Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
+
 				$this->_files[] = $destination;
 				$this->_pids[]  = exec($cmd);
+
+				if ($immediate)
+					array_pop($this->_pids);
 			}
 
 			$this->reset();
@@ -139,10 +159,10 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 		while (!empty($this->_pids)) {
 			foreach ($this->_pids as $key => $pid) {
-				if (!file_exists('/proc/'.$pid))
-					unset($this->_pids[$key]);
-				else
+				if (file_exists('/proc/'.$pid))
 					clearstatcache('/proc/'.$pid);
+				else
+					unset($this->_pids[$key]);
 			}
 			usleep(100000); // 0.1 s
 		}
@@ -159,12 +179,12 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		if ($this->isSvg())
 			return 0;
 
-		if (empty($this->_imagesize)) {
+		if (empty($this->_imageSize)) {
 			$this->open();
-			$this->_imagesize = (array) getimagesize($this->_fileName); // (yes)
+			$this->_imageSize = (array) getimagesize($this->_fileName); // (yes)
 		}
 
-		return $this->_imagesize[0] ?? 0;
+		return $this->_imageSize[0] ?? 0;
 	}
 
 	public function getOriginalHeight() {
@@ -172,12 +192,12 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		if ($this->isSvg())
 			return 0;
 
-		if (empty($this->_imagesize)) {
+		if (empty($this->_imageSize)) {
 			$this->open();
-			$this->_imagesize = (array) getimagesize($this->_fileName); // (yes)
+			$this->_imageSize = (array) getimagesize($this->_fileName); // (yes)
 		}
 
-		return $this->_imagesize[1] ?? 0;
+		return $this->_imageSize[1] ?? 0;
 	}
 
 	public function getMimeType() {
@@ -185,12 +205,12 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		if ($this->isSvg())
 			return 'image/svg+xml';
 
-		if (empty($this->_imagesize)) {
+		if (empty($this->_imageSize)) {
 			$this->open();
-			$this->_imagesize = (array) getimagesize($this->_fileName); // (yes)
+			$this->_imageSize = (array) getimagesize($this->_fileName); // (yes)
 		}
 
-		return $this->_imagesize[2] ?? null;
+		return $this->_imageSize[2] ?? null;
 	}
 
 	public function isSvg() {
@@ -292,6 +312,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	public function setFilename($value) {
 		$this->_fileName = $value;
+		$this->_imageSize = [];
 		$this->_svg = null;
 		return $this;
 	}
@@ -325,6 +346,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		$this->_watermarkWidth = null;
 		$this->_watermarkHeigth = null;
 		$this->_fileName = null;
+		$this->_imageSize = [];
 		$this->_svg = null;
 		$this->_resizeFixed = null;
 		return $this;

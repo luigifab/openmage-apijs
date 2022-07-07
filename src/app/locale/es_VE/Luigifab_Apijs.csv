@@ -2,7 +2,7 @@
 "Enable in backend","Activar en el back-office"
 "Enable in frontend","Activar sobre el front-office"
 "Use python-pil and python-scour as image processor","Usar python-pil y python-scour como procesador de imagen"
-"Used even if the apijs is disabled.","Usado aunque el apijs esté desactivado."
+"Used even if the apijs is disabled. If yes, image generation will be multi-threaded. <strong>Warning,</strong> if you have added svg and webp images, if you want to disable this feature, you must first remove them.","Usado aunque el apijs esté desactivado."
 "Check browser version","Comprobar la versión del navegador"
 "Firefox 36+, Chrome 32+, Opera 19+, Edge 16+, Safari 9+ (checks even if the apijs is disabled).","Firefox 36+, Chrome 32+, Opera 19+, Edge 16+, Safari 9+ (verifica incluso si el apijs esta desactivado)."
 "Remove cached images","Borrar las imágenes almacenadas en caché"
@@ -39,3 +39,4 @@
 "Save images","Grabar las imágenes"
 "The added or removed images are automatically saved.","Las imágenes añadidas o eliminadas se graban automáticamente."
 "Maximum images width and height is <a %s>%s x %s pixels</a>.","La anchura y la altura máximas de las imágenes son de <a %s>%s x %s píxeles</a>"
+"Remove all","Remover todos"

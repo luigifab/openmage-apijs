@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/29/10/2021
+ * Updated M/31/05/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -68,20 +68,36 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 				$counts[$image->getData('apijs_group')] = 1;
 		}
 
+		$database = Mage::getSingleton('core/resource');
+		$writer   = $database->getConnection('core_write');
+		$reader   = $database->getConnection('core_read');
+		$table    = $database->getTableName('catalog_product_entity_varchar');
+
 		$ids = [];
 		foreach ($attributes as $code => $attribute) {
+
 			if (($attribute->getIsText() !== true) && ($attribute->getIsCheckbox() !== true)) {
+
 				$ids[] = $attribute->getId();
 				$globalValues[$code] = $product->getResource()->getAttributeRawValue($productId, $code, 0);
+
+				// bug de merde, quand la valeur par défaut est non présente, la lecture de la valeur par vue ne marche pas
+				if ($globalValues[$code] === false) {
+					try {
+						$writer->fetchAll('INSERT INTO '.$table.' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES
+							(4, '.$attribute->getId().', 0, '.$productId.', "no_selection")');
+						$globalValues[$code] = 'no_selection';
+					}
+					catch (Throwable $t) {
+						Mage::logException($t);
+					}
+				}
+
 				$storeValues[$code]  = $product->getResource()->getAttributeRawValue($productId, $code, $storeId);
 			}
 		}
 
-		$database = Mage::getSingleton('core/resource');
-		$reader   = $database->getConnection('core_read');
-		$table    = $database->getTableName('catalog_product_entity_varchar');
-		$values   = $reader->fetchAll('SELECT store_id, attribute_id, value FROM '.$table.' WHERE entity_id = '.$productId.' AND attribute_id IN ('.implode(',', $ids).')');
-
+		$values = $reader->fetchAll('SELECT store_id, attribute_id, value FROM '.$table.' WHERE entity_id = '.$productId.' AND attribute_id IN ('.implode(',', $ids).')');
 		foreach ($values as $value) {
 			if (!empty($images[$value['value']])) {
 				$image = $images[$value['value']];

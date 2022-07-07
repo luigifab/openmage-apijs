@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated J/04/11/2021
+ * Updated D/26/06/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -21,16 +21,22 @@ class Luigifab_Apijs_Model_Rewrite_Validator extends Mage_Core_Model_File_Valida
 
 	public function validate($path) {
 
-		if (is_file($path) && in_array(mime_content_type($path), ['image/svg', 'image/svg+xml', 'application/pdf']))
-			return true;
-
 		if (!Mage::getStoreConfigFlag('apijs/general/python'))
 			return parent::validate($path);
 
+		// @todo
+		// svg pdf
+		if (is_file($path) && in_array(mime_content_type($path), ['image/svg', 'image/svg+xml', 'application/pdf']))
+			return true;
+
 		// replace tmp image with re-sampled copy to exclude images with malicious data
+		// jpg jpeg gif png + webp
 		try {
 			$processor = Mage::getSingleton('apijs/python');
-			$processor->setFilename($path)->resize($processor->getOriginalWidth(), $processor->getOriginalHeight())->save($path);
+			$processor->setFilename($path);
+			$processor->quality(100);
+			$processor->resize($processor->getOriginalWidth(), $processor->getOriginalHeight());
+			$processor->save($path, null, true);
 		}
 		catch (Throwable $t) {
 			Mage::throwException('Invalid image: '.$t->getMessage());

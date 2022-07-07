@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated V/22/10/2021
+ * Updated M/22/03/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>6.8.2</version>
+			<version>6.9.0</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -144,6 +144,14 @@
 	</admin>
 	<adminhtml>
 		<events>
+			<admin_system_config_changed_section_apijs>
+				<observers>
+					<apijs>
+						<class>apijs/observer</class>
+						<method>clearCache</method>
+					</apijs>
+				</observers>
+			</admin_system_config_changed_section_apijs>
 			<controller_action_predispatch_adminhtml_apijs_media_save>
 				<observers>
 					<apijs>
@@ -182,9 +190,11 @@
 				<extensions>
 					<allowed>
 						<svg>1</svg>
+						<webp>1</webp>
 					</allowed>
 					<image_allowed>
 						<svg>1</svg>
+						<webp>1</webp>
 					</image_allowed>
 				</extensions>
 			</browser>

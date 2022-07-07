@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/08/09/2019
- * Updated J/04/11/2021
+ * Updated L/02/05/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -36,9 +36,9 @@ $prev = null;
 			$name  = $help->escapeEntities(basename($file), true);
 		?>
 			<?php if (is_file($file)): ?>
-				<?php $curr = $date->setTimestamp(filemtime($file))->toString(Zend_Date::MONTH_SHORT) ?>
+				<?php $curr = $date->setTimestamp(filemtime($file))->toString(Zend_Date::MONTH_NAME.' '.Zend_Date::YEAR) ?>
 				<?php if ($curr != $prev): ?>
-					<h4><?php echo $date->toString(Zend_Date::MONTH_NAME.' '.Zend_Date::YEAR) ?></h4>
+					<h4><?php echo $curr ?></h4>
 					<?php $prev = $curr ?>
 				<?php endif ?>
 				<div class="filecnt" id="<?php echo $image->getId() ?>">
