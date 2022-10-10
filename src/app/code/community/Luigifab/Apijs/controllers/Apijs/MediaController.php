@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/17/03/2022
+ * Updated M/30/08/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -243,10 +243,11 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 				if ($product->hasDataChanges())
 					$product->save();
+
+				// reload
+				$product->setStoreId($storeId)->load($product->getId());
 			}
 
-			// reload
-			$product->setStoreId($storeId)->load($product->getId());
 			// très important car les chemins et les URLs sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			// html
@@ -263,8 +264,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 	public function saveAction() {
 
-		$this->getResponse()->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
-		$this->getResponse()->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
+		$this->getResponse()
+			->setHttpResponseCode(200)
+			->setHeader('Content-Type', 'text/plain; charset=utf-8', true)
+			->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
 
 		$productId = (int) $this->getRequest()->getParam('product', 0);
 		$storeId   = (int) $this->getRequest()->getParam('store', 0);
@@ -285,12 +288,28 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 						$product->setData($code, $value);
 				}
 
+				// s'assure que l'image sélectionnée existe bien
+				// sinon resélectionne no_selection
+				if (!empty($product->getMediaGallery('images'))) {
+					$attributes = $product->getMediaAttributes();
+					foreach ($attributes as $code => $attribute) {
+						// si dans eav_attribute, attribute_model = xyz/source_xyz
+						// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
+						if ($attribute->getIsCheckbox() !== true) {
+							$value = $product->getData($code);
+							if (empty($value) || (($value != 'no_selection') && !in_array($value, $gallery['values'])))
+								$product->setData($code, 'no_selection');
+						}
+					}
+				}
+
 				if ($product->hasDataChanges())
 					$product->save();
+
+				// reload
+				$product->setStoreId($storeId)->load($product->getId());
 			}
 
-			// reload
-			$product->setStoreId($storeId)->load($product->getId());
 			// très important car les chemins et les URLs sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			// html
@@ -305,8 +324,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 	public function removeAction() {
 
-		$this->getResponse()->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
-		$this->getResponse()->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
+		$this->getResponse()
+			->setHttpResponseCode(200)
+			->setHeader('Content-Type', 'text/plain; charset=utf-8', true)
+			->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
 
 		$productId = (int) $this->getRequest()->getParam('product', 0);
 		$imageId   = (int) $this->getRequest()->getParam('image', 0);
@@ -327,9 +348,10 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				Mage::throwException('Invalid product/image ids ('.$productId.'/'.$imageId.')');
 
 			// trouve les ids
-			$ids = [$imageId];
 			if ($imageId === true)
 				$ids = array_filter(explode(',', $reader->fetchOne('SELECT GROUP_CONCAT(value_id) AS ids FROM '.$cpemg.' WHERE entity_id = ? GROUP BY entity_id', [$productId])));
+			else
+				$ids = [$imageId];
 
 			// supprime les images
 			$paths = [];
@@ -340,15 +362,15 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				$filename = basename($filepath);
 				$paths[]  = $filepath;
 
-				if (empty($filepath) || empty($filename))
-					Mage::throwException('File does not exist (id: '.$id.').');
+				if (!empty($filepath) && !empty($filename)) {
 
-				$writer->query('DELETE FROM '.$cpemg.' WHERE value_id = ?', $id);
-				$writer->query('DELETE FROM '.$cpev.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]); // si par défaut
+					$writer->query('DELETE FROM '.$cpemg.' WHERE value_id = ?', $id);
+					$writer->query('DELETE FROM '.$cpev.' WHERE entity_id = ? AND value = ?', [$productId, $filepath]); // si par défaut
 
-				// supprime enfin les fichiers s'ils ne sont pas utilisés dans d'autres produits
-				if ($reader->fetchOne('SELECT count(*) FROM '.$cpemg.' WHERE value = ?', [$filepath]) == 0)
-					$help->removeFiles($help->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
+					// supprime enfin les fichiers s'ils ne sont pas utilisés dans d'autres produits
+					if ($reader->fetchOne('SELECT count(*) FROM '.$cpemg.' WHERE value = ?', [$filepath]) == 0)
+						$help->removeFiles($help->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
+				}
 			}
 
 			// image par défaut (global uniquement)
@@ -356,8 +378,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			$product    = Mage::getModel('catalog/product')->load($productId);
 			$attributes = $product->getMediaAttributes();
 
-			if (!empty($product->getMediaGallery('images'))) {
-
+			if (empty($product->getMediaGallery('images'))) {
+				foreach ($attributes as $attribute) {
+					$writer->query('DELETE FROM '.str_replace('_varchar', '_'.$attribute->getData('backend_type'), $cpev).
+						' WHERE entity_id = ? AND attribute_id = ?', [$productId, $attribute->getId()]);
+				}
+			}
+			else {
 				$newvalue = $product->getMediaGallery('images')[0]['file'];
 				foreach ($attributes as $code => $attribute) {
 					$value = $product->getData($code);
@@ -369,12 +396,6 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 				if ($product->hasDataChanges())
 					$product->save();
-			}
-			else {
-				foreach ($attributes as $attribute) {
-					$writer->query('DELETE FROM '.str_replace('_varchar', '_'.$attribute->getData('backend_type'), $cpev).
-						' WHERE entity_id = ? AND attribute_id = ?', [$productId, $attribute->getId()]);
-				}
 			}
 
 			// reload

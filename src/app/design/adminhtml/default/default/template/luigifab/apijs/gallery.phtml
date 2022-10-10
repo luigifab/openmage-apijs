@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/24/03/2022
+ * Updated M/30/08/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -26,6 +26,7 @@ $date = Mage::getSingleton('core/locale')->date();
 $base = Mage::getSingleton('catalog/product_media_config')->getBaseMediaUrl();
 $pid  = $product->getId();
 $sid  = $product->getStoreId();
+$hids = (int) date('His') + random_int(10000, 90000); // ids des input, toujours unique, même après ajax
 
 $sortByStore = Mage::getStoreConfigFlag('apijs/general/sort_by_store');
 if ($sortByStore)
@@ -54,9 +55,9 @@ if (!empty($this->getRequest()->getParam('debug')))
 			<tr class="headings">
 				<th><?php echo $this->__('Image'),'<br /><span>',$this->__('[GLOBAL]'),'</span>' ?></th>
 				<th><?php echo $this->__('Label and Sort order'),'<br /><span>',$this->__('[STORE VIEW]'),'</span>' ?></th>
-				<?php foreach ($attributes as $attribute): ?>
+				<?php foreach ($attributes as $code => $attribute): ?>
 					<?php if ($attribute->getIsText() === true) continue; ?>
-					<th class="attr"><?php
+					<th class="attr" title="<?php echo $attribute->getId(),' ',$code ?>"><?php
 						echo $attribute->getFrontend()->getLabel(),'<br /><span>',$this->getScopeLabel($attribute),'</span>';
 					?></th>
 				<?php endforeach ?>
@@ -68,7 +69,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 				<th>
 					<?php if ($sortByStore): ?>
 						<label>
-							<select style="width:calc(100% - 1.5em);" class="filter" id="apijsFilter" onchange="apijsOpenMage.filter(this);">
+							<select style="width:calc(100% - 1.5em);" class="filter no-changes" id="apijsFilter" onchange="apijsOpenMage.filter(this);">
 								<option value="all"><?php echo $this->__('View All') ?></option>
 								<option value="none"><?php echo $this->__('Collapse All') ?></option>
 								<?php $prev = -1 ?>
@@ -145,10 +146,10 @@ if (!empty($this->getRequest()->getParam('debug')))
 							<?php if (empty($sid)): ?>
 								<label>
 									<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-									<input type="radio" name="apijs[<?php echo $code ?>]" value="no_selection" <?php
+									<input type="radio" name="apijs[<?php echo $code ?>]" id="inpt-<?php echo ++$hids ?>" value="no_selection" <?php
 										echo (empty($product->getData($code)) || ($product->getData($code) == 'no_selection')) ?
 											'checked="checked"' : '';
-									?> class="check" />
+									?> class="check" id="inpt-<?php echo ++$hids ?>" />
 								</label>
 							<?php else: ?>
 								<?php if (empty($data['globalValues'][$code]) || ($data['globalValues'][$code] == 'no_selection')): ?>
@@ -156,7 +157,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" value="no_selection" <?php
 											echo (empty($data['storeValues'][$code]) || ($data['globalValues'][$code] == 'no_selection')) ? 'checked="checked"' : '';
-										?> disabled="disabled" class="check" />
+										?> disabled="disabled" class="check" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php else: ?>
 									<label style="visibility:hidden;">
@@ -168,7 +169,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 									<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 									<input type="radio" name="apijs[<?php echo $code ?>]" value="no_selection" <?php
 										echo (empty($data['storeValues'][$code]) || ($data['globalValues'][$code] == 'no_selection') || ($data['storeValues'][$code] == 'no_selection')) ? 'checked="checked"' : '';
-									?> class="check" />
+									?> class="check" id="inpt-<?php echo ++$hids ?>" />
 								</label>
 							<?php endif ?>
 						<?php endif ?>
@@ -257,17 +258,15 @@ if (!empty($this->getRequest()->getParam('debug')))
 							<div>
 								<?php if (empty($sid)): ?>
 									<label>
-										<?php echo $this->__('Label') ?> /
-										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-										<input type="text" name="apijs[<?php echo $iid ?>][label]" value="<?php echo $label ?>" maxlength="250" class="input-text val" />
+										<?php echo $this->__('Label') ?> / <?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+										<input type="text" name="apijs[<?php echo $iid ?>][label]" value="<?php echo $label ?>" maxlength="250" class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php else: ?>
 									<label>
-										<?php echo $this->__('Label') ?> /
-										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
+										<?php echo $this->__('Label') ?> / <?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][label]" value="$$" <?php
 											echo $this->isUseGlobal($image, 'label', 'checked');
-										?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
+										?> class="check def inl" id="inpt-<?php echo ++$hids ?>" onchange="apijsOpenMage.checkVal(this);" />
 									</label>
 									<label>
 										<input type="text" name="apijs[<?php echo $iid ?>][label]" value="<?php
@@ -275,29 +274,27 @@ if (!empty($this->getRequest()->getParam('debug')))
 												$image->getData('label') : $image->getData('label_default'), true);
 										?>" <?php
 											echo $this->isUseGlobal($image, 'label', 'disabled');
-										?> maxlength="250" class="input-text val" />
+										?> maxlength="250" class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php endif ?>
 							</div>
 							<div>
 								<?php if (empty($sid)): ?>
 									<label>
-										<?php echo $this->__('Sort Order') ?> /
-										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php echo $image->getData('position') ?>" class="input-text position val" />
+										<?php echo $this->__('Sort Order') ?> / <?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php echo $image->getData('position') ?>" class="input-text position val" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php else: ?>
 									<label>
-										<?php echo $this->__('Sort Order') ?> /
-										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
+										<?php echo $this->__('Sort Order') ?> / <?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][position]" value="$$" <?php
 											echo $this->isUseGlobal($image, 'position', 'checked');
-										?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
+										?> class="check def inl" id="inpt-<?php echo ++$hids ?>" onchange="apijsOpenMage.checkVal(this);" />
 									</label>
 									<label>
 										<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][position]" value="<?php echo $image->getData('position') ?>" <?php
 											echo $this->isUseGlobal($image, 'position', 'disabled');
-										?> class="input-text position val" />
+										?> class="input-text position val" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php endif ?>
 							</div>
@@ -308,25 +305,23 @@ if (!empty($this->getRequest()->getParam('debug')))
 									<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 									<?php if (empty($sid)): ?>
 										<label>
-											<?php echo $attribute->getData('frontend_label') ?> /
-											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
+											<?php echo $attribute->getData('frontend_label') ?> / <?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 											<?php if ($attribute->getInputType() == 'number'): ?>
 												<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
 													echo $help->escapeEntities($image->getData($code), true);
-												?>" class="input-text val" />
+												?>" class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 											<?php else: ?>
 												<input type="text" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
 													echo $help->escapeEntities($image->getData($code), true);
-												?>" class="input-text val" />
+												?>" class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 											<?php endif ?>
 										</label>
 									<?php else: ?>
 										<label>
-											<?php echo $attribute->getData('frontend_label') ?> /
-											<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
+											<?php echo $attribute->getData('frontend_label') ?> / <?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 											<input type="checkbox" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="$$" <?php
 												echo $this->isUseGlobal($image, $code, 'checked');
-											?> class="check def inl" onchange="apijsOpenMage.checkVal(this);" />
+											?> class="check def inl" id="inpt-<?php echo ++$hids ?>" onchange="apijsOpenMage.checkVal(this);" />
 										</label>
 										<label>
 											<?php if ($attribute->getInputType() == 'number'): ?>
@@ -334,13 +329,13 @@ if (!empty($this->getRequest()->getParam('debug')))
 													echo $help->escapeEntities(($image->getData($code) != $image->getData($code.'_default')) ? $image->getData($code) : $image->getData($code.'_default'), true);
 												?>" <?php
 													echo $this->isUseGlobal($image, $code, 'disabled');
-												?> class="input-text val" />
+												?> class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 											<?php else: ?>
 												<input type="text" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
 													echo $help->escapeEntities(($image->getData($code) != $image->getData($code.'_default')) ? $image->getData($code) : $image->getData($code.'_default'), true);
 												?>" <?php
 													echo $this->isUseGlobal($image, $code, 'disabled');
-												?> class="input-text val" />
+												?> class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 											<?php endif ?>
 										</label>
 									<?php endif ?>
@@ -359,14 +354,14 @@ if (!empty($this->getRequest()->getParam('debug')))
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="1" <?php
 											echo empty($image->getData($code)) ? '' : 'checked="checked"';
-										?> class="check" />
+										?> class="check" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php else: ?>
 									<label>
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="checkbox" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="$$" <?php
 											echo $this->isUseGlobal($image, $code, 'checked');
-										?> class="check def" onchange="apijsOpenMage.checkVal(this);" />
+										?> class="check def" id="inpt-<?php echo ++$hids ?>" onchange="apijsOpenMage.checkVal(this);" />
 									</label>
 									<label>
 										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
@@ -374,7 +369,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 											echo $image->getData($code) ? 'checked="checked"' : '';
 										?> <?php
 											echo $this->isUseGlobal($image, $code, 'disabled');
-										?> class="check val" />
+										?> class="check val" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php endif ?>
 							<?php else: ?>
@@ -383,13 +378,13 @@ if (!empty($this->getRequest()->getParam('debug')))
 										<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 										<input type="radio" name="apijs[<?php echo $code ?>]" value="<?php echo $path ?>" <?php
 											echo ($product->getData($code) == $path) ? 'checked="checked"' : '';
-										?> class="check" />
+										?> class="check" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php else: ?>
 									<?php if ($data['globalValues'][$code] == $path): ?>
 										<label>
 											<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
-											<input type="checkbox" checked="checked" disabled="disabled" class="check" />
+											<input type="checkbox" checked="checked" disabled="disabled" class="check" id="inpt-<?php echo ++$hids ?>" />
 										</label>
 									<?php else: ?>
 										<label style="visibility:hidden;">
@@ -401,7 +396,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 										<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
 										<input type="radio" name="apijs[<?php echo $code ?>]" value="<?php echo $path ?>" <?php
 											echo ($data['storeValues'][$code] == $path) ? 'checked="checked"' : '';
-										?> class="check" />
+										?> class="check" id="inpt-<?php echo ++$hids ?>" />
 									</label>
 								<?php endif ?>
 							<?php endif ?>
@@ -413,14 +408,14 @@ if (!empty($this->getRequest()->getParam('debug')))
 								<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 								<input type="checkbox" name="apijs[<?php echo $iid ?>][disabled]" value="1" <?php
 									echo $image->getData('disabled') ? 'checked="checked"' : '';
-								?> class="check val" />
+								?> class="check val" id="inpt-<?php echo ++$hids ?>" />
 							</label>
 						<?php else: ?>
 							<label>
 								<?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 								<input type="checkbox" name="apijs[<?php echo $iid ?>][disabled]" value="$$" <?php
 									echo $this->isUseGlobal($image, 'disabled', 'checked');
-								?> class="check def" onchange="apijsOpenMage.checkVal(this);" />
+								?> class="check def" id="inpt-<?php echo ++$hids ?>" onchange="apijsOpenMage.checkVal(this);" />
 							</label>
 							<label>
 								<?php echo trim($this->__('[STORE VIEW]'), '[]') ?>
@@ -428,15 +423,17 @@ if (!empty($this->getRequest()->getParam('debug')))
 									echo $image->getData('disabled') ? 'checked="checked"' : '';
 								?> <?php
 									echo $this->isUseGlobal($image, 'disabled', 'disabled');
-								?> class="check val" />
+								?> class="check val" id="inpt-<?php echo ++$hids ?>" />
 							</label>
 						<?php endif ?>
 					</td>
 					<td class="last">
 						<?php if (is_file($file)): ?>
 							<a href="<?php echo $base,$path ?>" type="<?php echo mime_content_type($file) ?>" download=""><?php echo $this->__('Download') ?></a>
+						<?php else: ?>
+							<a href="<?php echo $base,$path ?>" style="font-style:italic;" onclick="return false;"><?php echo $this->__('Download') ?></a>
 						<?php endif ?>
-						<br /><button type="button" class="slink remove" onclick="apijsOpenMage.removeAttachment('<?php echo $this->getRemoveUrl($iid) ?>'); return false;"><?php echo $this->__('Remove') ?></button>
+						<br /><button type="button" class="slink remove" onclick="apijsOpenMage.removeAttachment('<?php echo $this->getRemoveUrl($iid, basename($path)) ?>'); return false;"><?php echo $this->__('Remove') ?></button>
 
 						<div style="margin-top:1em;"><?php if (is_file($file)) {
 							if (mb_substr($file, -4) == '.svg') {

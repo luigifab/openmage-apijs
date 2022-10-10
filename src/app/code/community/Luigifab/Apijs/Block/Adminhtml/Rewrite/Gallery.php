@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated M/31/05/2022
+ * Updated J/11/08/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -135,9 +135,10 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 			['product' => $product->getId(), 'store' => $product->getStoreId(), 'form_key' => $this->getFormKey()]);
 	}
 
-	public function getRemoveUrl($imageId) {
+	public function getRemoveUrl($imageId, $imageName = null) {
 		$product = Mage::registry('current_product');
 		return $this->getUrl('*/apijs_media/remove',
-			['product' => $product->getId(), 'store' => $product->getStoreId(), 'image' => $imageId]);
+			['product' => $product->getId(), 'store' => $product->getStoreId(), 'image' => $imageId]).
+				(empty($imageName) ? '' : '?img='.urlencode($imageName));
 	}
 }

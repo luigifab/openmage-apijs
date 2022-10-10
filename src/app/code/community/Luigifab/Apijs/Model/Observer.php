@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated M/22/03/2022
+ * Updated D/18/09/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -25,7 +25,7 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 		Mage::app()->cleanCache();
 		Mage::dispatchEvent('adminhtml_cache_flush_system');
 
-		Mage::getSingleton('adminhtml/session')->addSuccess(str_replace('Magento', 'OpenMage', Mage::helper('adminhtml')->__('The Magento cache storage has been flushed.')));
+		Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('The OpenMage cache storage has been flushed.'));
 	}
 
 	// EVENT catalog_category_delete_commit_after (global)

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated D/26/06/2022
+ * Updated L/03/10/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -19,6 +19,14 @@
  */
 
 class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
+
+	protected $_usePython;
+	protected $_cacheConfig;
+	protected $_cacheUrls;
+
+	public function __construct() {
+		$this->_usePython = Mage::getStoreConfigFlag('apijs/general/python');
+	}
 
 	public function init($product, $attribute, $path = null, $fixed = true, $webp = false) {
 
@@ -64,7 +72,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		$attribute = $model->getDestinationSubdir();
 		$this->_setModel($model);
 
-		// cache de la config et des chemins des images et des urls générées
+		// cache de la config et des chemins des images et des URLs générées
 		if (empty($this->_cacheConfig) || empty($this->_cacheUrls)) {
 
 			$this->_processor = Mage::getSingleton('apijs/python');
@@ -74,7 +82,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 				$this->_cacheConfig = [
 					'date' => date('Y-m-d H:i:s \U\T\C'),
-					'apijs/general/python' => Mage::getStoreConfigFlag('apijs/general/python'),
+					'apijs/general/python' => $this->_usePython,
 					'apijs/general/remove_store_id' => Mage::getStoreConfigFlag('apijs/general/remove_store_id'),
 					'list_search'  => [],
 					'list_replace' => [],
@@ -189,7 +197,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		if (!is_file($path))
 			return false;
 
-		if (!Mage::getStoreConfigFlag('apijs/general/python'))
+		if (!$this->_usePython)
 			return parent::validateUploadFile($path);
 
 		// @todo
@@ -259,7 +267,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 	}
 
 	public function hasWebp() {
-		return Mage::getStoreConfigFlag('apijs/general/python');
+		return $this->_usePython;
 	}
 
 	public function __toString() {
@@ -283,7 +291,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 			if ($model->getDestinationSubdir() == 'wysiwyg') {
 				// if ($model->isCached())
-				// oui mais non car il faut supprimer les ../ des chemins et des urls
+				// oui mais non car il faut supprimer les ../ des chemins et des URLs
 				// ../../wysiwyg/abc/xyz.jpg
 				// .../media/catalog/product/cache/[0/]wysiwyg/1200x/040ec09b1e35df139433887a97daa66f/../../wysiwyg/abc/xyz.jpg
 				// .../media/wysiwyg/cache/[0/]1200x/040ec09b1e35df139433887a97daa66f/wysiwyg/abc/xyz.jpg
@@ -313,7 +321,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 							$model->setWatermark($this->getWatermark());
 
 						// $url = $model->saveFile()->getUrl();
-						// oui mais non car il faut supprimer les ../ des chemins et des urls
+						// oui mais non car il faut supprimer les ../ des chemins et des URLs
 						$model->getImageProcessor()->save($fileName);
 					}
 
@@ -330,7 +338,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 			}
 			else if ($model->getDestinationSubdir() == 'category') {
 				// if ($model->isCached())
-				// oui mais non car il faut supprimer les ../ des chemins et des urls
+				// oui mais non car il faut supprimer les ../ des chemins et des URLs
 				// ../category/xyz.jpg
 				// .../media/catalog/product/cache/[0/]category/1200x/040ec09b1e35df139433887a97daa66f/../category/xyz.jpg
 				// .../media/catalog/category/cache/[0/]1200x/040ec09b1e35df139433887a97daa66f/xyz.jpg
@@ -358,7 +366,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 							$model->setWatermark($this->getWatermark());
 
 						// $url = $model->saveFile()->getUrl();
-						// oui mais non car il faut supprimer les ../ des chemins et des urls
+						// oui mais non car il faut supprimer les ../ des chemins et des URLs
 						$model->getImageProcessor()->save($fileName);
 					}
 
@@ -400,7 +408,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 							$model->setWatermark($this->getWatermark());
 
 						// $url = $model->saveFile()->getUrl();
-						// oui mais non car il faut supprimer les ../ des chemins et des urls
+						// oui mais non car il faut supprimer les ../ des chemins et des URLs
 						$model->getImageProcessor()->save($fileName);
 					}
 

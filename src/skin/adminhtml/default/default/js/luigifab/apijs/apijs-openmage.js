@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated J/26/05/2022
+ * Updated J/11/08/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -135,34 +135,7 @@ var apijsOpenMage = new (function () {
 		}
 	};
 
-	this.actionSave = function (action) {
-
-		document.querySelector('body').classList.add('fabload');
-
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', action + '?isAjax=true', true);
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState === 4) {
-				if ([0, 200].has(xhr.status)) {
-					if (xhr.responseText.indexOf('success-') === 0)
-						apijsOpenMage.updateForm(xhr.responseText);
-					else
-						apijsOpenMage.error(xhr.responseText);
-				}
-				else {
-					apijsOpenMage.error(xhr.status);
-				}
-				document.querySelector('body').classList.remove('fabload');
-			}
-		};
-
-		xhr.send(apijs.serialize(document.getElementById('product_edit_form'), 'apijs'));
-	};
-
-	this.updateForm = function (data, elem) {
+	this.updateForm = function (data, indicator, elem) {
 
 		// success-{json[result, bbcode]}
 		if (data.indexOf('{') > -1) {
@@ -193,10 +166,43 @@ var apijsOpenMage = new (function () {
 				elem.value = data.filter;
 				elem.dispatchEvent(new Event('change'));
 			}
+
+			if (indicator) {
+				indicator.classList.remove('changed');
+				varienWindowOnload(true);
+			}
 		}
 		else {
 			MediabrowserInstance.selectFolder(MediabrowserInstance.currentNode);
 		}
+	};
+
+	// product
+	this.actionSave = function (action) {
+
+		document.querySelector('body').classList.add('fabload');
+
+		var xhr = new XMLHttpRequest(), indicator = document.querySelector('.tab-item-link.active');
+		xhr.open('POST', action + '?isAjax=true', true);
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+		xhr.onreadystatechange = function () {
+
+			if (xhr.readyState === 4) {
+				if ([0, 200].has(xhr.status)) {
+					if (xhr.responseText.indexOf('success-') === 0)
+						apijsOpenMage.updateForm(xhr.responseText, indicator);
+					else
+						apijsOpenMage.error(xhr.responseText);
+				}
+				else {
+					apijsOpenMage.error(xhr.status);
+				}
+				document.querySelector('body').classList.remove('fabload');
+			}
+		};
+
+		xhr.send(apijs.serialize(document.getElementById('product_edit_form'), 'apijs'));
 	};
 
 	this.removeAttachment = function (action) {
@@ -210,7 +216,7 @@ var apijsOpenMage = new (function () {
 	this.actionRemoveAttachment = function (args) {
 
 		// args = action
-		var xhr = new XMLHttpRequest();
+		var xhr = new XMLHttpRequest(), indicator = document.querySelector('.tab-item-link.active');
 		xhr.open('GET', args, true);
 
 		xhr.onreadystatechange = function () {
@@ -218,7 +224,7 @@ var apijsOpenMage = new (function () {
 			if (xhr.readyState === 4) {
 				if ([0, 200].has(xhr.status)) {
 					if (xhr.responseText.indexOf('success-') === 0)
-						apijsOpenMage.updateForm(xhr.responseText);
+						apijsOpenMage.updateForm(xhr.responseText, indicator);
 					else
 						apijsOpenMage.error(xhr.responseText);
 				}
@@ -239,6 +245,78 @@ var apijsOpenMage = new (function () {
 		apijsOpenMage.actionRemoveAttachment(action);
 	};
 
+	this.checkVal = function (root) {
+
+		var elem = root;
+		while ((elem.nodeName !== 'BODY') && !elem.querySelector('.val'))
+			elem = elem.parentNode;
+
+		if (elem = elem.querySelector('.val')) {
+			if (root.checked)
+				elem.setAttribute('disabled', 'disabled');
+			else
+				elem.removeAttribute('disabled');
+		}
+	};
+
+	this.filter = function (root) {
+
+		var word, text, show;
+		if (typeof root == 'string') {
+			show = root;
+			root = document.getElementById('apijsFilter');
+			if (((root.value === show) && (show !== 'all')) || ((root.value === 'all') && (show === 'all')))
+				show = 'none';
+			root.value = show;
+		}
+		if (root.nodeName === 'BUTTON') {
+			text = root.getAttribute('data-text');
+			root.setAttribute('data-text', root.textContent);
+			root.textContent = text;
+			root.setAttribute('data-state', (root.getAttribute('data-state') == '0') ? '1' : '0');
+		}
+
+		document.getElementById('apijsGallery').querySelectorAll('tbody tr[id]').forEach(function (line) {
+
+			show = [];
+
+			// pour chaque colonne (car toutes les colonnes peuvent avoir un filtre)
+			// word = ce qu'on cherche dans la colonne courante
+			// text = ce qu'il y a dans la cellule de la colonne de la ligne courante
+			document.getElementById('apijsGallery').querySelectorAll('tr.filter th').forEach(function (col, idx) {
+
+				col = col.querySelector('.filter');
+				if (!col) {
+					show.push(true);
+				}
+				else if (col.nodeName === 'SELECT') {
+					word = Math.floor(parseInt(col.value, 10) / 100); // ce qu'on cherche
+					text = Math.floor(parseInt(line.querySelectorAll('td')[idx].querySelector('input.position').value, 10) / 100); //dans quoi
+					show.push((col.value === 'all') || (text == word));
+				}
+				else if (col.nodeName === 'BUTTON') {
+					word = col.getAttribute('data-state') == '1'; // ce qu'on cherche
+					text = line.querySelectorAll('td')[idx].querySelector('input.check:not(.def)').checked; // dans quoi on cherche
+					if (col.hasAttribute('data-reverse')) text = !text;
+					show.push(!word || (word && (word !== text)));
+				}
+			});
+
+			// maintenant que chaque colonne de la ligne a été vérifiée
+			// si aucune colonne indique qu'il ne faut pas afficher la ligne, on affiche la ligne
+			line.setAttribute('style', (show.indexOf(false) > -1) ? 'display:none;' : '');
+			line.removeAttribute('title');
+		});
+
+		// s'assure que le séparateur est visible
+		if ((root.nodeName === 'SELECT') && !isNaN(root.value) && (root = document.querySelector('tr.grp' + root.value))) {
+			var rect = root.getBoundingClientRect();
+			if ((rect.top < 0) && (rect.bottom <= window.innerHeight))
+				root.scrollIntoView();
+		}
+	};
+
+	// wysiwyg
 	this.renameMedia = function (elem) {
 
 		elem = elem.parentNode.parentNode;
@@ -324,29 +402,6 @@ var apijsOpenMage = new (function () {
 		xhr.send('form_key=' + FORM_KEY + '&file=' + encodeURIComponent(args));
 	};
 
-	this.clearCache = function (action) {
-		apijs.dialog.dialogConfirmation(apijs.i18n.translate(255), apijs.i18n.translate(256), apijsOpenMage.actionClearCache, action);
-	};
-
-	this.actionClearCache = function (args) {
-		apijs.dialog.remove('waiting', 'lock'); // obligatoire sinon demande de confirmation de quitter la page
-		self.location.href = args;
-	};
-
-	this.checkVal = function (root) {
-
-		var elem = root;
-		while ((elem.nodeName !== 'BODY') && !elem.querySelector('.val'))
-			elem = elem.parentNode;
-
-		if (elem = elem.querySelector('.val')) {
-			if (root.checked)
-				elem.setAttribute('disabled', 'disabled');
-			else
-				elem.removeAttribute('disabled');
-		}
-	};
-
 	this.overloadMediabrowser = function () {
 
 		var elem, objs = [];
@@ -405,61 +460,14 @@ var apijsOpenMage = new (function () {
 		MediabrowserInstance.deleteFolderUrl = MediabrowserInstance.deleteFolderUrl.replace(/[a-z_]+\/deleteFolder\//, 'apijs_wysiwyg/deleteFolder/');
 	};
 
-	this.filter = function (root) {
+	// cache
+	this.clearCache = function (action) {
+		apijs.dialog.dialogConfirmation(apijs.i18n.translate(255), apijs.i18n.translate(256), apijsOpenMage.actionClearCache, action);
+	};
 
-		var word, text, show;
-		if (typeof root == 'string') {
-			show = root;
-			root = document.getElementById('apijsFilter');
-			if (((root.value === show) && (show !== 'all')) || ((root.value === 'all') && (show === 'all')))
-				show = 'none';
-			root.value = show;
-		}
-		if (root.nodeName === 'BUTTON') {
-			text = root.getAttribute('data-text');
-			root.setAttribute('data-text', root.textContent);
-			root.textContent = text;
-			root.setAttribute('data-state', (root.getAttribute('data-state') == '0') ? '1' : '0');
-		}
-
-		document.getElementById('apijsGallery').querySelectorAll('tbody tr[id]').forEach(function (line) {
-
-			show = [];
-
-			// pour chaque colonne (car toutes les colonnes peuvent avoir un filtre)
-			// word = ce qu'on cherche dans la colonne courante
-			// text = ce qu'il y a dans la cellule de la colonne de la ligne courante
-			document.getElementById('apijsGallery').querySelectorAll('tr.filter th').forEach(function (col, idx) {
-
-				col = col.querySelector('.filter');
-				if (!col) {
-					show.push(true);
-				}
-				else if (col.nodeName === 'SELECT') {
-					word = Math.floor(parseInt(col.value, 10) / 100); // ce qu'on cherche
-					text = Math.floor(parseInt(line.querySelectorAll('td')[idx].querySelector('input.position').value, 10) / 100); //dans quoi
-					show.push((col.value === 'all') || (text == word));
-				}
-				else if (col.nodeName === 'BUTTON') {
-					word = col.getAttribute('data-state') == '1'; // ce qu'on cherche
-					text = line.querySelectorAll('td')[idx].querySelector('input.check:not(.def)').checked; // dans quoi on cherche
-					if (col.hasAttribute('data-reverse')) text = !text;
-					show.push(!word || (word && (word !== text)));
-				}
-			});
-
-			// maintenant que chaque colonne de la ligne a été vérifiée
-			// si aucune colonne indique qu'il ne faut pas afficher la ligne, on affiche la ligne
-			line.setAttribute('style', (show.indexOf(false) > -1) ? 'display:none;' : '');
-			line.removeAttribute('title');
-		});
-
-		// s'assure que le séparateur est visible
-		if ((root.nodeName === 'SELECT') && !isNaN(root.value) && (root = document.querySelector('tr.grp' + root.value))) {
-			var rect = root.getBoundingClientRect();
-			if ((rect.top < 0) && (rect.bottom <= window.innerHeight))
-				root.scrollIntoView();
-		}
+	this.actionClearCache = function (args) {
+		apijs.dialog.remove('waiting', 'lock'); // obligatoire sinon demande de confirmation de quitter la page
+		self.location.href = args;
 	};
 
 })();

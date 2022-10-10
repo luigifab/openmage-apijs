@@ -1,6 +1,6 @@
 /**
  * Created D/15/12/2013
- * Updated J/26/05/2022
+ * Updated J/11/08/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -49,6 +49,8 @@ button.slink {
 	font-weight:400; text-decoration:underline; color:#EA7601; border:0; background:none;
 }
 
+button.slink.remove { color:red; }
+
 td div.image.preview {
 	display:inline-block; padding:3px;
 	border-width:1px; border-style:solid; border-color:#AAA #C8C8C8 #C8C8C8 #AAA; background-color:white;
@@ -63,7 +65,6 @@ body.fabload div.content-header p.form-buttons, body.fabload div.content-header-
 body.fabload #apijsGallery { pointer-events:none; opacity:0.5; }
 
 #apijsGallery table.gallery { width:100%; }
-#apijsGallery table.gallery .remove { color:red; }
 #apijsGallery table.gallery td { text-align:center; vertical-align:top; white-space:nowrap; }
 
 #apijsGallery table.gallery thead tr.headings th {
@@ -104,6 +105,7 @@ body.fabload #apijsGallery { pointer-events:none; opacity:0.5; }
 #apijsGallery table.gallery tbody input:disabled { background-color:#EFEFEF; }
 #apijsGallery table.gallery tbody input.check { margin:0.3em auto; cursor:pointer; }
 #apijsGallery table.gallery tbody input.input-text { margin-bottom:1em; width:100% !important; box-sizing:border-box; -moz-box-sizing:border-box; }
+#apijsGallery table.gallery tbody div input.check { margin:0 auto 0.1em; }
 
 /* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&& apijs/wysiwyg/index &&& */
 body.adminhtml-apijs-wysiwyg-index .side-col { padding-top:39px; padding-bottom:0; max-height:75vh; overflow:auto; }

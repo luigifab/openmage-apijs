@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated J/30/06/2022
+ * Updated V/02/09/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -29,20 +29,28 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	protected $_svg;
 
 	public function __construct($file = null, $adapter = null) {
-
-		exec('command -v python3', $cmd);
-		$this->_python = trim(implode($cmd));
-
-		exec('nproc', $core);
-		$this->_core = max(1, (int) trim(implode($core)));
+		// nothing
 	}
 
 	public function __destruct() {
 		$this->waitThreads();
 	}
 
+	private function initCommands() {
+
+		if (empty($this->_python)) {
+
+			exec('command -v python3', $cmd);
+			$this->_python = trim(implode($cmd));
+
+			exec('nproc', $core);
+			$this->_core = max(1, (int) trim(implode($core)));
+		}
+	}
+
 	public function getProgramVersions($helpPil, $helpSco) {
 
+		$this->initCommands();
 		$cmd = $this->_python;
 
 		if (empty($cmd)) {
@@ -92,6 +100,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		$this->open();
 
 		try {
+			$this->initCommands();
 			$core = max(1, $this->_core - 2);
 			while (count($this->_pids) >= $core) {
 				foreach ($this->_pids as $key => $pid) {

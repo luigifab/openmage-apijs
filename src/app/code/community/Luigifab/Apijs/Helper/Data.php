@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated L/06/06/2022
+ * Updated L/03/10/2022
  *
  * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://www.luigifab.fr/openmage/apijs
@@ -18,6 +18,9 @@
  */
 
 class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
+
+	protected $_usePython;
+
 
 	public function getVersion() {
 		return (string) Mage::getConfig()->getModuleConfig('Luigifab_Apijs')->version;
@@ -142,7 +145,10 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 		$resource = Mage::helper('catalog/image')->init($product, $type, $path, $fixed, $webp);
 
-		if (Mage::getStoreConfigFlag('apijs/general/python'))
+		if (!is_bool($this->_usePython))
+			$this->_usePython = Mage::getStoreConfigFlag('apijs/general/python');
+
+		if ($this->_usePython)
 			$resource->resize($width, $height);
 		else if ($fixed)
 			$resource->resize($width, $height);
