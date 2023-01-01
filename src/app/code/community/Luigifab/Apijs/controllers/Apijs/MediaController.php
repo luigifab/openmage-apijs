@@ -1,11 +1,11 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated M/30/08/2022
+ * Updated J/08/12/2022
  *
- * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * Copyright 2019-2022 | Fabrice Creuzot <fabrice~cellublue~com>
- * https://www.luigifab.fr/openmage/apijs
+ * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
+ * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -24,15 +24,17 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 	protected function disableAllBuffer() {
 
-		// désactivation des tampons
+		// désactivation des tampons (sauf si zlib.output_compression)
 		// cela permet d'afficher 100% dans la barre de progression
 		// https://stackoverflow.com/a/25835968
 		header('Content-Encoding: chunked');
+		header('Connection: Keep-Alive');
 		header('Content-Type: text/plain; charset=utf-8');
 		header('Cache-Control: no-cache, must-revalidate');
 		ini_set('output_buffering', 0);
 		ini_set('implicit_flush', 1);
 		ob_implicit_flush();
+		ignore_user_abort(true);
 
 		try {
 			for ($i = 0; $i < ob_get_level(); $i++)
@@ -41,6 +43,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		catch (Throwable $t) { }
 
 		echo ' ';
+		return $this;
 	}
 
 	protected function formatResult($success, $errors, $data) {

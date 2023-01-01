@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
- * Created S/19/11/2011
- * Updated J/23/01/2019
+<?php
+/**
+ * Created J/20/10/2022
+ * Updated D/11/12/2022
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -15,21 +15,16 @@
  * but without any warranty, without even the implied warranty of
  * merchantability or fitness for a particular purpose. See the
  * GNU General Public License (GPL) for more details.
--->
+ */
 
-<config>
-	<modules>
-		<Luigifab_Apijs>
-			<active>true</active>
-			<codePool>community</codePool>
-			<depends>
-				<Mage_Core />
-				<Mage_Adminhtml />
-				<Mage_Catalog />
-				<Mage_Cms />
-			</depends>
-			<!-- see https://github.com/luigifab/openmage-modules for more information -->
-			<update>https://www.luigifab.fr/openmage/rss.xml</update>
-		</Luigifab_Apijs>
-	</modules>
-</config>
+if (Mage::getStoreConfigFlag('apijs/general/python')) {
+	// this allow to use OpenMage without PHP-GD (with PR 2666)
+	class Luigifab_Apijs_Model_Rewrite_Varienimg extends Luigifab_Apijs_Model_Python {
+		protected $_isVarienRewrite = true;
+	}
+}
+else {
+	class Luigifab_Apijs_Model_Rewrite_Varienimg extends Varien_Image {
+		protected $_isVarienRewrite = false;
+	}
+}

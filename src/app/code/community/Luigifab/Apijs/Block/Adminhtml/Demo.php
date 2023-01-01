@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated M/28/02/2017
+ * Updated S/03/12/2022
  *
- * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/apijs
+ * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -22,6 +22,8 @@ class Luigifab_Apijs_Block_Adminhtml_Demo extends Mage_Adminhtml_Block_Abstract 
 	protected $_template = 'luigifab/apijs/demo.phtml';
 
 	public function render(Varien_Data_Form_Element_Abstract $element) {
-		return '<tr><td colspan="4">'.$this->toHtml().'</td></tr>';
+		// getPath PR 2774
+		$isDefault = !$element->getCanUseWebsiteValue() && !$element->getCanUseDefaultValue();
+		return '<tr><td colspan="'.(empty($element->getPath()) ? ($isDefault ? 4 : 5) : ($isDefault ? 5 : 6)).'">'.$this->toHtml().'</td></tr>';
 	}
 }

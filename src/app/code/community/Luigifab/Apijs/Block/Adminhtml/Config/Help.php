@@ -3,8 +3,8 @@
  * Created V/23/05/2014
  * Updated V/20/05/2022
  *
- * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/apijs
+ * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -47,6 +47,7 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 			['model' => 'catalog_resource/product_attribute_backend_media'],
 			['model' => 'cms/wysiwyg_images_storage'],
 			['model' => 'core/file_validator_image'],
+			['model' => 'varien/image'],
 		];
 
 		foreach ($rewrites as $rewrite) {

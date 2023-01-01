@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated M/30/08/2022
+ * Updated J/20/10/2022
  *
- * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/apijs
+ * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>6.9.2</version>
+			<version>6.9.3</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -74,6 +74,11 @@
 					<file_validator_image>Luigifab_Apijs_Model_Rewrite_Validator</file_validator_image>
 				</rewrite>
 			</core>
+			<varien>
+				<rewrite>
+					<image>Luigifab_Apijs_Model_Rewrite_Varienimg</image>
+				</rewrite>
+			</varien>
 		</models>
 		<resources>
 			<apijs_setup>

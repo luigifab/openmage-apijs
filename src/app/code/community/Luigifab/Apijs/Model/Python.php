@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated V/02/09/2022
+ * Updated J/17/11/2022
  *
- * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/apijs
+ * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -21,22 +21,49 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	// singleton
 	protected $_python;
-	protected $_quality = 100;
-	protected $_imageSize = [];
 	protected $_files = [];
 	protected $_pids  = [];
 	protected $_core  = 1;
+	protected $_imageSize = [];
+	protected $_isVarienRewrite = false;
+	protected $_quality   = 100;
+	protected $_rotateAngle;
+	protected $_resizeWidth;
+	protected $_resizeHeight;
+	protected $_cropTop;
+	protected $_cropLeft;
+	protected $_cropRight;
+	protected $_cropBottom;
+	protected $_watermarkImage;
+	protected $_watermarkPositionX;
+	protected $_watermarkPositionY;
+	protected $_watermarkOpacity;
+	protected $_watermarkRepeat;
+	protected $_keepAspectRatio;
+	protected $_keepFrame;
+	protected $_keepTransparency;
+	protected $_constrainOnly;
+	protected $_backgroundColor;
+	protected $_watermarkPosition;
+	protected $_watermarkImageOpacity;
+	protected $_watermarkWidth;
+	protected $_watermarkHeigth;
+	protected $_fileName;
 	protected $_svg;
+	protected $_resizeFixed;
 
+	// model
 	public function __construct($file = null, $adapter = null) {
-		// nothing
+
+		if ($this->_isVarienRewrite && !empty($file))
+			$this->setFilename($file);
 	}
 
 	public function __destruct() {
 		$this->waitThreads();
 	}
 
-	private function initCommands() {
+	protected function initCommands() {
 
 		if (empty($this->_python)) {
 
@@ -158,7 +185,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		}
 		catch (Throwable $t) {
 			Mage::logException($t);
-			throw $t;
+			Mage::throwException($t);
 		}
 
 		return $this;
@@ -182,7 +209,6 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	}
 
 	// getter
-
 	public function getOriginalWidth() {
 
 		if ($this->isSvg())
@@ -233,7 +259,6 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	}
 
 	// setter
-
 	public function rotate($angle) {
 		$this->_rotateAngle = $angle;
 		return $this;
@@ -320,7 +345,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	}
 
 	public function setFilename($value) {
-		$this->_fileName = $value;
+		$this->_fileName  = $value;
 		$this->_imageSize = [];
 		$this->_svg = null;
 		return $this;

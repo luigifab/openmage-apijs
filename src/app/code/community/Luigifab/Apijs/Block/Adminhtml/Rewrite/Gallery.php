@@ -1,10 +1,10 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/11/08/2022
+ * Updated D/11/12/2022
  *
- * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/apijs
+ * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -23,13 +23,23 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 		$this->setModuleName('Mage_Adminhtml');
 	}
 
-	public function __construct() {
+	public function setTemplate($template) {
 
-		parent::__construct();
 		$product = Mage::registry('current_product');
-
 		if (!empty($product) && !empty($product->getId()) && Mage::getStoreConfigFlag('apijs/general/backend'))
-			$this->setTemplate('luigifab/apijs/gallery.phtml'); // catalog/product/helper/gallery.phtml
+			$template = 'luigifab/apijs/gallery.phtml'; // catalog/product/helper/gallery.phtml
+
+		return parent::setTemplate($template);
+	}
+
+	public function getScopeLabel(object $attribute) {
+
+		if ($attribute->isScopeGlobal())
+			return $this->__('[GLOBAL]');
+		if ($attribute->isScopeWebsite())
+			return $this->__('[WEBSITE]');
+
+		return $this->__('[STORE VIEW]');
 	}
 
 	public function getImages(bool $sortByStore) {
@@ -93,7 +103,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 					}
 				}
 
-				$storeValues[$code]  = $product->getResource()->getAttributeRawValue($productId, $code, $storeId);
+				$storeValues[$code] = $product->getResource()->getAttributeRawValue($productId, $code, $storeId);
 			}
 		}
 
@@ -106,17 +116,13 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 			}
 		}
 
-		return ['images' => $images, 'counts' => $counts, 'defaultValues' => $defaultValues, 'storeValues' => $storeValues, 'globalValues' => $globalValues];
-	}
-
-	public function getScopeLabel(object $attribute) {
-
-		if ($attribute->isScopeGlobal())
-			return $this->__('[GLOBAL]');
-		if ($attribute->isScopeWebsite())
-			return $this->__('[WEBSITE]');
-
-		return $this->__('[STORE VIEW]');
+		return [
+			'images'        => $images,
+			'counts'        => $counts,
+			'defaultValues' => $defaultValues,
+			'storeValues'   => $storeValues,
+			'globalValues'  => $globalValues,
+		];
 	}
 
 	public function isUseGlobal(object $image, string $field, string $value) {

@@ -1,10 +1,10 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated L/03/10/2022
+ * Updated V/09/12/2022
  *
- * Copyright 2008-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://www.luigifab.fr/openmage/apijs
+ * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
  * it under the terms of the GNU General Public License (GPL) as published
@@ -19,7 +19,11 @@
 
 class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
+	// singleton
 	protected $_usePython;
+	protected $_baseMediaPath;
+	protected $_baseWysiwygPath;
+	protected $_filesToRemove;
 
 
 	public function getVersion() {
@@ -114,7 +118,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 			$user = $action->getFullActionName();
 		// frontend
 		else
-			$user = sprintf('frontend %d', Mage::app()->getStore()->getData('code'));
+			$user = sprintf('frontend %s', Mage::app()->getStore()->getData('code'));
 
 		return $user;
 	}
