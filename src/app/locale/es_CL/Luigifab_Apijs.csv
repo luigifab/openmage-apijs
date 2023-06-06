@@ -36,6 +36,7 @@
 "clear cache","vaciar la caché"
 "Rename","Renombrar"
 "Label and Sort order","Etiqueta y Orden de clasificación"
+"Hide","Ocultar"
 "Save images","Grabar las imágenes"
 "The added or removed images are automatically saved.","Las imágenes añadidas o eliminadas se graban automáticamente."
 "Maximum images width and height is <a %s>%s x %s pixels</a>.","La anchura y la altura máximas de las imágenes son de <a %s>%s x %s píxeles</a>"

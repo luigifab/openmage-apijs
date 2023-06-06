@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated D/18/09/2022
+ * Updated V/19/05/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -47,7 +47,7 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 			foreach ($attributes as $attribute) {
 				$file = $category->getData($attribute->getData('attribute_code'));
 				if (!empty($file) && ($reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]) == 0))
-					$this->removeFiles($this->getCatalogCategoryImageDir(), $file); // pas uniquement dans le cache
+					$this->removeFiles($this->getCatalogCategoryImageDir(), $file); // everywhere (not only in cache dir)
 			}
 		}
 	}
@@ -71,13 +71,13 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 			foreach ($attributes as $attribute) {
 				$file = $product->getData($attribute->getData('attribute_code'));
 				if (!empty($file) && ($reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]) == 0))
-					$this->removeFiles($this->getCatalogProductImageDir(), basename($file)); // pas uniquement dans le cache
+					$this->removeFiles($this->getCatalogProductImageDir(), basename($file)); // everywhere (not only in cache dir)
 			}
 
 			foreach ($product->getMediaGallery('images') as $image) {
 				$file = $image['file'];
 				if (!empty($file) && ($reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]) == 0))
-					$this->removeFiles($this->getCatalogProductImageDir(), basename($file)); // pas uniquement dans le cache
+					$this->removeFiles($this->getCatalogProductImageDir(), basename($file)); // everywhere (not only in cache dir)
 			}
 		}
 	}

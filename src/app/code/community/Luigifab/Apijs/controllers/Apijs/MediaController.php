@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated J/08/12/2022
+ * Updated V/19/05/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -37,7 +37,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		ignore_user_abort(true);
 
 		try {
-			for ($i = 0; $i < ob_get_level(); $i++)
+			while (ob_get_level() > 0)
 				ob_end_clean();
 		}
 		catch (Throwable $t) { }
@@ -144,7 +144,6 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		$cpemg     = $database->getTableName('catalog_product_entity_media_gallery');
 		$cpemv     = $database->getTableName('catalog_product_entity_media_gallery_value');
 
-		$storage = Mage::getSingleton('cms/wysiwyg_images_storage');
 		$success = [];
 		$errors  = [];
 
@@ -156,6 +155,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				Mage::throwException('No files uploaded.');
 
 			// sauvegarde du ou des fichiers
+			$exts = Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image');
 			$keys = array_keys($_FILES['myimage']['name']);
 			foreach ($keys as $key) {
 
@@ -168,7 +168,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 						'size'     => $_FILES['myimage']['size'][$key],
 					]);
 
-					$uploader->setAllowedExtensions($storage->getAllowedExtensions('image'));
+					$uploader->setAllowedExtensions($exts);
 					$uploader->setAllowRenameFiles(true);
 					$uploader->setFilesDispersion(true);
 					$uploader->addValidateCallback(Mage_Core_Model_File_Validator_Image::NAME,
@@ -230,6 +230,9 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				}
 			}
 
+			// OM 21.1.0-rc3+
+			$_FILES = [];
+
 			// image par défaut (global uniquement)
 			$product = Mage::getModel('catalog/product')->load($productId);
 
@@ -289,6 +292,9 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				if (!empty($gallery['values']) && is_array($gallery['values'])) {
 					foreach ($gallery['values'] as $code => $value)
 						$product->setData($code, $value);
+				}
+				else {
+					$gallery['values'] = [];
 				}
 
 				// s'assure que l'image sélectionnée existe bien
@@ -372,7 +378,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 					// supprime enfin les fichiers s'ils ne sont pas utilisés dans d'autres produits
 					if ($reader->fetchOne('SELECT count(*) FROM '.$cpemg.' WHERE value = ?', [$filepath]) == 0)
-						$help->removeFiles($help->getCatalogProductImageDir(), $filename); // pas uniquement dans le cache
+						$help->removeFiles($help->getCatalogProductImageDir(), $filename); // everywhere (not only in cache dir)
 				}
 			}
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated V/23/12/2022
+ * Updated V/14/04/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -117,7 +117,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 							$tmp[] = 'catalog/product/cache/'.$attrCode;
 					}
 					else {
-						$storeIds = Mage::getResourceModel('core/store_collection')->getAllIds();
+						$storeIds = Mage::getResourceModel('core/store_collection')->getAllIds(); // with admin
 						foreach ($attrs as $attrCode => $attr) {
 							$tmp[] = 'catalog/product/cache/'.$attrCode;
 							foreach ($storeIds as $storeId)
@@ -159,6 +159,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		}
 
 		// watermark
+		// @todo store view
 		if (!array_key_exists('design/watermark/'.$attribute.'_image', $this->_cacheConfig)) {
 			$this->_cacheConfig['design/watermark/'.$attribute.'_image'] = Mage::getStoreConfig('design/watermark/'.$attribute.'_image');
 			$this->_cacheConfig['design/watermark/'.$attribute.'_imageOpacity'] = Mage::getStoreConfig('design/watermark/'.$attribute.'_imageOpacity');

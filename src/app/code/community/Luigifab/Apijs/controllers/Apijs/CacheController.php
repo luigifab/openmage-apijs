@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/07/01/2020
- * Updated V/18/06/2021
+ * Updated J/05/01/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -32,19 +32,20 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 
 	public function clearCacheAction() {
 
+		$help = Mage::helper('apijs');
 		$type = $this->getRequest()->getParam('type');
 
  		try {
 			if ($type == 'wysiwyg') {
 
 				// thumb
-				$dir = trim(Mage::helper('apijs')->getWysiwygImageDir(true, true));
+				$dir = trim($help->getWysiwygImageDir(true, true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);
 
 				// cache
-				$dir = trim(Mage::helper('apijs')->getWysiwygImageDir(true));
+				$dir = trim($help->getWysiwygImageDir(true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);
@@ -54,7 +55,7 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 			else if ($type == 'product') {
 
 				// cache
-				$dir = trim(Mage::helper('apijs')->getCatalogProductImageDir(true));
+				$dir = trim($help->getCatalogProductImageDir(true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);
@@ -64,7 +65,7 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 			else if ($type == 'category') {
 
 				// cache
-				$dir = trim(Mage::helper('apijs')->getCatalogCategoryImageDir(true));
+				$dir = trim($help->getCatalogCategoryImageDir(true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);

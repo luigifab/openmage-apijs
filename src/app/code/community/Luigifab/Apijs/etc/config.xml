@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated J/20/10/2022
+ * Updated L/24/04/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>6.9.3</version>
+			<version>6.9.4</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>

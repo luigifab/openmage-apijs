@@ -90,10 +90,12 @@ Files and directories
 - skin/frontend/base/default/fonts/luigifab/apijs/
 - skin/frontend/base/default/images/luigifab/apijs/
 - skin/frontend/base/default/js/luigifab/apijs/
+- shell/apijs-clean-images.php
 Depends (with php exec)
+- python3
 - python-pil
 - python-scour
-- also used: command -v, python3, nproc, find, xargs, du -hs, cut -f1, ps aux | grep
+- also used: command -v, nproc, find -delete, du -hs, cut -f1, ps aux | grep
 Notes
 - For the app, read: https://www.luigifab.fr/apijs
 - For the Redmine plugin, read: https://www.luigifab.fr/redmine/apijs

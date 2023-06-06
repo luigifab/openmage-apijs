@@ -1,9 +1,10 @@
 <?php
 /**
  * Created S/09/10/2021
- * Updated S/09/10/2021
+ * Updated V/28/04/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -33,6 +34,15 @@ class Luigifab_Apijs_Model_Rewrite_Storage extends Mage_Cms_Model_Wysiwyg_Images
 	}
 
 	public function getAllowedExtensions($type = null) {
-		return (empty($type) && Mage::getStoreConfigFlag('apijs/general/backend')) ? [] : parent::getAllowedExtensions($type);
+
+		$exts = parent::getAllowedExtensions($type);
+
+		if (!Mage::getStoreConfigFlag('apijs/general/python')) {
+			$exts = array_combine($exts, $exts);
+			unset($exts['webp'], $exts['svg']);
+			$exts = array_values($exts);
+		}
+
+		return $exts;
 	}
 }

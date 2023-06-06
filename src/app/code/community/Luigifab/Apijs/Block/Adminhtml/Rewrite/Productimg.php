@@ -1,9 +1,10 @@
 <?php
 /**
  * Created J/27/05/2021
- * Updated J/23/12/2021
+ * Updated V/28/04/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -21,6 +22,10 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Productimg extends Mage_Adminhtml_B
 
 	protected function _construct() {
 		$this->setModuleName('Mage_Adminhtml');
+	}
+
+	public function getAllowedExtensions() {
+		return Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image');
 	}
 
 	public function getElementHtml() {

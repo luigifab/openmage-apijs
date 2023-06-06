@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/05/09/2019
- * Updated L/26/12/2022
+ * Updated V/03/02/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -31,12 +31,13 @@ ignore_user_abort(true);
 set_time_limit(0);
 
 try {
-	$fields = $this->getConnection()->fetchAll('SHOW COLUMNS FROM '.$this->getTable('catalog_product_entity_media_gallery_value'));
+	$table  = $this->getTable('catalog_product_entity_media_gallery_value');
+	$fields = $this->getConnection()->fetchAll('SHOW COLUMNS FROM '.$table);
 
 	foreach ($fields as $field) {
 		if ((empty($field['Null']) || ($field['Null'] != 'YES')) && (mb_stripos($field['Field'], '_id') === false)) {
-			$this->run('ALTER TABLE '.$this->getTable('catalog_product_entity_media_gallery_value').
-				' MODIFY COLUMN '.$field['Field'].' '.$field['Type'].' NULL DEFAULT '.(($field['Default'] != '') ? $field['Default'] : 'NULL'));
+			$default = ($field['Default'] != '') ? $field['Default'] : 'NULL';
+			$this->run('ALTER TABLE '.$table.' MODIFY COLUMN '.$field['Field'].' '.$field['Type'].' NULL DEFAULT '.$default);
 		}
 	}
 }

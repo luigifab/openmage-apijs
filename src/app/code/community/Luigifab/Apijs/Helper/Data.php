@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated V/09/12/2022
+ * Updated J/25/05/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -21,9 +21,10 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 	// singleton
 	protected $_usePython;
+	protected $_baseMediaDir;
 	protected $_baseMediaPath;
 	protected $_baseWysiwygPath;
-	protected $_filesToRemove;
+	protected $_filesToRemove = [];
 
 
 	public function getVersion() {
@@ -70,7 +71,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 	public function getNumber($value, array $options = []) {
-		$options['locale'] = Mage::getSingleton('core/translate')->getLocale();
+		$options['locale'] = Mage::getSingleton('core/locale')->getLocaleCode();
 		return Zend_Locale_Format::toNumber($value, $options);
 	}
 
@@ -124,16 +125,16 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 
+	public function getCatalogCategoryImageDir(bool $cache = false) {
+		return str_replace('/product/', '/category/', $this->getCatalogProductImageDir($cache));
+	}
+
 	public function getCatalogProductImageDir(bool $cache = false) {
 
 		if (empty($this->_baseMediaPath))
 			$this->_baseMediaPath = rtrim(Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath(), '/');
 
 		return $this->_baseMediaPath.($cache ? '/cache/' : '/');
-	}
-
-	public function getCatalogCategoryImageDir(bool $cache = false) {
-		return str_replace('/product/', '/category/', $this->getCatalogProductImageDir($cache));
 	}
 
 	public function getWysiwygImageDir(bool $cache = false, bool $old = false) {
@@ -269,7 +270,7 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 				'config.xml one_max_size' => (int) Mage::getStoreConfig('apijs/general/one_max_size'),
 				'config.xml all_max_size' => (int) Mage::getStoreConfig('apijs/general/all_max_size'),
 				'php upload_max_filesize' => (int) ini_get('upload_max_filesize'),
-				'php post_max_size'       => (int) ini_get('post_max_size')
+				'php post_max_size'       => (int) ini_get('post_max_size'),
 			];
 		}
 
@@ -313,61 +314,85 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	}
 
 
-	protected function searchAndRemoveFiles(string $dir, string $file) {
+	protected function searchAndRemoveFiles(string $directory, string $file, array $filesCache = []) {
 
-		if (mb_stripos($file, '/') === false)
-			$cmd = 'find '.escapeshellarg($dir).' -name '.escapeshellarg($file).' | xargs rm';
-		else
-			$cmd = 'find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.trim($file, '/')).' | xargs rm';
+		// supprime les fichiers
+		if (!empty($filesCache)) {
 
-		Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
-		exec($cmd);
-
-		// supprime aussi les éventuels fichiers webp, uniquement dans le dossier cache
-		$webp = str_ireplace(['.jpg', '.jpeg', '.png', '.gif'], '.webp', $file);
-		if ($file != $webp) {
-
-			if (mb_stripos($dir, '/cache') === false)
-				$dir .= '/cache';
-
-			if (mb_stripos($webp, '/') === false)
-				$cmd = 'find '.escapeshellarg($dir).' -name '.escapeshellarg($webp).' | xargs rm';
+			$file = '/'.trim($file, '/');
+			foreach ($filesCache as $fileCache) {
+				if ((mb_stripos($fileCache, $file) !== false) && (mb_stripos($fileCache, $directory) !== false) && is_file($fileCache)) {
+					echo '  ',$fileCache,"\n";
+					unlink($fileCache);
+				}
+			}
+		}
+		else {
+			if (mb_stripos($file, '/') === false)
+				$cmd = 'find '.escapeshellarg($directory).' -name '.escapeshellarg($file).' -type f -delete';
 			else
-				$cmd = 'find '.escapeshellarg($dir).' -wholename '.escapeshellarg('*/'.trim($webp, '/')).' | xargs rm';
+				$cmd = 'find '.escapeshellarg($directory).' -wholename '.escapeshellarg('*/'.trim($file, '/')).' -type f -delete';
 
 			Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
 			exec($cmd);
 		}
+
+		// supprime aussi les éventuels fichiers webp
+		// mais uniquement dans le dossier cache
+		$webp = str_ireplace(['.jpg', '.jpeg', '.png', '.gif'], '.webp', $file);
+		if ($file != $webp) {
+
+			if (mb_stripos($directory, '/cache') === false)
+				$directory .= '/cache';
+
+			if (!empty($filesCache)) {
+
+				foreach ($filesCache as $fileCache) {
+					if ((mb_stripos($fileCache, $webp) !== false) && (mb_stripos($fileCache, $directory) !== false) && is_file($fileCache)) {
+						echo '  ',$fileCache,"\n";
+						unlink($fileCache);
+					}
+				}
+			}
+			else {
+				if (mb_stripos($webp, '/') === false)
+					$cmd = 'find '.escapeshellarg($directory).' -name '.escapeshellarg($webp).' -type f -delete';
+				else
+					$cmd = 'find '.escapeshellarg($directory).' -wholename '.escapeshellarg('*/'.trim($webp, '/')).' -type f -delete';
+
+				Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
+				exec($cmd);
+			}
+		}
 	}
 
-	public function removeFiles(string $dir, string $file, bool $now = false) {
+	public function removeFiles(string $directory, string $file, bool $now = false, array $filesCache = []) {
 
-		$dir = realpath($dir);
+		if (empty($this->_baseMediaDir))
+			$this->_baseMediaDir = realpath(Mage::getBaseDir('media'));
+
+		$directory = empty($filesCache) ? realpath($directory) : $directory;
 
 		// recherche et supprime tous les fichiers avec la commande find
 		// si le nom du fichier contient des caractères simples et qu'on est bien dans le dossier media
-		if (!empty($dir) && Mage::getStoreConfigFlag('apijs/general/remove_cache') &&
-		    (preg_match('#[\w\-]+\.\w+$#', $file) === 1) &&
-		    (mb_stripos($dir, realpath(Mage::getBaseDir('media'))) === 0)) {
-
-			if (empty($this->_filesToRemove))
-				$this->_filesToRemove = [];
-
-			if (is_dir($dir)) {
-				if ($now)
-					$this->searchAndRemoveFiles($dir, $file);
-				else
-					$this->_filesToRemove[] = [$dir => $file];
-			}
+		if (
+			!empty($directory) && (!empty($filesCache) || is_dir($directory)) &&
+			(mb_stripos($directory, $this->_baseMediaDir) === 0) &&
+			(preg_match('#[\w\-]+\.\w+$#', $file) === 1)
+		) {
+			if ($now)
+				$this->searchAndRemoveFiles($directory, $file, $filesCache);
+			else
+				$this->_filesToRemove[] = [$directory => $file];
 		}
 	}
 
 	public function __destruct() {
 
 		if (!empty($this->_filesToRemove)) {
-			foreach ($this->_filesToRemove as $data) {
-				foreach ($data as $dir => $file)
-					$this->searchAndRemoveFiles($dir, $file);
+			foreach ($this->_filesToRemove as $files) {
+				foreach ($files as $directory => $file)
+					$this->searchAndRemoveFiles($directory, $file);
 			}
 		}
 	}

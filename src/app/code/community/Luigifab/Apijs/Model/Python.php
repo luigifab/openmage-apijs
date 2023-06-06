@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated J/17/11/2022
+ * Updated J/09/03/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -141,7 +141,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 			exec('ps aux | grep Apijs/lib/image.py', $runs);
 			$core = ceil($core * 1.5);
-			while ((count($runs) - 1) >= $core) {
+			while (count($runs) >= $core) {
 				usleep(90000); // 0.09 s
 				$runs = [];
 				exec('ps aux | grep Apijs/lib/image.py', $runs);
