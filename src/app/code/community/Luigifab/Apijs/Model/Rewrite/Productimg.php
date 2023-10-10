@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/27/05/2021
- * Updated V/19/05/2023
+ * Updated J/21/09/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -20,7 +20,7 @@
 
 class Luigifab_Apijs_Model_Rewrite_Productimg extends Mage_Catalog_Model_Resource_Product_Attribute_Backend_Image {
 
-	public function getAllowedExtensions() {
+	public function getAllowedExtensions():array {
 		// PR 3301
 		return Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image');
 	}

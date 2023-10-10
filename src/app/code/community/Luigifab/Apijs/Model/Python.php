@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated J/09/03/2023
+ * Updated J/05/10/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -128,8 +128,14 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 		try {
 			$this->initCommands();
-			$core = max(1, $this->_core - 2);
-			while (count($this->_pids) >= $core) {
+
+			// leaves 2 cores free, but because $runs include grep check, we add 2 for $maxc
+			// [] => 18:14 0:00 /usr/bin/python3 ...
+			// [] => 18:14 0:00 sh -c ps aux | grep Apijs/lib/image.py
+			// [] => 18:14 0:00 grep Apijs/lib/image.py
+			$maxc = 2 + max(1, $this->_core - 2);
+
+			while (count($this->_pids) >= $maxc) {
 				foreach ($this->_pids as $key => $pid) {
 					if (file_exists('/proc/'.$pid))
 						clearstatcache('/proc/'.$pid);
@@ -140,8 +146,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 			}
 
 			exec('ps aux | grep Apijs/lib/image.py', $runs);
-			$core = ceil($core * 1.5);
-			while (count($runs) >= $core) {
+			while (count($runs) >= $maxc) {
 				usleep(90000); // 0.09 s
 				$runs = [];
 				exec('ps aux | grep Apijs/lib/image.py', $runs);

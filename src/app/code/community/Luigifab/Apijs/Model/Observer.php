@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated V/19/05/2023
+ * Updated S/07/10/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -86,9 +86,10 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 	// EVENT controller_action_predispatch_adminhtml_catalog_product_save (adminhtml)
 	public function updatePostForGallery(Varien_Event_Observer $observer) {
 
-		$post      = $observer->getData('controller_action')->getRequest()->getPost();
-		$productId = $observer->getData('controller_action')->getRequest()->getParam('id', 0);
-		$storeId   = $observer->getData('controller_action')->getRequest()->getParam('store', 0);
+		$request   = $observer->getData('controller_action')->getRequest();
+		$post      = $request->getPost();
+		$productId = $request->getParam('id', 0);
+		$storeId   = $request->getParam('store', 0);
 
 		if (!empty($post['apijs'])) {
 
@@ -97,7 +98,7 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 			$fields     = $product->getResource()->getAttribute('media_gallery')->getBackend()->getAllColumns();
 			$gallery    = [];
 
-			// simule ce que fait le js du core, quel bordel
+			// fait ce que fait le js du core, quel bordel
 			foreach ($post['apijs'] as $imageId => $image) {
 
 				if (!is_array($image) || !array_key_exists('file', $image)) {
@@ -136,10 +137,13 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 							if (!empty($value) && ($field['Field'] == 'label')) {
 								$values[$field['Field']] = stripslashes($value);
 								$values[$field['Field'].'_default'] = stripslashes($value);
+								$values[$field['Field'].'_use_default'] = ($value == null); // PR 2481 // null when $$ when checked
 							}
 							else {
 								$values[$field['Field']] = $value;
 								$values[$field['Field'].'_default'] = $value;
+								if ($field['Field'] == 'position')
+									$values[$field['Field'].'_use_default'] = ($value == null); // null when $$ when checked
 							}
 						}
 					}

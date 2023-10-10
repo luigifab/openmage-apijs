@@ -1,7 +1,7 @@
 <?php
 /**
  * Forked from https://gist.github.com/peterjaap/5547654
- * Updated J/25/05/2023
+ * Updated J/21/09/2023
  *
  * fdupes is required
  *
@@ -81,10 +81,15 @@ if ($cleanUpDuplicates) {
 	echo '=== clean up duplicates images ===',"\n";
 
 	$output = exec('find '.$directory.' -type d -exec fdupes -n {} \;');
-	$before = substr(exec('find '.$directory.' -type f | wc -l'), 0, -1);
+	$before = substr(exec('find '.$directory.' -type f | wc -l'), 0, -1); // not mb_substr
 
 	// count files for difference calculation
-	$total = exec('du -h '.$directory); $total = explode("\n",$total); array_pop($total); $total = array_pop($total); $total = explode("\t",$total); $total = (int) array_shift($total);
+	$total = exec('du -h '.$directory);
+	$total = explode("\n",$total);
+	array_pop($total);
+	$total = array_pop($total);
+	$total = explode("\t",$total);
+	$total = (int) array_shift($total);
 	$totalBefore = $total;
 	$chunks = explode("\n\n", $output);
 
@@ -121,8 +126,13 @@ if ($cleanUpDuplicates) {
     }
 
 	// calculate difference
-	$after = substr(exec('find '.$directory.' -type f | wc -l'), 0, -1);
-	$total = exec('du -h '.$directory); $total = explode("\n",$total); array_pop($total); $total = array_pop($total); $total = explode("\t",$total); $total = (int) array_shift($total);
+	$after = substr(exec('find '.$directory.' -type f | wc -l'), 0, -1); // not mb_substr
+	$total = exec('du -h '.$directory);
+	$total = explode("\n",$total);
+	array_pop($total);
+	$total = array_pop($total);
+	$total = explode("\t",$total);
+	$total = (int) array_shift($total);
 	$totalAfter = $total;
 
 	echo '  in directory ',$directory,' the script has deleted ',($before - $after),' files, files before: ',$totalBefore,' files after:',$totalAfter,"\n";

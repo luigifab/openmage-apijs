@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated V/14/04/2023
+ * Updated J/21/09/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -133,9 +133,9 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 						// ajoute l'id pour éviter une boucle infini
 						foreach (explode('/', $full) as $word)
-							$short .= substr($word, 0, $idx);
+							$short .= substr($word, 0, $idx); // not mb_substr
 						while (in_array('/media/'.$short.'/', $this->_cacheConfig['list_replace']))
-							$short .= substr($word.$key, ++$idx, 1);
+							$short .= substr($word.$key, ++$idx, 1); // not mb_substr
 
 						// $dir $short => /var/www/xyz/web/media wc
 						// $dir $full  => /var/www/xyz/web/media wysiwyg/cache

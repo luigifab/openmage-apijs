@@ -1,7 +1,7 @@
 <?php
 /**
  * Created M/10/09/2019
- * Updated V/19/05/2023
+ * Updated J/21/09/2023
  *
  * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -59,7 +59,7 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 			$cache = trim('wysiwyg/'.str_replace([$base, Mage::getBaseDir('media').'/', '//'], ['', '', '/'], $path), '/');
 
 			// s'assure que le dossier à supprimer est bien dans le dossier media/wysiwyg
-			if (!empty($path) && (stripos($path, $base) === 0) && (trim($path, '/') != trim($base, '/'))) {
+			if (!empty($path) && (mb_stripos($path, $base) === 0) && (trim($path, '/') != trim($base, '/'))) {
 
 				// supprime les images en cache
 				foreach ($files as $file) {
@@ -94,7 +94,7 @@ class Luigifab_Apijs_Apijs_WysiwygController extends Mage_Adminhtml_Cms_Wysiwyg_
 			$cache = trim('wysiwyg/'.str_replace([$base, Mage::getBaseDir('media').'/', '//'], ['', '', '/'], $path), '/');
 
 			// s'assure que les fichiers à supprimer sont bien dans le dossier media/wysiwyg
-			if (!empty($path) && (stripos($path, $base) === 0)) {
+			if (!empty($path) && (mb_stripos($path, $base) === 0)) {
 
 				foreach ($files as $file) {
 
