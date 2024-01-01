@@ -1,9 +1,9 @@
 <?php
 /**
  * Created J/12/09/2019
- * Updated J/21/09/2023
+ * Updated S/30/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -39,7 +39,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		$this->_usePython = Mage::getStoreConfigFlag('apijs/general/python');
 	}
 
-	public function init($object, $attribute, $path = null, $fixed = true, $webp = false) {
+	public function init($object, $attribute, $path = null, bool $fixed = true, bool $webp = false) {
 
 		$this->_reset();
 		$this->_webp = $webp;
@@ -87,6 +87,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 		$model = clone $this->_modelImg;
 		$model->setDestinationSubdir($attribute);
+
 		$attribute = $model->getDestinationSubdir();
 		$this->_setModel($model);
 
@@ -95,7 +96,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 
 			$this->_processor = Mage::getSingleton('apijs/python');
 
-			$this->_cacheConfig = Mage::app()->useCache('config') ? @json_decode(Mage::app()->loadCache('apijs_config'), true) : null;
+			if (Mage::app()->useCache('config')) {
+				$this->_cacheConfig = Mage::app()->loadCache('apijs_config');
+				$this->_cacheConfig = empty($this->_cacheConfig) ? null : @json_decode($this->_cacheConfig, true);
+			}
+
 			if (empty($this->_cacheConfig) || !is_array($this->_cacheConfig)) {
 
 				$this->_cacheConfig = [
@@ -150,7 +155,11 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 				}
 			}
 
-			$this->_cacheUrls = Mage::app()->useCache('block_html') ? @json_decode(Mage::app()->loadCache('apijs_urls'), true) : null;
+			if (Mage::app()->useCache('block_html')) {
+				$this->_cacheUrls = Mage::app()->loadCache('apijs_urls');
+				$this->_cacheUrls = empty($this->_cacheUrls) ? null : @json_decode($this->_cacheUrls, true);
+			}
+
 			if (empty($this->_cacheUrls) || !is_array($this->_cacheUrls)) {
 				$this->_cacheUrls = [
 					'date' => date('c'),
@@ -159,7 +168,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		}
 
 		// watermark
-		// @todo store view
+		// @todo by store view
 		if (!array_key_exists('design/watermark/'.$attribute.'_image', $this->_cacheConfig)) {
 			$this->_cacheConfig['design/watermark/'.$attribute.'_image'] = Mage::getStoreConfig('design/watermark/'.$attribute.'_image');
 			$this->_cacheConfig['design/watermark/'.$attribute.'_imageOpacity'] = Mage::getStoreConfig('design/watermark/'.$attribute.'_imageOpacity');
@@ -173,7 +182,7 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 			$this->setWatermarkSize($this->_cacheConfig['design/watermark/'.$attribute.'_size']);
 		}
 
-		$this->_svg = !empty($path) && (mb_substr($path, -4) == '.svg');
+		$this->_svg = !empty($path) && str_ends_with($path, '.svg');
 		$this->_fixed = $fixed;
 		$this->_imageFile = $path;
 
@@ -218,8 +227,14 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 		if (!$this->_usePython)
 			return parent::validateUploadFile($path);
 
-		// @todo
-		return in_array(mime_content_type($path), ['image/svg', 'image/svg+xml', 'image/webp']) ? true : parent::validateUploadFile($path);
+		$fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+		if (!in_array(finfo_file($fileInfo, $path), Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image', true))) {
+			finfo_close($fileInfo);
+			return false;
+		}
+		finfo_close($fileInfo);
+
+		return parent::validateUploadFile($path);
 	}
 
 	public function setBaseFile() {
@@ -282,10 +297,6 @@ class Luigifab_Apijs_Helper_Rewrite_Image extends Mage_Catalog_Helper_Image {
 			$url = str_replace($this->_cacheConfig['list_search'], $this->_cacheConfig['list_replace'], $url);
 
 		return $url;
-	}
-
-	public function hasWebp() {
-		return $this->_usePython;
 	}
 
 	public function __toString() {

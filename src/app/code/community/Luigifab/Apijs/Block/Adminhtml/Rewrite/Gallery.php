@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/19/05/2023
+ * Updated S/02/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -52,11 +52,11 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 		$defaultValues = [];
 		$globalValues  = [];
 		$storeValues   = [];
+		$images        = [];
+		$counts        = [];
 
 		$values = $product->getMediaGallery('images');
 		$values = empty($values) ? [] : $values;
-		$images = [];
-		$counts = [];
 
 		foreach ($values as $image) {
 

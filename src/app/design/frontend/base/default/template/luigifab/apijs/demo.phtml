@@ -1,9 +1,9 @@
 <?php
 /**
  * Created J/01/12/2011
- * Updated L/24/05/2021
+ * Updated L/13/11/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,9 +20,12 @@
 
 <?php if (Mage::getStoreConfigFlag('apijs/general/frontend')): ?>
 	<div style="margin:1em 0; padding:0.8em; border:1px solid #C4C6C8; background-color:#FAF7EE;">
-		<?php echo sprintf('<p class="box">%s %s <span class="right"><a href="https://www.%s">%3$s</a> | <a href="https://www.%4$s">%4$s</a> | ⚠ IPv6</span></p>',
-			'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'luigifab.fr/openmage/apijs', 'luigifab.fr/apijs') ?>
-
+		<p style="margin-bottom:0.5em;">
+			Luigifab/Apijs <?php echo $this->helper('apijs')->getVersion() ?>
+			<span style="float:right;">
+				<a href="https://github.com/luigifab/openmage-apijs">github.com</a> | <a href="https://www.luigifab.fr/openmage/apijs">luigifab.fr/openmage/apijs</a> - <a href="https://www.luigifab.fr/apijs">luigifab.fr/apijs</a> - ⚠ IPv6
+			</span>
+		</p>
 		<button type="button" class="button" onclick="apijs.dialog.dialogInformation('<?php echo $this->__('PHP manual') ?>','<?php echo addslashes($this->__('It is important to note that just because the mail was accepted for delivery, it doesn\'t mean the mail will actually reach the intended destination.')) ?>');"><span><?php echo $this->__('Example %d', 1) ?></span></button>
 		<button type="button" class="button" onclick="apijs.dialog.dialogInformation('<?php echo $this->__('Surprise!') ?>','[p]<?php echo addslashes($this->__('You are watching this video without proprietary extension thanks to the new [em]video[/em] tag included in the [strong]HTML 5[/strong] language.')) ?>[/p][p]<?php echo addslashes($this->__('Website: %s', '[a href=\'https://www.luigifab.fr/\' class=\'popup\']www.luigifab.fr[/a]')) ?>[/p]');"><span><?php echo $this->__('Example %d', 2) ?></span></button>
 	</div>

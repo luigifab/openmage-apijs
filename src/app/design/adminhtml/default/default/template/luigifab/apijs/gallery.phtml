@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated M/30/08/2022
+ * Updated D/24/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -18,10 +18,10 @@
  * GNU General Public License (GPL) for more details.
  */
 
+$helper     = $this->helper('apijs');
 $product    = Mage::registry('current_product');
 $attributes = $product->getMediaAttributes();
 
-$help = $this->helper('apijs');
 $date = Mage::getSingleton('core/locale')->date();
 $base = Mage::getSingleton('catalog/product_media_config')->getBaseMediaUrl();
 $pid  = $product->getId();
@@ -33,7 +33,7 @@ if ($sortByStore)
 	$stores = Mage::getResourceModel('core/store_collection');
 
 $data    = $this->getImages($sortByStore);
-$exclude = empty($sid) ? 'false' : '\''.$help->escapeEntities($this->__('Automatically exclude these images from other store views'), true).'\'';
+$exclude = empty($sid) ? 'false' : '\''.$helper->escapeEntities($this->__('Automatically exclude these images from other store views'), true).'\'';
 
 if (!empty($this->getRequest()->getParam('debug')))
 	echo '<pre>',print_r($data, true),'</pre>';
@@ -98,7 +98,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 					<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 					<?php if ($attribute->getIsCheckbox() === true): ?>
 						<th class="gallery_<?php echo $code ?>">
-							<button type="button" class="slink filter" onclick="apijsOpenMage.filter(this);" data-reverse="1" data-state="0" data-text="<?php echo $help->escapeEntities($this->__('Show'), true) ?>">
+							<button type="button" class="slink filter" onclick="apijsOpenMage.filter(this);" data-reverse="1" data-state="0" data-text="<?php echo $helper->escapeEntities($this->__('Show'), true) ?>">
 								<?php echo $this->__('Hide') ?>
 							</button>
 						</th>
@@ -107,7 +107,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 					<?php endif ?>
 				<?php endforeach ?>
 				<th class="gallery_disabled">
-					<button type="button" class="slink filter" onclick="apijsOpenMage.filter(this);" data-state="0" data-text="<?php echo $help->escapeEntities($this->__('Show'), true) ?>">
+					<button type="button" class="slink filter" onclick="apijsOpenMage.filter(this);" data-state="0" data-text="<?php echo $helper->escapeEntities($this->__('Show'), true) ?>">
 						<?php echo $this->__('Hide') ?>
 					</button>
 				</th>
@@ -120,14 +120,14 @@ if (!empty($this->getRequest()->getParam('debug')))
 					<button type="button" class="scalable save" onclick="apijsOpenMage.actionSave('<?php echo $this->getSaveUrl() ?>');">
 						<span><span><?php echo $this->__('Save images') ?></span></span>
 					</button>
-					<button type="button" class="scalable add" onclick="apijsOpenMage.sendFiles(this.textContent, '<?php echo $this->getAddUrl() ?>', <?php echo $help->getMaxSizes() ?>, '<?php echo implode(',', Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image')) ?>', <?php echo $exclude ?>);">
+					<button type="button" class="scalable add" onclick="apijsOpenMage.sendFiles(this.textContent, '<?php echo $this->getAddUrl() ?>', <?php echo $helper->getMaxSizes() ?>, '<?php echo implode(',', Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image')) ?>', <?php echo $exclude ?>);">
 						<span><span><?php echo $this->__('Add one or multiple files') ?></span></span>
 					</button>
 					<?php $maxWidth = (int) Mage::getStoreConfig('catalog/product_image/max_dimension') ?>
 					<p><?php echo $this->__('The added or removed images are automatically saved.') ?>
 					<br /><?php echo $this->__('Maximum images width and height is <a %s>%s x %s pixels</a>.',
 						'href="'.$this->getUrl('*/system_config/edit', ['section' => 'catalog']).'"',
-						$help->getNumber($maxWidth), $help->getNumber($maxWidth)) ?></p>
+						$helper->getNumber($maxWidth), $helper->getNumber($maxWidth)) ?></p>
 				</td>
 			</tr>
 		</tfoot>
@@ -186,9 +186,9 @@ if (!empty($this->getRequest()->getParam('debug')))
 			<?php foreach ($data['images'] as $image):
 				$iid   = $image->getData('value_id');
 				$path  = $image->getData('file');
-				$file  = $help->getCatalogProductImageDir().$path;
-				$label = $help->escapeEntities($image->getData('label'), true);
-				$name  = $help->escapeEntities(basename($file), true);
+				$file  = $helper->getCatalogProductImageDir().$path;
+				$label = $helper->escapeEntities($image->getData('label'), true);
+				$name  = $helper->escapeEntities(basename($file), true);
 				$grp   = $image->getData('apijs_group');
 			?>
 				<?php if ($sortByStore && ($grp != $prev)): ?>
@@ -206,7 +206,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 								if ($cnt <= 1)
 									echo $this->__('%d image', $cnt);  // 0-1
 								else if ($cnt <= 4)
-									echo  $help->_('%d images', $cnt); // 2-4
+									echo  $helper->_('%d images', $cnt); // 2-4
 								else
 									echo $this->__('%d images', $cnt); // 5+
 							?>
@@ -238,14 +238,14 @@ if (!empty($this->getRequest()->getParam('debug')))
 					<?php $prev = $grp ?>
 				<?php endif ?>
 				<tr id="attachmentId<?php echo $iid ?>" <?php echo ($sortByStore && ($sid > 0) && ($grp != ($sid * 100))) ? 'style="display:none;"' : '' ?>>
-					<td class="img hgt" title="<?php echo $help->escapeEntities($path, true) ?>">
+					<td class="img hgt" title="<?php echo $helper->escapeEntities($path, true) ?>">
 						<?php if (is_file($file)):
 							// <a> <img src srcset> <input>
 							// l'image du lien = une image redimensionnée en cache
 							// l'image de l'image = une miniature en cache
 						?>
-							<a href="<?php echo $help->resizeImage($product, 'image', $path, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" id="slideshow.0.<?php echo $i++ ?>">
-								<img src="<?php echo $help->resizeImage($product, 'thumbnail', $path, 200, 150, true) ?>" srcset="<?php echo $help->resizeImage($product, 'thumbnail', $path, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $label ?>" />
+							<a href="<?php echo $helper->resizeImage($product, 'image', $path, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" id="slideshow.0.<?php echo $i++ ?>">
+								<img src="<?php echo $helper->resizeImage($product, 'thumbnail', $path, 200, 150, true) ?>" srcset="<?php echo $helper->resizeImage($product, 'thumbnail', $path, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $label ?>" />
 								<input type="hidden" value="<?php echo $name ?>|false|<?php echo $label ?>" />
 							</a>
 						<?php else: ?>
@@ -270,7 +270,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 									</label>
 									<label>
 										<input type="text" name="apijs[<?php echo $iid ?>][label]" value="<?php
-											echo $help->escapeEntities(($image->getData('label') != $image->getData('label_default')) ?
+											echo $helper->escapeEntities(($image->getData('label') != $image->getData('label_default')) ?
 												$image->getData('label') : $image->getData('label_default'), true);
 										?>" <?php
 											echo $this->isUseGlobal($image, 'label', 'disabled');
@@ -308,11 +308,11 @@ if (!empty($this->getRequest()->getParam('debug')))
 											<?php echo $attribute->getData('frontend_label') ?> / <?php echo trim($this->__('[GLOBAL]'), '[]') ?>
 											<?php if ($attribute->getInputType() == 'number'): ?>
 												<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
-													echo $help->escapeEntities($image->getData($code), true);
+													echo $helper->escapeEntities($image->getData($code), true);
 												?>" class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 											<?php else: ?>
 												<input type="text" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
-													echo $help->escapeEntities($image->getData($code), true);
+													echo $helper->escapeEntities($image->getData($code), true);
 												?>" class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 											<?php endif ?>
 										</label>
@@ -326,13 +326,13 @@ if (!empty($this->getRequest()->getParam('debug')))
 										<label>
 											<?php if ($attribute->getInputType() == 'number'): ?>
 												<input type="number" min="0" step="1" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
-													echo $help->escapeEntities(($image->getData($code) != $image->getData($code.'_default')) ? $image->getData($code) : $image->getData($code.'_default'), true);
+													echo $helper->escapeEntities(($image->getData($code) != $image->getData($code.'_default')) ? $image->getData($code) : $image->getData($code.'_default'), true);
 												?>" <?php
 													echo $this->isUseGlobal($image, $code, 'disabled');
 												?> class="input-text val" id="inpt-<?php echo ++$hids ?>" />
 											<?php else: ?>
 												<input type="text" name="apijs[<?php echo $iid ?>][<?php echo $code ?>]" value="<?php
-													echo $help->escapeEntities(($image->getData($code) != $image->getData($code.'_default')) ? $image->getData($code) : $image->getData($code.'_default'), true);
+													echo $helper->escapeEntities(($image->getData($code) != $image->getData($code.'_default')) ? $image->getData($code) : $image->getData($code.'_default'), true);
 												?>" <?php
 													echo $this->isUseGlobal($image, $code, 'disabled');
 												?> class="input-text val" id="inpt-<?php echo ++$hids ?>" />
@@ -436,14 +436,14 @@ if (!empty($this->getRequest()->getParam('debug')))
 						<br /><button type="button" class="slink remove" onclick="apijsOpenMage.removeAttachment('<?php echo $this->getRemoveUrl($iid, basename($path)) ?>'); return false;"><?php echo $this->__('Remove') ?></button>
 
 						<div style="margin-top:1em;"><?php if (is_file($file)) {
-							if (mb_substr($file, -4) == '.svg') {
-								echo $help->getNumberToHumanSize(filesize($file)),
+							if (str_ends_with($file, '.svg')) {
+								echo $helper->getNumberToHumanSize(filesize($file)),
 									'<br />',$date->setTimestamp(filemtime($file))->toString();
 							}
 							else {
 								$sizes = (array) getimagesize($file); // (yes)
-								echo $help->getNumberToHumanSize(filesize($file)),
-									'<br />',$help->getNumber($sizes[0]),' x ',$help->getNumber($sizes[1]),
+								echo $helper->getNumberToHumanSize(filesize($file)),
+									'<br />',$helper->getNumber($sizes[0]),' x ',$helper->getNumber($sizes[1]),
 									'<br />',$date->setTimestamp(filemtime($file))->toString();
 							}
 						} ?></div>

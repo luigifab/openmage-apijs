@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/19/03/2016
- * Updated J/05/08/2021
+ * Updated D/24/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -16,14 +16,13 @@
  * merchantability or fitness for a particular purpose. See the
  * GNU General Public License (GPL) for more details.
  */
-?>
 
-<?php if (Mage::getStoreConfigFlag('apijs/general/browser')):
+if (Mage::getStoreConfigFlag('apijs/general/browser')) {
 
 	$data = $this->getBrowserData();
 
 	if (!empty($data['browser']) && !empty($data['version'])) {
-		$data['version'] = empty($this->getRequest()->getParam('browser')) ? (float) $data['version'] : 1;
+		$data['version'] = empty($_GET['browser']) ? (float) $data['version'] : 1;
 		if (($data['browser'] == 'MSIE') && ($data['version'] < 15)) {
 			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Internet Explorer', $data['version'], 'href="https://www.microsoft.com/windows/microsoft-edge"');
 		}
@@ -42,9 +41,9 @@
 		else if (($data['browser'] == 'Safari') && ($data['version'] < 9)) {
 			$text = $this->__('<strong>Warning:</strong> your browser <strong>%s %s</strong> is outdated, please <a %s>upgrade your browser</a>.', 'Safari', $data['version'], 'href="https://www.apple.com/safari/"');
 		}
+
+		if (!empty($text)) {
+			echo '<div class="notification-global notification-global-error notification-global-apijs" id="oldBrowser">',$text,'</div>';
+		}
 	}
-?>
-	<?php if (!empty($text)): ?>
-		<div class="notification-global notification-global-error notification-global-apijs" id="oldBrowser"><?php echo $text ?></div>
-	<?php endif ?>
-<?php endif ?>
+}

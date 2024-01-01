@@ -1,9 +1,10 @@
 <?php
 /**
  * Created L/26/10/2015
- * Updated J/23/12/2021
+ * Updated J/19/10/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -23,6 +24,17 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Configimg extends Mage_Adminhtml_Bl
 		$this->setModuleName('Mage_Adminhtml');
 	}
 
+	public function getAllowedExtensions() {
+
+		$exts = Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image');
+
+		$model = (string) $this->getFieldConfig()->descend('backend_model');
+		if (!empty($model))
+			return array_intersect($exts, Mage::getModel($model)->getAllowedExtensions());
+
+		return $exts;
+	}
+
 	public function getElementHtml() {
 
 		if (Mage::getStoreConfigFlag('apijs/general/backend')) {
@@ -36,7 +48,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Configimg extends Mage_Adminhtml_Bl
 				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $link, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de $this->helper ici
 			}
 
-			return $html.$this->_getDeleteCheckbox().'</div>';
+			return sprintf('%s <em>(%s)</em> %s</div>', $html, implode(', ', $this->getAllowedExtensions()), $this->_getDeleteCheckbox());
 		}
 
 		return parent::getElementHtml();

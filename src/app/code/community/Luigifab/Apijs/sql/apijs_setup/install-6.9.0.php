@@ -1,9 +1,9 @@
 <?php
 /**
  * Created J/05/09/2019
- * Updated V/03/02/2023
+ * Updated S/25/11/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -43,7 +43,7 @@ try {
 }
 catch (Throwable $t) {
 	$lock->unlock();
-	Mage::throwException($t);
+	throw $t;
 }
 
 $this->endSetup();

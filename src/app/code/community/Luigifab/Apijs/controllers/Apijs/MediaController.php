@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated V/19/05/2023
+ * Updated D/03/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -26,13 +26,13 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 		// désactivation des tampons (sauf si zlib.output_compression)
 		// cela permet d'afficher 100% dans la barre de progression
-		// https://stackoverflow.com/a/25835968
+		// @see https://stackoverflow.com/a/25835968
 		header('Content-Encoding: chunked');
 		header('Connection: Keep-Alive');
 		header('Content-Type: text/plain; charset=utf-8');
 		header('Cache-Control: no-cache, must-revalidate');
-		ini_set('output_buffering', 0);
-		ini_set('implicit_flush', 1);
+		ini_set('output_buffering', (PHP_VERSION_ID < 80100) ? '0' : 0);
+		ini_set('implicit_flush', (PHP_VERSION_ID < 80100) ? '1' : 1);
 		ob_implicit_flush();
 		ignore_user_abort(true);
 
@@ -148,7 +148,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 		$errors  = [];
 
 		try {
-			$help = Mage::helper('apijs');
+			$helper = Mage::helper('apijs');
 			if (empty($productId))
 				Mage::throwException('Invalid product id.');
 			if (empty($_FILES))
@@ -176,7 +176,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 					$uploader->addValidateCallback('catalog_product_image',
 						Mage::helper('catalog/image'), 'validateUploadFile');
 
-					$filepath = $uploader->save($help->getCatalogProductImageDir());
+					$filepath = $uploader->save($helper->getCatalogProductImageDir());
 					Mage::dispatchEvent('catalog_product_gallery_upload_image_after', ['result' => $filepath, 'action' => $this]);
 					$filepath = array_pop($filepath);
 
@@ -257,7 +257,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			// très important car les chemins et les URLs sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			// html
-			$result = $this->formatResult($success, $errors, $help->renderGalleryBlock($product));
+			$result = $this->formatResult($success, $errors, $helper->renderGalleryBlock($product));
 		}
 		catch (Throwable $t) {
 			$result = $t->getMessage();
@@ -352,7 +352,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			$imageId = true;
 
 		try {
-			$help = Mage::helper('apijs');
+			$helper = Mage::helper('apijs');
 			if (empty($productId) || empty($imageId))
 				Mage::throwException('Invalid product/image ids ('.$productId.'/'.$imageId.')');
 
@@ -378,7 +378,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 
 					// supprime enfin les fichiers s'ils ne sont pas utilisés dans d'autres produits
 					if ($reader->fetchOne('SELECT count(*) FROM '.$cpemg.' WHERE value = ?', [$filepath]) == 0)
-						$help->removeFiles($help->getCatalogProductImageDir(), $filename); // everywhere (not only in cache dir)
+						$helper->removeFiles($helper->getCatalogProductImageDir(), $filename); // everywhere (not only in cache dir)
 				}
 			}
 
@@ -412,7 +412,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 			// très important car les chemins et les URLs sont aussi mis en cache
 			Mage::app()->getCacheInstance()->cleanType('block_html');
 			// html
-			$result = $this->formatResult(null, null, $help->renderGalleryBlock($product));
+			$result = $this->formatResult(null, null, $helper->renderGalleryBlock($product));
 		}
 		catch (Throwable $t) {
 			$result = $t->getMessage();

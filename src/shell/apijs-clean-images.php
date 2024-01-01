@@ -1,7 +1,7 @@
 <?php
 /**
  * Forked from https://gist.github.com/peterjaap/5547654
- * Updated J/21/09/2023
+ * Updated J/28/12/2023
  *
  * fdupes is required
  *
@@ -15,7 +15,7 @@
 
 chdir(dirname($argv[0], 2)); // root
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', (PHP_VERSION_ID < 80100) ? '1' : 1);
 
 if (PHP_SAPI != 'cli')
 	exit(-1);
@@ -25,8 +25,8 @@ if (is_file('app/bootstrap.php'))
 	require_once('app/bootstrap.php');
 
 $dev = !empty($_SERVER['MAGE_IS_DEVELOPER_MODE']) || !empty($_ENV['MAGE_IS_DEVELOPER_MODE']) || in_array('--dev', $argv);
-require_once('app/Mage.php');
 
+require_once('app/Mage.php');
 Mage::app('admin')->setUseSessionInUrl(false);
 Mage::app()->addEventArea('crontab');
 Mage::setIsDeveloperMode($dev);
@@ -68,7 +68,7 @@ if ($countProductWithoutImages) {
 
 	$products = Mage::getResourceModel('catalog/product_collection')->addFieldToFilter('entity_id', ['in' => $result]);
 	echo "\033[36m"; // terminal color
-	foreach ($products as $pid => $product)
+	foreach ($products as $product)
 		echo ' no images for product ',$product->getSku(),' (',$product->getId(),')',"\n";
 	echo "\033[0m";
 

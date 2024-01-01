@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Created S/19/11/2011
- * Updated J/21/09/2023
+ * Updated J/19/10/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,7 +20,7 @@
 <config>
 	<modules>
 		<Luigifab_Apijs>
-			<version>6.9.5</version>
+			<version>6.9.6</version>
 		</Luigifab_Apijs>
 	</modules>
 	<global>
@@ -31,10 +31,10 @@
 			<adminhtml>
 				<rewrite>
 					<cache_additional>Luigifab_Apijs_Block_Adminhtml_Rewrite_Additional</cache_additional>
-					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Configimg</system_config_form_field_image>
 					<catalog_product_helper_form_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Productimg</catalog_product_helper_form_image>
-					<catalog_category_helper_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Categoryimg</catalog_category_helper_image>
 					<catalog_product_helper_form_gallery_content>Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery</catalog_product_helper_form_gallery_content>
+					<catalog_category_helper_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Categoryimg</catalog_category_helper_image>
+					<system_config_form_field_image>Luigifab_Apijs_Block_Adminhtml_Rewrite_Configimg</system_config_form_field_image>
 				</rewrite>
 			</adminhtml>
 		</blocks>
@@ -52,6 +52,12 @@
 			<apijs>
 				<class>Luigifab_Apijs_Model</class>
 			</apijs>
+			<adminhtml>
+				<rewrite>
+					<system_config_backend_image>Luigifab_Apijs_Model_Rewrite_Configimg</system_config_backend_image>
+					<system_config_backend_image_pdf>Luigifab_Apijs_Model_Rewrite_Configimg</system_config_backend_image_pdf>
+				</rewrite>
+			</adminhtml>
 			<catalog>
 				<rewrite>
 					<product_attribute_backend_media>Luigifab_Apijs_Model_Rewrite_Media</product_attribute_backend_media>

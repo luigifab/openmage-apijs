@@ -1,10 +1,10 @@
 <?php
 /**
- * Copyright 2013-2022 | Jesse G. Donat <donatj~gmail~com>
+ * Copyright 2013-2023 | Jesse G. Donat <donatj~gmail~com>
  * https://github.com/donatj/PhpUserAgent
  *
- * Copyright 2019-2022 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.7.0-fork1)
+ * Copyright 2019-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.8.0-fork2)
  *
  * Parses a user agent string into its important parts
  * Licensed under the MIT License
@@ -57,18 +57,18 @@ class Luigifab_Apijs_Model_Useragentparser {
 
 
 		preg_match_all( // ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			'%(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi/MiuiBrowser|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[:/ ](?P<version>[\dA-Z.]+)|/[A-Z]*)%ix',
+			'%(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Thunderbird|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi/MiuiBrowser|YaApp_Android|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[:/ ](?P<version>[\dA-Z.]+)|/[A-Z]*)%ix',
 			$userAgent, $result);
 
 
 		// If nothing matched, return null (to avoid undefined index errors)
 		if (!isset($result['browser'][0], $result['version'][0])) {
 
-			if (preg_match('%^(?!Mozilla)(?P<browser>[A-Z\d\-]+)(/(?P<version>[\dA-Z.]+))?%ix', $userAgent, $result)) {
+			if (preg_match('%^(?!Mozilla)(?P<browser>[A-Z\d\-]+)([/ :](?P<version>[\dA-Z.]+))?%ix', $userAgent, $result)) {
 				return [
 					'platform' => $platform ?: null,
 					'browser'  => $result['browser'],
-					'version'  => empty($result['version']) ? null : $result['version']
+					'version'  => empty($result['version']) ? null : $result['version'],
 				];
 			}
 			return $empty;
@@ -86,7 +86,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 		$key = 0;
 		$val = '';
 
-		if ($this->findT($lowerBrowser, ['OPR' => 'Opera', 'Facebot' => 'iMessageBot', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'EdgA' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'], $key, $browser)) {
+		if ($this->findT($lowerBrowser, ['OPR' => 'Opera', 'Facebot' => 'iMessageBot', 'UCBrowser' => 'UC Browser', 'YaBrowser' => 'Yandex', 'YaApp_Android' => 'Yandex', 'Iceweasel' => 'Firefox', 'Icecat' => 'Firefox', 'CriOS' => 'Chrome', 'Edg' => 'Edge', 'EdgA' => 'Edge', 'XiaoMi/MiuiBrowser' => 'MiuiBrowser'], $key, $browser)) {
 			$version = is_numeric(substr($result['version'][$key], 0, 1)) ? $result['version'][$key] : null;
 		}
 		else if ($this->find($lowerBrowser, 'Playstation Vita', $key, $platform)) {

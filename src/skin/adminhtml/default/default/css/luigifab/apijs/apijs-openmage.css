@@ -1,8 +1,8 @@
 /**
  * Created D/15/12/2013
- * Updated L/02/10/2023
+ * Updated V/17/10/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -16,7 +16,7 @@
  * GNU General Public License (GPL) for more details.
  */
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogues &&& */
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& dialogs &&& */
 #apijsBox { font:0.8rem sans-serif; }
 #apijsBox.error { font-weight:normal !important; color:black !important; }
 #apijsBox.photo.error, #apijsBox.video.error { background-image:url("../../../images/luigifab/apijs/tv.gif"); }
@@ -57,9 +57,11 @@ td div.image.preview {
 }
 
 td div.image.preview input { font-size:12px; border:0; background:white; }
-td div.image.preview a { display:block; margin:4px 25px 3px; }
+td div.image.preview a { display:block; margin:4px 25px 0; }
+td div.image.preview em { display:block; margin:0 25px; }
+td div.image.preview span { display:block; margin-top:4px; }
 
-/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& galerie photo &&& */
+/* &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& gallery &&& */
 body.fabload * { cursor:progress !important; }
 body.fabload div.content-header p.form-buttons, body.fabload div.content-header-floating p.form-buttons,
 body.fabload #apijsGallery { pointer-events:none; opacity:0.5; }

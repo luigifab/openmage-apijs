@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/09/10/2021
- * Updated V/28/04/2023
+ * Updated S/30/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -33,14 +33,33 @@ class Luigifab_Apijs_Model_Rewrite_Storage extends Mage_Cms_Model_Wysiwyg_Images
 		return $dirs;
 	}
 
-	public function getAllowedExtensions($type = null) {
+	public function getAllowedExtensions($type = null, $mimes = false) {
 
 		$exts = parent::getAllowedExtensions($type);
 
 		if (!Mage::getStoreConfigFlag('apijs/general/python')) {
 			$exts = array_combine($exts, $exts);
-			unset($exts['webp'], $exts['svg']);
+			unset($exts['svg']);
+			if (version_compare(Mage::getOpenMageVersion(), '20.1.1', '<'))
+				unset($exts['webp']);
 			$exts = array_values($exts);
+		}
+
+		if ($mimes) {
+			$types = [];
+			foreach ($exts as $ext) {
+				if (in_array($ext, ['jpg', 'jpeg'])) {
+					$types[] = 'image/jpeg';
+				}
+				else if ($ext == 'svg') {
+					$types[] = 'image/svg+xml';
+					$types[] = 'image/svg';
+				}
+				else {
+					$types[] = 'image/'.$ext;
+				}
+			}
+			return $types;
 		}
 
 		return $exts;

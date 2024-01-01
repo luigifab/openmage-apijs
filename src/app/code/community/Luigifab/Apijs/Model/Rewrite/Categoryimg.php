@@ -1,9 +1,9 @@
 <?php
 /**
  * Created J/27/05/2021
- * Updated J/21/09/2023
+ * Updated S/30/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -25,6 +25,8 @@ class Luigifab_Apijs_Model_Rewrite_Categoryimg extends Mage_Catalog_Model_Catego
 		return Mage::getSingleton('cms/wysiwyg_images_storage')->getAllowedExtensions('image');
 	}
 
+	// attribute backend model: catalog/category_attribute_backend_image
+	//  frontend_input: image, backend_type: varchar
 	public function beforeSave($object) {
 
 		$name  = $this->getAttribute()->getName();
@@ -38,15 +40,62 @@ class Luigifab_Apijs_Model_Rewrite_Categoryimg extends Mage_Catalog_Model_Catego
 
 			$file  = $value['value'];
 			$count = $reader->fetchOne('SELECT count(*) FROM '.$table.' WHERE value = ?', [$file]);
+
 			if ($count == 1) {
-				$help = Mage::helper('apijs');
-				if (!empty($value['delete']))
-					$help->removeFiles($help->getCatalogCategoryImageDir(), basename($file)); // everywhere (not only in cache dir)
-				else if (!empty($_FILES[$name]['size']))
-					$help->removeFiles($help->getCatalogCategoryImageDir(), basename($file), true); // everywhere (not only in cache dir)
+				$helper = Mage::helper('apijs');
+				if (!empty($_FILES[$name]['tmp_name'])) {
+					$helper->removeFiles($helper->getCatalogCategoryImageDir(), basename($file), true); // everywhere (not only in cache dir)
+					// allow to delete and upload
+					unset($value['delete']);
+					$object->setData($name, $value);
+				}
+				else if (!empty($value['delete'])) {
+					$helper->removeFiles($helper->getCatalogCategoryImageDir(), basename($file)); // everywhere (not only in cache dir)
+				}
 			}
 		}
 
 		return parent::beforeSave($object);
+	}
+
+	public function afterSave($object) {
+
+		$name   = $this->getAttribute()->getName();
+		$result = $this;
+
+		try {
+			$before = $object->getData($name);
+			$result = parent::afterSave($object);
+			$after  = $object->getData($name);
+
+			// @deprecated (exception is hidden with 20.3.0)
+			if (!empty($_FILES[$name]['tmp_name']) && ($before == $after)) {
+				$object->setData($name, null);
+                    $this->getAttribute()->getEntity()->saveAttribute($object, $name);
+				if (Mage::app()->getStore()->isAdmin()) {
+					Mage::getSingleton('adminhtml/session')->addError(sprintf(
+						'Warning: image (<em>%s</em>) for attribute <em>%s</em> was not saved!',
+						$_FILES[$name]['name'],
+						$name
+					));
+				}
+			}
+		}
+		catch (Throwable $t) {
+			if (!empty($_FILES[$name]['tmp_name'])) {
+				$object->setData($name, null);
+                    $this->getAttribute()->getEntity()->saveAttribute($object, $name);
+				if (Mage::app()->getStore()->isAdmin()) {
+					Mage::getSingleton('adminhtml/session')->addError(sprintf(
+						'Warning: image (<em>%s</em>) for attribute <em>%s</em> was not saved: %s',
+						$_FILES[$name]['name'],
+						$name,
+						$t->getMessage()
+					));
+				}
+			}
+		}
+
+		return $result;
 	}
 }

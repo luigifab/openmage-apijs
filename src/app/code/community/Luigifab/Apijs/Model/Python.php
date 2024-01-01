@@ -1,9 +1,9 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated J/05/10/2023
+ * Updated S/30/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -20,13 +20,12 @@
 class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	// singleton
-	protected $_python;
 	protected $_files = [];
 	protected $_pids  = [];
-	protected $_core  = 1;
+	protected $_core  = 0;
 	protected $_imageSize = [];
 	protected $_isVarienRewrite = false;
-	protected $_quality   = 100;
+	protected $_quality = 100;
 	protected $_rotateAngle;
 	protected $_resizeWidth;
 	protected $_resizeHeight;
@@ -49,7 +48,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	protected $_watermarkWidth;
 	protected $_watermarkHeigth;
 	protected $_fileName;
-	protected $_svg;
+	protected $_isSvg;
 	protected $_resizeFixed;
 
 	// model
@@ -63,22 +62,15 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		$this->waitThreads();
 	}
 
-	protected function initCommands() {
+	public function getProgramVersions($helpPil, $helpSco) {
 
-		if (empty($this->_python)) {
-
-			exec('command -v python3', $cmd);
-			$this->_python = trim(implode($cmd));
-
+		if (empty($this->_core)) {
 			exec('nproc', $core);
 			$this->_core = max(1, (int) trim(implode($core)));
 		}
-	}
 
-	public function getProgramVersions($helpPil, $helpSco) {
-
-		$this->initCommands();
-		$cmd = $this->_python;
+		exec('command -v python3', $cmd);
+		$cmd = trim(implode($cmd));
 
 		if (empty($cmd)) {
 			$pyt = 'not found';
@@ -86,11 +78,11 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 			$sco = $pyt;
 		}
 		else {
-			exec($cmd.' --version 2>&1', $pyt);
+			exec('python3 --version 2>&1', $pyt);
 			$pyt = trim(str_replace('Python', '', implode($pyt)));
 			$pyt = implode('.', array_slice(preg_split('#\D#', $pyt), 0, 3));
 
-			exec($cmd.' -c "from PIL import Image; print(Image.__version__)" 2>&1', $pil);
+			exec('python3 -c "from PIL import Image; print(Image.__version__)" 2>&1', $pil);
 			$pil = trim(implode($pil));
 
 			if (mb_stripos($pil, 'o module named') !== false)
@@ -100,7 +92,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 			else
 				$pil = implode('.', array_slice(preg_split('#\D#', $pil), 0, 3));
 
-			exec($cmd.' -c "import scour; print(scour.__version__)" 2>&1', $sco);
+			exec('python3 -c "import scour; print(scour.__version__)" 2>&1', $sco);
 			$sco = trim(implode($sco));
 
 			if (mb_stripos($sco, 'o module named') !== false)
@@ -122,13 +114,16 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		return $this;
 	}
 
-	public function save($destination = null, $newFilename = null, $immediate = false) {
+	public function save($destination = null, $dummy = null, $immediate = false) {
 
 		$this->open();
 
-		try {
-			$this->initCommands();
+		if (empty($this->_core)) {
+			exec('nproc', $core);
+			$this->_core = max(1, (int) trim(implode($core)));
+		}
 
+		try {
 			// leaves 2 cores free, but because $runs include grep check, we add 2 for $maxc
 			// [] => 18:14 0:00 /usr/bin/python3 ...
 			// [] => 18:14 0:00 sh -c ps aux | grep Apijs/lib/image.py
@@ -138,7 +133,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 			while (count($this->_pids) >= $maxc) {
 				foreach ($this->_pids as $key => $pid) {
 					if (file_exists('/proc/'.$pid))
-						clearstatcache('/proc/'.$pid);
+						clearstatcache(true, '/proc/'.$pid);
 					else
 						unset($this->_pids[$key]);
 				}
@@ -157,7 +152,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 				@mkdir($dir, 0755);
 
 			$cmd = sprintf('%s %s %s %s %d %d %d %s >> %s 2>&1'.($immediate ? '' : ' & echo $!'),
-				$this->_python,
+				'python3',
 				str_replace('Apijs/etc', 'Apijs/lib/image.py', Mage::getModuleDir('etc', 'Luigifab_Apijs')),
 				escapeshellarg($this->_fileName),
 				escapeshellarg($destination),
@@ -190,7 +185,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		}
 		catch (Throwable $t) {
 			Mage::logException($t);
-			Mage::throwException($t);
+			throw $t;
 		}
 
 		return $this;
@@ -201,7 +196,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		while (!empty($this->_pids)) {
 			foreach ($this->_pids as $key => $pid) {
 				if (file_exists('/proc/'.$pid))
-					clearstatcache('/proc/'.$pid);
+					clearstatcache(true, '/proc/'.$pid);
 				else
 					unset($this->_pids[$key]);
 			}
@@ -255,12 +250,10 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 
 	public function isSvg() {
 
-		if (is_null($this->_svg)) {
-			$this->open();
-			$this->_svg = (mb_substr($this->_fileName, -4) == '.svg') || in_array(mime_content_type($this->_fileName), ['image/svg', 'image/svg+xml']);
-		}
+		if (is_null($this->_isSvg))
+			$this->_isSvg = str_ends_with($this->_fileName, '.svg');
 
-		return $this->_svg;
+		return $this->_isSvg;
 	}
 
 	// setter
@@ -352,7 +345,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 	public function setFilename($value) {
 		$this->_fileName  = $value;
 		$this->_imageSize = [];
-		$this->_svg = null;
+		$this->_isSvg = null;
 		return $this;
 	}
 
@@ -386,7 +379,7 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 		$this->_watermarkHeigth = null;
 		$this->_fileName = null;
 		$this->_imageSize = [];
-		$this->_svg = null;
+		$this->_isSvg = null;
 		$this->_resizeFixed = null;
 		return $this;
 	}

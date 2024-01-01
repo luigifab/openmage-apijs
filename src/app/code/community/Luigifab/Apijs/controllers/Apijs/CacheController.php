@@ -1,9 +1,9 @@
 <?php
 /**
  * Created M/07/01/2020
- * Updated J/05/01/2023
+ * Updated S/11/11/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -32,20 +32,20 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 
 	public function clearCacheAction() {
 
-		$help = Mage::helper('apijs');
-		$type = $this->getRequest()->getParam('type');
+		$helper = Mage::helper('apijs');
+		$type   = $this->getRequest()->getParam('type');
 
  		try {
 			if ($type == 'wysiwyg') {
 
 				// thumb
-				$dir = trim($help->getWysiwygImageDir(true, true));
+				$dir = trim($helper->getWysiwygImageDir(true, true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);
 
 				// cache
-				$dir = trim($help->getWysiwygImageDir(true));
+				$dir = trim($helper->getWysiwygImageDir(true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);
@@ -55,7 +55,7 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 			else if ($type == 'product') {
 
 				// cache
-				$dir = trim($help->getCatalogProductImageDir(true));
+				$dir = trim($helper->getCatalogProductImageDir(true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);
@@ -65,7 +65,7 @@ class Luigifab_Apijs_Apijs_CacheController extends Mage_Adminhtml_System_ConfigC
 			else if ($type == 'category') {
 
 				// cache
-				$dir = trim($help->getCatalogCategoryImageDir(true));
+				$dir = trim($helper->getCatalogCategoryImageDir(true));
 				$iof = new Varien_Io_File();
 				if (mb_strlen($dir) > 5)
 					$iof->rmdir($dir, true);

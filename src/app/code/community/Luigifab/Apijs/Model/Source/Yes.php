@@ -1,7 +1,7 @@
 <?php
 /**
- * Created J/20/10/2022
- * Updated D/11/12/2022
+ * Created J/19/10/2023
+ * Updated J/19/10/2023
  *
  * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -17,14 +17,18 @@
  * GNU General Public License (GPL) for more details.
  */
 
-if (Mage::getStoreConfigFlag('apijs/general/python')) {
-	// this allow to use OpenMage without PHP-GD (with PR 2666)
-	class Luigifab_Apijs_Model_Rewrite_Varienimg extends Luigifab_Apijs_Model_Python {
-		protected $_isVarienRewrite = true;
-	}
-}
-else {
-	class Luigifab_Apijs_Model_Rewrite_Varienimg extends Varien_Image {
-		protected $_isVarienRewrite = false;
+class Luigifab_Apijs_Model_Source_Yes {
+
+	protected $_options;
+
+	public function toOptionArray() {
+
+		if (empty($this->_options)) {
+			$this->_options = [
+				['value' => 1, 'label' => Mage::helper('adminhtml')->__('Yes').' *'],
+			];
+		}
+
+		return $this->_options;
 	}
 }

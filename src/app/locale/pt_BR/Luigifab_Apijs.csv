@@ -2,7 +2,7 @@
 "Enable in backend","Ativar no back-office"
 "Enable in frontend","Ativar no front-office"
 "Remove cached images","Suprimir as imagens em cache"
-"When removing a <strong>product image</strong> or a <strong>product</strong>, a <strong>category image</strong> or a <strong>category</strong>, a <strong>wysiwyg image</strong> (remove even if the apijs is disabled).","Quando suprimir uma imagem ou um produto."
+"When removing a <strong>product image</strong> or a <strong>product</strong>, a <strong>category image</strong> or a <strong>category</strong>, a <strong>wysiwyg image</strong>.","Quando suprimir uma imagem ou um produto."
 "Automatically display the gallery tab","Afixar automaticamente o separador da galeria"
 "When displaying the modification page of a product in the backend.","Ao afixar a página de modificação de um produto no back-office."
 "INCOMPLETE MODULE INSTALLATION","INSTALACAO INCOMPLETA DO MODULO"

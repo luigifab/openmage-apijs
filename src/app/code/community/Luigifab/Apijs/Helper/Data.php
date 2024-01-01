@@ -1,9 +1,10 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated J/25/05/2023
+ * Updated S/16/12/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -75,8 +76,9 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		return Zend_Locale_Format::toNumber($value, $options);
 	}
 
-	public function getNumberToHumanSize(int $number) {
+	public function getNumberToHumanSize($number) {
 
+		$number = (float) $number;
 		if ($number < 1) {
 			$data = '';
 		}
@@ -264,8 +266,9 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 
 	public function getMaxSizes(bool $dump = false) {
 
-		// config admise en Mo, "one file, all files"
-		if ($dump === true) {
+		// return "one file, all files"
+		// config admise en Mo
+		if ($dump) {
 			return [
 				'config.xml one_max_size' => (int) Mage::getStoreConfig('apijs/general/one_max_size'),
 				'config.xml all_max_size' => (int) Mage::getStoreConfig('apijs/general/all_max_size'),
@@ -288,11 +291,11 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 	public function getTabName($product = null) {
 
 		$product = is_object($product) ? $product : Mage::registry('current_product');
-		$egroups = Mage::getResourceModel('eav/entity_attribute_group_collection')
+		$groups  = Mage::getResourceModel('eav/entity_attribute_group_collection')
 			->setAttributeSetFilter($product->getData('attribute_set_id'))
 			->load();
 
-		foreach ($egroups as $group) {
+		foreach ($groups as $group) {
 			$attributes = $product->getAttributes($group->getId(), true);
 			foreach ($attributes as $attribute) {
 				if (in_array($attribute->getData('attribute_code'), ['media_gallery', 'gallery']))
@@ -319,9 +322,10 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		// supprime les fichiers
 		if (!empty($filesCache)) {
 
+			// for apijs-clean-images.php
 			$file = '/'.trim($file, '/');
 			foreach ($filesCache as $fileCache) {
-				if ((mb_stripos($fileCache, $file) !== false) && (mb_stripos($fileCache, $directory) !== false) && is_file($fileCache)) {
+				if ((mb_stripos($fileCache, $file) !== false) && (mb_stripos($fileCache, $directory) !== false)) {
 					echo '  ',$fileCache,"\n";
 					unlink($fileCache);
 				}
@@ -345,23 +349,27 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 			if (mb_stripos($directory, '/cache') === false)
 				$directory .= '/cache';
 
-			if (!empty($filesCache)) {
+			if (is_dir($directory)) {
 
-				foreach ($filesCache as $fileCache) {
-					if ((mb_stripos($fileCache, $webp) !== false) && (mb_stripos($fileCache, $directory) !== false) && is_file($fileCache)) {
-						echo '  ',$fileCache,"\n";
-						unlink($fileCache);
+				if (!empty($filesCache)) {
+
+					// for apijs-clean-images.php
+					foreach ($filesCache as $fileCache) {
+						if ((mb_stripos($fileCache, $webp) !== false) && (mb_stripos($fileCache, $directory) !== false)) {
+							echo '  ',$fileCache,"\n";
+							unlink($fileCache);
+						}
 					}
 				}
-			}
-			else {
-				if (mb_stripos($webp, '/') === false)
-					$cmd = 'find '.escapeshellarg($directory).' -name '.escapeshellarg($webp).' -type f -delete';
-				else
-					$cmd = 'find '.escapeshellarg($directory).' -wholename '.escapeshellarg('*/'.trim($webp, '/')).' -type f -delete';
+				else {
+					if (mb_stripos($webp, '/') === false)
+						$cmd = 'find '.escapeshellarg($directory).' -name '.escapeshellarg($webp).' -type f -delete';
+					else
+						$cmd = 'find '.escapeshellarg($directory).' -wholename '.escapeshellarg('*/'.trim($webp, '/')).' -type f -delete';
 
-				Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
-				exec($cmd);
+					Mage::log($cmd, Zend_Log::DEBUG, 'apijs.log');
+					exec($cmd);
+				}
 			}
 		}
 	}
@@ -371,12 +379,14 @@ class Luigifab_Apijs_Helper_Data extends Mage_Core_Helper_Abstract {
 		if (empty($this->_baseMediaDir))
 			$this->_baseMediaDir = realpath(Mage::getBaseDir('media'));
 
+		// when $filesCache is set (from apijs-clean-images.php) $directory is already realpath()
 		$directory = empty($filesCache) ? realpath($directory) : $directory;
 
-		// recherche et supprime tous les fichiers avec la commande find
-		// si le nom du fichier contient des caractères simples et qu'on est bien dans le dossier media
+		// search and remove all files with find command
+		// if the file name contains simple characters and only in the media folder
 		if (
-			!empty($directory) && (!empty($filesCache) || is_dir($directory)) &&
+			($directory != $this->_baseMediaDir) &&
+			!empty($directory) && is_dir($directory) &&
 			(mb_stripos($directory, $this->_baseMediaDir) === 0) &&
 			(preg_match('#[\w\-]+\.\w+$#', $file) === 1)
 		) {

@@ -1,9 +1,9 @@
 <?php
 /**
  * Created V/23/05/2014
- * Updated V/20/05/2022
+ * Updated D/26/11/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
  *
  * This program is free software, you can redistribute it or modify
@@ -23,13 +23,13 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 
 		$msg = $this->checkRewrites();
 		if ($msg !== true)
-			return sprintf('<p class="box">%s %s <span class="right">Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://www.%s">%3$s</a> | ⚠ IPv6</span></p><p class="box" style="margin-top:-5px; color:white; background-color:#E60000;"><strong>%s</strong><br />%s</p>',
-				'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'luigifab.fr/openmage/apijs',
+			return sprintf('<p class="box">%s %s <span class="right">Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://github.com/luigifab/%3$s">github.com</a> | <a href="https://www.%4$s">%4$s</a> - <a href="https://www.%5$s">%5$s</a> - ⚠ IPv6</span></p><p class="box" style="margin-top:-5px; color:white; background-color:#E60000;"><strong>%6$s</strong><br />%7$s</p>',
+				'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'openmage-apijs', 'luigifab.fr/openmage/apijs', 'luigifab.fr/apijs',
 				$this->__('INCOMPLETE MODULE INSTALLATION'),
 				$this->__('There is conflict (<em>%s</em>).', $msg));
 
-		return sprintf('<p class="box">%s %s <span class="right">Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://www.%s">%3$s</a> | <a href="https://www.%4$s">%4$s</a> | ⚠ IPv6</span></p>',
-			'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'luigifab.fr/openmage/apijs', 'luigifab.fr/apijs');
+		return sprintf('<p class="box">%s %s <span class="right">Stop russian war. <b>🇺🇦 Free Ukraine!</b> | <a href="https://github.com/luigifab/%3$s">github.com</a> | <a href="https://www.%4$s">%4$s</a> - <a href="https://www.%5$s">%5$s</a> - ⚠ IPv6</span></p>',
+			'Luigifab/Apijs', $this->helper('apijs')->getVersion(), 'openmage-apijs', 'luigifab.fr/openmage/apijs', 'luigifab.fr/apijs');
 	}
 
 	protected function checkRewrites() {
@@ -41,6 +41,8 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 			['block' => 'adminhtml/catalog_product_helper_form_image'],
 			['block' => 'adminhtml/system_config_form_field_image'],
 			['helper' => 'catalog/image'],
+			['model' => 'adminhtml/system_config_backend_image'],
+			['model' => 'adminhtml/system_config_backend_image_pdf'],
 			['model' => 'catalog/category_attribute_backend_image'],
 			['model' => 'catalog/product_attribute_backend_media'],
 			['model' => 'catalog_resource/product_attribute_backend_image'],
@@ -54,9 +56,9 @@ class Luigifab_Apijs_Block_Adminhtml_Config_Help extends Mage_Adminhtml_Block_Ab
 			foreach ($rewrite as $type => $class) {
 				if (($type == 'model') && (mb_stripos(Mage::getConfig()->getModelClassName($class), 'luigifab') === false))
 					return $class;
-				else if (($type == 'block') && (mb_stripos(Mage::getConfig()->getBlockClassName($class), 'luigifab') === false))
+				if (($type == 'block') && (mb_stripos(Mage::getConfig()->getBlockClassName($class), 'luigifab') === false))
 					return $class;
-				else if (($type == 'helper') && (mb_stripos(Mage::getConfig()->getHelperClassName($class), 'luigifab') === false))
+				if (($type == 'helper') && (mb_stripos(Mage::getConfig()->getHelperClassName($class), 'luigifab') === false))
 					return $class;
 			}
 		}

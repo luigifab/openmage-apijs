@@ -1,9 +1,9 @@
 <?php
 /**
  * Created J/27/05/2021
- * Updated V/28/04/2023
+ * Updated J/19/10/2023
  *
- * Copyright 2008-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * Copyright 2008-2024 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
  * https://github.com/luigifab/openmage-apijs
  *
@@ -41,7 +41,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Productimg extends Mage_Adminhtml_B
 				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $link, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de $this->helper ici
 			}
 
-			return $html.$this->_getDeleteCheckbox().'</div>';
+			return sprintf('%s <em>(%s)</em> %s</div>', $html, implode(', ', $this->getAllowedExtensions()), $this->_getDeleteCheckbox());
 		}
 
 		return parent::getElementHtml();
