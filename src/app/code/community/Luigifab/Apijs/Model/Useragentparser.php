@@ -1,10 +1,10 @@
 <?php
 /**
- * Copyright 2013-2023 | Jesse G. Donat <donatj~gmail~com>
+ * Copyright 2013-2024 | Jesse G. Donat <donatj~gmail~com>
  * https://github.com/donatj/PhpUserAgent
  *
- * Copyright 2019-2023 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
- * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.8.0-fork2)
+ * Copyright 2019-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
+ * https://gist.github.com/luigifab/4cb373e75f3cd2f342ca6bc25504b149 (1.10.0-fork1)
  *
  * Parses a user agent string into its important parts
  * Licensed under the MIT License
@@ -20,13 +20,13 @@ class Luigifab_Apijs_Model_Useragentparser {
 		$browser  = null;
 		$version  = null;
 		$empty    = ['platform' => $platform, 'browser' => $browser, 'version' => $version];
-		$priority = ['Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'X11', 'Sailfish'];
+		$priority = ['Xbox One', 'Xbox', 'Windows Phone', 'Tizen', 'Android', 'FreeBSD', 'NetBSD', 'OpenBSD', 'CrOS', 'Fuchsia', 'X11', 'Sailfish'];
 
 		if (empty($userAgent)) return $empty;
 
 		if (preg_match('/\((.*?)\)/m', $userAgent, $parentMatches)) {
 
-			preg_match_all('/(?P<platform>BB\d+;|Android|Adr|Symbian|Sailfish|CrOS|Tizen|iPhone|iPad|iPod|Linux|(?:Open|Net|Free)BSD|Macintosh|Windows(?:\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(?:New\ )?Nintendo\ (?:WiiU?|3?DS|Switch)|Xbox(?:\ One)?) (?:\ [^;]*)? (?:;|$)/imx',
+			preg_match_all('/(?P<platform>BB\d+;|Android|Adr|Symbian|Sailfish|CrOS|Fuchsia|Tizen|iPhone|iPad|iPod|Linux|(?:Open|Net|Free)BSD|Macintosh|Windows(?:\ Phone)?|Silk|linux-gnu|BlackBerry|PlayBook|X11|(?:New\ )?Nintendo\ (?:WiiU?|3?DS|Switch)|Xbox(?:\ One)?) (?:\ [^;]*)? (?:;|$)/imx',
 				$parentMatches[1], $result);
 			$result['platform'] = array_unique($result['platform']);
 			if (count($result['platform']) > 1) {
@@ -57,7 +57,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 
 
 		preg_match_all( // ["browser" => ["Firefox"...], "version" => ["45.0"...]]
-			'%(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Thunderbird|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi/MiuiBrowser|YaApp_Android|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|Valve\ Steam\ Tenfoot|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[:/ ](?P<version>[\dA-Z.]+)|/[A-Z]*)%ix',
+			'%(?P<browser>Camino|Kindle(\ Fire)?|Firefox|Thunderbird|Iceweasel|IceCat|Safari|MSIE|Trident|AppleWebKit|TizenBrowser|(?:Headless)?Chrome|YaBrowser|Vivaldi|IEMobile|Opera|OPR|Silk|Midori|(?-i:Edge)|EdgA?|CriOS|UCBrowser|Puffin|OculusBrowser|SamsungBrowser|SailfishBrowser|XiaoMi/MiuiBrowser|YaApp_Android|Whale|Baiduspider|Applebot|Facebot|Googlebot|YandexBot|bingbot|Lynx|Version|Wget|curl|ChatGPT-User|GPTBot|OAI-SearchBot|Valve\ Steam\ Tenfoot|Mastodon|NintendoBrowser|PLAYSTATION\ (?:\d|Vita)+)\)?;?(?:[:/ ](?P<version>[\dA-Z.]+)|/[A-Z]*)%ix',
 			$userAgent, $result);
 
 
@@ -125,7 +125,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 				}
 			}
 		}
-		else if ($this->find($lowerBrowser, ['Applebot', 'IEMobile', 'Edge', 'Midori', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome', 'SailfishBrowser'], $key, $browser)) {
+		else if ($this->find($lowerBrowser, ['Googlebot', 'Applebot', 'IEMobile', 'Edge', 'Midori', 'Whale', 'Vivaldi', 'OculusBrowser', 'SamsungBrowser', 'Valve Steam Tenfoot', 'Chrome', 'HeadlessChrome', 'SailfishBrowser'], $key, $browser)) {
 			$version = $result['version'][$key];
 		}
 		else if ($rv_result && $this->find($lowerBrowser, 'Trident')) {
@@ -143,11 +143,17 @@ class Luigifab_Apijs_Model_Useragentparser {
 			else if ($platform == 'BlackBerry' || $platform == 'PlayBook') {
 				$browser = 'BlackBerry Browser';
 			}
-			else {
-				$this->find($lowerBrowser, 'Safari', $key, $browser) || $this->find($lowerBrowser, 'TizenBrowser', $key, $browser);
+			else if ($this->find($lowerBrowser, 'Safari', $key, $browser) || $this->find($lowerBrowser, 'TizenBrowser', $key, $browser)) {
+				$version = $result['version'][$key];
 			}
-			$this->find($lowerBrowser, 'Version', $key);
-			$version = $result['version'][$key];
+			else if (count($result['browser'])) {
+				$key     = count($result['browser']) - 1;
+				$browser = $result['browser'][$key];
+				$version = $result['version'][$key];
+			}
+			if ($this->find($lowerBrowser, 'Version', $key)) {
+				$version = $result['version'][$key];
+			}
 		}
 		else if (!empty($pKey = preg_grep('/playstation \d/i', $result['browser']))) {
 			$pKey     = reset($pKey);
