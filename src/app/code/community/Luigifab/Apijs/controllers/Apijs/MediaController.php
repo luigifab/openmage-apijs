@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated D/03/12/2023
+ * Updated D/27/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -241,7 +241,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				$attributes = $product->getMediaAttributes();
 				foreach ($attributes as $code => $attribute) {
 					$value = $product->getData($code);
-					// si dans eav_attribute, attribute_model = xyz/source_xyz
+					// when in eav_attribute, attribute_model = xyz/source_xyz
 					// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
 					if ((empty($value) || ($value == 'no_selection')) && ($attribute->getIsCheckbox() !== true))
 						$product->setData($code, $success[0]);
@@ -302,7 +302,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				if (!empty($product->getMediaGallery('images'))) {
 					$attributes = $product->getMediaAttributes();
 					foreach ($attributes as $code => $attribute) {
-						// si dans eav_attribute, attribute_model = xyz/source_xyz
+						// when in eav_attribute, attribute_model = xyz/source_xyz
 						// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
 						if ($attribute->getIsCheckbox() !== true) {
 							$value = $product->getData($code);
@@ -397,7 +397,7 @@ class Luigifab_Apijs_Apijs_MediaController extends Mage_Adminhtml_Catalog_Produc
 				$newvalue = $product->getMediaGallery('images')[0]['file'];
 				foreach ($attributes as $code => $attribute) {
 					$value = $product->getData($code);
-					// si dans eav_attribute, attribute_model = xyz/source_xyz
+					// when in eav_attribute, attribute_model = xyz/source_xyz
 					// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
 					if ((empty($value) || ($value == 'no_selection') || in_array($value, $paths)) && ($attribute->getIsCheckbox() !== true))
 						$product->setData($code, $newvalue);

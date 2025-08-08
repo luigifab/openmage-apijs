@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/08/09/2019
- * Updated S/23/12/2023
+ * Updated D/27/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -44,8 +44,8 @@ $prev = null;
 				<div class="filecnt" id="<?php echo $image->getId() ?>">
 					<?php
 						// <a> <img src srcset> <input>
-						// l'image du lien = une image redimensionnée en cache
-						// l'image de l'image = une miniature en cache
+						//  the image of the link = a cached resized image
+						// the image of the image = a cached thumbnail
 						if ($storage->isImage($file)):
 					?>
 						<a href="<?php echo $helper->resizeImage(null, 'wysiwyg', $file, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" class="img" id="slideshow.0.<?php echo $i++ ?>">

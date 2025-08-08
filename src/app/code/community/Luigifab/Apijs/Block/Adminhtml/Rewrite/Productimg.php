@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/27/05/2021
- * Updated J/19/10/2023
+ * Updated D/27/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -38,7 +38,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Productimg extends Mage_Adminhtml_B
 			if ($this->getValue()) {
 				$link  = $this->_getUrl();
 				$link  = str_replace('product//', 'product/', (mb_stripos($link, 'http') === 0) ? $link : Mage::getBaseUrl('media').$link);
-				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $link, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // pas de $this->helper ici
+				$html .= sprintf(' <a href="%s" onclick="apijs.dialog.dialogPhoto(this.href, \'false\', \'false\', \'%s\'); return false;" id="%s_image">%s (%s)</a> ', $link, addslashes($this->getValue()), $this->getHtmlId(), Mage::helper('apijs')->__('Preview'), $this->getValue()); // no $this->helper here
 			}
 
 			return sprintf('%s <em>(%s)</em> %s</div>', $html, implode(', ', $this->getAllowedExtensions()), $this->_getDeleteCheckbox());

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/29/08/2019
- * Updated S/19/02/2022
+ * Updated L/28/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -29,7 +29,7 @@ class Luigifab_Apijs_Model_Rewrite_Mediares extends Mage_Catalog_Model_Resource_
 		$adapter = $this->_getReadAdapter();
 		$positionCheckSql = $adapter->getCheckSql('value.position IS NULL', 'default_value.position', 'value.position');
 
-		// récupère toutes les colonnes
+		// fetch all columns
 		$values = [];
 		$fields = $this->getAllColumns();
 		foreach ($fields as $field) {
@@ -48,7 +48,7 @@ class Luigifab_Apijs_Model_Rewrite_Mediares extends Mage_Catalog_Model_Resource_
 				$adapter->quoteInto('main.value_id = value.value_id AND value.store_id = ?', (int) $storeId),
 				array_values($values) // ['label', 'position', 'disabled']
 			)
-			->joinLeft( // Joining default values
+			->joinLeft( // joining default values
 				['default_value' => $this->getTable(self::GALLERY_VALUE_TABLE)],
 				'main.value_id = default_value.value_id AND default_value.store_id = 0',
 				$values // ['label_default' => 'label', 'position_default' => 'position', 'disabled_default' => 'disabled']

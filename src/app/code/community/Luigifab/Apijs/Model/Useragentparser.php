@@ -61,7 +61,7 @@ class Luigifab_Apijs_Model_Useragentparser {
 			$userAgent, $result);
 
 
-		// If nothing matched, return null (to avoid undefined index errors)
+		// if nothing matched, return null (to avoid undefined index errors)
 		if (!isset($result['browser'][0], $result['version'][0])) {
 
 			if (preg_match('%^(?!Mozilla)(?P<browser>[A-Z\d\-]+)([/ :](?P<version>[\dA-Z.]+))?%ix', $userAgent, $result)) {

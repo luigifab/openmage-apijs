@@ -1,7 +1,7 @@
 <?php
 /**
  * Created D/20/11/2011
- * Updated V/22/12/2023
+ * Updated D/27/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -200,7 +200,7 @@ else {
 	</ul>
 
 	<?php foreach ($values as $key => $value): ?>
-		<br /><strong><?php echo $key ?></strong> = <?php echo $helper->getNumberToHumanSize($value * 1024 * 1024) // de Mo à octets ?>
+		<br /><strong><?php echo $key ?></strong> = <?php echo $helper->getNumberToHumanSize($value * 1024 * 1024) // from MB to bytes ?>
 	<?php endforeach ?>
 	<br /><strong>php max_file_uploads</strong> = <?php echo ini_get('max_file_uploads') ?>
 	<br /><strong>exec</strong> <?php echo Mage::getSingleton('apijs/python')->getProgramVersions(

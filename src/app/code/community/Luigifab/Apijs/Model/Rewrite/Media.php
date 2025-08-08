@@ -1,7 +1,7 @@
 <?php
 /**
  * Created J/29/08/2019
- * Updated J/21/04/2022
+ * Updated L/30/06/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -30,7 +30,7 @@ class Luigifab_Apijs_Model_Rewrite_Media extends Mage_Catalog_Model_Product_Attr
 		$value    = ['images' => [], 'values' => []];
 		$localAttributes = ['label', 'position', 'disabled'];
 
-		// traite toutes les colonnes
+		// all columns
 		$fields = $this->getAllColumns();
 		foreach ($fields as $field) {
 			if ((mb_stripos($field['Field'], '_id') === false) && !in_array($field['Field'], $localAttributes))
@@ -97,8 +97,8 @@ class Luigifab_Apijs_Model_Rewrite_Media extends Mage_Catalog_Model_Product_Attr
 
 			$this->_getResource()->deleteGalleryValueInStore($image['value_id'], $storeId);
 
-			// par vue magasin
-			// remet toutes les colonnes
+			// store view
+			// with all columns
 			$data   = ['value_id' => $image['value_id'], 'store_id' => $storeId];
 			$fields = $this->_getResource()->getAllColumns();
 			foreach ($fields as $field) {

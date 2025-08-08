@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated D/24/12/2023
+ * Updated D/27/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * Copyright 2019-2023 | Fabrice Creuzot <fabrice~cellublue~com>
@@ -26,7 +26,7 @@ $date = Mage::getSingleton('core/locale')->date();
 $base = Mage::getSingleton('catalog/product_media_config')->getBaseMediaUrl();
 $pid  = $product->getId();
 $sid  = $product->getStoreId();
-$hids = (int) date('His') + random_int(10000, 90000); // ids des input, toujours unique, même après ajax
+$hids = (int) date('His') + random_int(10000, 90000); // input ids, always unique, even after ajax
 
 $sortByStore = Mage::getStoreConfigFlag('apijs/general/sort_by_store');
 if ($sortByStore)
@@ -94,7 +94,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 				</th>
 				<?php foreach ($attributes as $code => $attribute): ?>
 					<?php if ($attribute->getIsText() === true) continue; ?>
-					<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
+					<?php // when in eav_attribute, attribute_model = xyz/source_xyz ?>
 					<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 					<?php if ($attribute->getIsCheckbox() === true): ?>
 						<th class="gallery_<?php echo $code ?>">
@@ -140,7 +140,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 				<?php foreach ($attributes as $code => $attribute): ?>
 					<?php if ($attribute->getIsText() === true) continue; ?>
 					<td>
-						<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
+						<?php // when in eav_attribute, attribute_model = xyz/source_xyz ?>
 						<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 						<?php if ($attribute->getIsCheckbox() !== true): ?>
 							<?php if (empty($sid)): ?>
@@ -204,7 +204,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 							?> / <?php
 								$cnt = $data['counts'][$grp];
 								if ($cnt <= 1)
-									echo $this->__('%d image', $cnt);  // 0-1
+									echo $this->__('%d image', $cnt); // 0-1
 								else if ($cnt <= 4)
 									echo  $helper->_('%d images', $cnt); // 2-4
 								else
@@ -241,8 +241,8 @@ if (!empty($this->getRequest()->getParam('debug')))
 					<td class="img hgt" title="<?php echo $helper->escapeEntities($path, true) ?>">
 						<?php if (is_file($file)):
 							// <a> <img src srcset> <input>
-							// l'image du lien = une image redimensionnée en cache
-							// l'image de l'image = une miniature en cache
+							//  the image of the link = a cached resized image
+							// the image of the image = a cached thumbnail
 						?>
 							<a href="<?php echo $helper->resizeImage($product, 'image', $path, 1200, 900, false) ?>" type="<?php echo mime_content_type($file) ?>" onclick="return false" id="slideshow.0.<?php echo $i++ ?>">
 								<img src="<?php echo $helper->resizeImage($product, 'thumbnail', $path, 200, 150, true) ?>" srcset="<?php echo $helper->resizeImage($product, 'thumbnail', $path, 400, 300, true) ?> 2x" width="200" height="150" alt="<?php echo $label ?>" />
@@ -301,7 +301,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 							<?php foreach ($attributes as $code => $attribute): ?>
 								<?php if ($attribute->getIsText() !== true) continue; ?>
 								<div>
-									<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
+									<?php // when in eav_attribute, attribute_model = xyz/source_xyz ?>
 									<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 									<?php if (empty($sid)): ?>
 										<label>
@@ -346,7 +346,7 @@ if (!empty($this->getRequest()->getParam('debug')))
 					<?php foreach ($attributes as $code => $attribute): ?>
 						<?php if ($attribute->getIsText() === true) continue; ?>
 						<td class="gallery_<?php echo $code ?><?php echo (empty($sid) && ($grp > 99) && !empty($data['defaultValues'][$attribute->getId()][$grp / 100]) && ($data['defaultValues'][$attribute->getId()][$grp / 100] == $path)) ? ' mark selected-in-group-'.$grp : '' ?>">
- 							<?php // si dans eav_attribute, attribute_model = xyz/source_xyz ?>
+ 							<?php // when in eav_attribute, attribute_model = xyz/source_xyz ?>
 							<?php // $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute ?>
 							<?php if ($attribute->getIsCheckbox() === true): ?>
 								<?php if (empty($sid)): ?>

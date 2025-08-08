@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/09/05/2020
- * Updated S/30/12/2023
+ * Updated D/27/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -162,13 +162,13 @@ class Luigifab_Apijs_Model_Python extends Varien_Image {
 				empty($this->_resizeFixed) ?
 					(empty($this->_resizeHeight) ? 0 : $this->_resizeHeight) :
 					(empty($this->_resizeHeight) ? (empty($this->_resizeWidth) ? 0 : $this->_resizeWidth) : $this->_resizeHeight),
-				// uniquement pour JPEG (ignoré et toujours à 9 pour PNG, inutile pour GIF)
+				// only for JPEG (ignored and always at 9 for PNG, useless for GIF)
 				$this->_quality,
 				empty($this->_resizeFixed) ? '' : 'fixed',
 				$dir.'/apijs.log'
 			);
 
-			// ne génère pas deux fois la même image
+			// does not generate the same image twice
 			if (!in_array($destination, $this->_files)) {
 
 				//Mage::log(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), Zend_Log::DEBUG, 'apijs.log');

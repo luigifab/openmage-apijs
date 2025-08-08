@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/13/06/2015
- * Updated S/28/10/2023
+ * Updated D/27/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -98,12 +98,12 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 			$fields     = $product->getResource()->getAttribute('media_gallery')->getBackend()->getAllColumns();
 			$gallery    = [];
 
-			// fait ce que fait le js du core, quel bordel
+			// does what core js does, what a mess
 			foreach ($post['apijs'] as $imageId => $image) {
 
 				if (!is_array($image) || !array_key_exists('file', $image)) {
 					// imageId = image, small_image, thumbnail, image = /a/b/c.xyz
-					// fait en sorte de ne pas copier la valeur par défaut
+					// ensures that the default value is not copied
 					$default = $product->getResource()->getAttributeRawValue($product->getId(), $imageId, 0);
 					$gallery['values'][$imageId] = (!empty($storeId) && ($default == $image)) ? false : $image;
 				}
@@ -118,7 +118,7 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 							if (mb_stripos($field['Type'], 'int(') !== false) {
 								$value = ($value == 'on') ? 1 : $value;
 								if (empty($value)) {
-									// si dans eav_attribute, attribute_model = xyz/source_xyz
+									// when in eav_attribute, attribute_model = xyz/source_xyz
 									// $attribute = Xyz_Xyz_Model_Source_Xyz extends Mage_Catalog_Model_Resource_Eav_Attribute
 									$attribute = array_key_exists($field['Field'], $attributes) ? $attributes[$field['Field']] : false;
 									if (is_object($attribute) && ($attribute->getIsCheckbox() === true))
@@ -148,7 +148,7 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 						}
 					}
 
-					ksort($values); // pour debug uniquement
+					ksort($values); // for debug only
 					$gallery['images'][] = $values;
 					// DELETE FROM catalog_product_entity_varchar WHERE value IS NULL
 				}
@@ -156,7 +156,7 @@ class Luigifab_Apijs_Model_Observer extends Luigifab_Apijs_Helper_Data {
 
 			if (!empty($gallery)) {
 
-				$post['media_gallery_apijs'] = $gallery; // pour Luigifab_Apijs_Apijs_MediaController
+				$post['media_gallery_apijs'] = $gallery; // for Luigifab_Apijs_Apijs_MediaController
 
 				if (array_key_exists('images', $gallery))
 					$gallery['images'] = json_encode($gallery['images']);

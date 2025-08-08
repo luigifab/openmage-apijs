@@ -1,7 +1,7 @@
 <?php
 /**
  * Created S/04/10/2014
- * Updated S/02/12/2023
+ * Updated L/28/07/2025
  *
  * Copyright 2008-2025 | Fabrice Creuzot (luigifab) <code~luigifab~fr>
  * https://github.com/luigifab/openmage-apijs
@@ -91,8 +91,7 @@ class Luigifab_Apijs_Block_Adminhtml_Rewrite_Gallery extends Mage_Adminhtml_Bloc
 				$ids[] = $attribute->getId();
 				$globalValues[$code] = $product->getResource()->getAttributeRawValue($productId, $code, 0);
 
-				// bug de merde, quand la valeur par défaut est non présente, la lecture de la valeur par vue ne marche pas
-				// fixed by PR 2964
+				// PR 2964 (fixed getAttributeRawValue when there are no value in the "default" store)
 				if ($globalValues[$code] === false) {
 					try {
 						$writer->fetchAll('INSERT INTO '.$table.' (entity_type_id, attribute_id, store_id, entity_id, value) VALUES
